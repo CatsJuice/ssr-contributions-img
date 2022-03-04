@@ -26,15 +26,14 @@ export class AppController {
     console.log('Request /:username, username = ', username);
     if (!username)
       throw new NotFoundException('Cannot find user with that username');
-    const raw = await this.appService.generateWall(username);
+
+    const raw = await this.appService.generateWall(username, query);
+    const filename = `${username}_${Date.now()}`;
 
     const solve = async (format?: string) => {
       if (format === OutputFormat.SVG) {
         res.header('Content-Type', 'image/svg;charset=utf-8');
-        res.header(
-          'Content-Disposition',
-          `inline; filename=${username}_${Date.now()}.svg`,
-        );
+        res.header('Content-Disposition', `inline; filename=${filename}.svg`);
         res.send(Buffer.from(raw));
       } else if (format === OutputFormat.XML) {
         res.header('Content-Type', 'application/xml;charset=utf-8');
@@ -44,11 +43,13 @@ export class AppController {
         res.send(generateHtml(raw, username));
       } else if (format === OutputFormat.PNG) {
         res.header('Content-Type', 'image/svg;charset=utf-8');
-        res.header(
-          'Content-Disposition',
-          `inline; filename=${username}_${Date.now()}.png`,
+        res.header('Content-Disposition', `inline; filename=${filename}.png`);
+        res.send(
+          await this.appService.transformSvg2Png(
+            raw,
+            Math.min(10, Math.max(0.1, parseFloat(`${query.quality}`) || 1)),
+          ),
         );
-        res.send(await this.appService.transformSvg2Png(raw));
       } else solve(OutputFormat.HTML);
     };
     solve(query.format);
