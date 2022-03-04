@@ -3,6 +3,7 @@ export enum OutputFormat {
   XML = 'xml',
   PNG = 'png',
   HTML = 'html',
+  JPEG = 'jpeg',
 }
 
 export enum WidgetSize {
@@ -41,7 +42,7 @@ export class ConfigChartQueryDto {
   format?: OutputFormat;
 
   /**
-   * png quality, only works when format=png, [0.1, 10]
+   * png quality, only works when format=png|jpeg, [0.1, 10]
    * @default {1}
    */
   quality?: number;
