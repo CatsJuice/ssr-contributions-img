@@ -1,6 +1,8 @@
 export enum OutputFormat {
-  SVG_FILE = 'svg',
-  SVG_RAW = 'svg_raw',
+  SVG = 'svg',
+  XML = 'xml',
+  PNG = 'png',
+  HTML = 'html',
 }
 
 export class ConfigChartQueryDto {

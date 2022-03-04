@@ -42,10 +42,11 @@ export const calendarProcessor = (
   const opt = {
     calendar: [
       {
+        color: 'transparent',
         left: 'center',
         top: 'middle',
         cellSize: [20, 20],
-        itemStyle: { borderColor: 'transparent' },
+        itemStyle: { borderColor: 'transparent', opacity: 0 },
         splitLine: { show: false },
         yearLabel: { show: false },
         dayLabel: { show: false },
@@ -93,6 +94,7 @@ export const calendarProcessor = (
         data: seriesData,
       },
     ],
+    backgroundColor: 'transparent',
   };
   return opt;
 };

@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import * as sharp from 'sharp';
+import * as echarts from 'echarts';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import * as echarts from 'echarts';
-import { calendarProcessor } from './charts/calendar.processor';
+import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { Contribution } from './types/contribution.interface';
+import { calendarProcessor } from './charts/calendar.processor';
 import { defaultCalendarChartOptions } from './types/chart-options.interface';
 
 @Injectable()
@@ -19,6 +21,10 @@ export class AppService {
     if (!user) throw new NotFoundException(`Cannot find user of '${username}'`);
     const chart = await this._render(user);
     return chart;
+  }
+
+  public async transformSvg2Png(svgRaw: string) {
+    return await sharp(Buffer.from(svgRaw)).png().toBuffer();
   }
 
   /**
@@ -47,7 +53,6 @@ export class AppService {
     const opt = calendarProcessor(data, {
       ...defaultCalendarChartOptions,
     });
-    console.log(JSON.stringify(opt));
     chart.setOption(opt);
 
     // Output string
