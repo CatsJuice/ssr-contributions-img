@@ -40,15 +40,19 @@ export class AppService {
    * @param resize
    * @returns
    */
-  public async transformSvg2Png(svgRaw: string, resize = 1) {
+  public async transformSvg2Image(svgRaw: string, format: string, resize = 1) {
     const buf = Buffer.from(svgRaw);
     return await sharp(buf)
       .metadata()
-      .then(({ width }) =>
-        sharp(buf)
+      .then(({ width }) => {
+        let ref = sharp(buf);
+        // TODO: add to configuration
+        if (format === 'jpeg') ref = ref.flatten({ background: '#fff' });
+        return ref
+          .toFormat(format)
           .resize(Math.round(width * resize) * 2)
-          .toBuffer(),
-      );
+          .toBuffer();
+      });
   }
 
   /**

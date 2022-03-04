@@ -42,11 +42,22 @@ export class AppController {
         res.header('Content-Type', 'text/html;charset=utf-8');
         res.send(generateHtml(raw, username));
       } else if (format === OutputFormat.PNG) {
-        res.header('Content-Type', 'image/svg;charset=utf-8');
+        res.header('Content-Type', 'image/png;charset=utf-8');
         res.header('Content-Disposition', `inline; filename=${filename}.png`);
         res.send(
-          await this.appService.transformSvg2Png(
+          await this.appService.transformSvg2Image(
             raw,
+            'png',
+            Math.min(10, Math.max(0.1, parseFloat(`${query.quality}`) || 1)),
+          ),
+        );
+      } else if (format === OutputFormat.JPEG) {
+        res.header('Content-Type', 'image/jpeg;charset=utf-8');
+        res.header('Content-Disposition', `inline; filename=${filename}.jpg`);
+        res.send(
+          await this.appService.transformSvg2Image(
+            raw,
+            'jpeg',
             Math.min(10, Math.max(0.1, parseFloat(`${query.quality}`) || 1)),
           ),
         );
