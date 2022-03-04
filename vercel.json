@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "name": "ssr-contributions-svg",
+  "builds": [
+    {
+      "src": "dist/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/main.js"
+    }
+  ]
+}
