@@ -28,26 +28,29 @@ export class AppController {
       throw new NotFoundException('Cannot find user with that username');
     const raw = await this.appService.generateWall(username);
 
-    if (query.format === OutputFormat.SVG) {
-      res.header('Content-Type', 'image/svg;charset=utf-8');
-      res.header(
-        'Content-Disposition',
-        `inline; filename=${username}_${Date.now()}.svg`,
-      );
-      res.send(Buffer.from(raw));
-    } else if (query.format === OutputFormat.XML) {
-      res.header('Content-Type', 'application/xml;charset=utf-8');
-      res.send(raw);
-    } else if (query.format === OutputFormat.HTML) {
-      res.header('Content-Type', 'text/html;charset=utf-8');
-      res.send(generateHtml(raw, username));
-    } else if (query.format === OutputFormat.PNG) {
-      res.header('Content-Type', 'image/svg;charset=utf-8');
-      res.header(
-        'Content-Disposition',
-        `inline; filename=${username}_${Date.now()}.png`,
-      );
-      res.send(await this.appService.transformSvg2Png(raw));
-    } else res.send(raw);
+    const solve = async (format?: string) => {
+      if (format === OutputFormat.SVG) {
+        res.header('Content-Type', 'image/svg;charset=utf-8');
+        res.header(
+          'Content-Disposition',
+          `inline; filename=${username}_${Date.now()}.svg`,
+        );
+        res.send(Buffer.from(raw));
+      } else if (format === OutputFormat.XML) {
+        res.header('Content-Type', 'application/xml;charset=utf-8');
+        res.send(raw);
+      } else if (format === OutputFormat.HTML) {
+        res.header('Content-Type', 'text/html;charset=utf-8');
+        res.send(generateHtml(raw, username));
+      } else if (format === OutputFormat.PNG) {
+        res.header('Content-Type', 'image/svg;charset=utf-8');
+        res.header(
+          'Content-Disposition',
+          `inline; filename=${username}_${Date.now()}.png`,
+        );
+        res.send(await this.appService.transformSvg2Png(raw));
+      } else solve(OutputFormat.HTML);
+    };
+    solve(query.format);
   }
 }
