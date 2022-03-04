@@ -28,7 +28,7 @@ export class AppController {
     const raw = await this.appService.generateWall(username);
 
     if (query.format === OutputFormat.SVG_FILE) {
-      res.header('Content-Type', 'application/octet-stream;charset=utf-8');
+      res.header('Content-Type', 'image/svg;charset=utf-8');
       res.header(
         'Content-Disposition',
         `attachment; filename=${username}_${Date.now()}.svg`,
