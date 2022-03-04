@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import * as echarts from 'echarts';
-import { JSDOM } from 'jsdom';
+import { calendarProcessor } from './charts/calendar.processor';
+import { Contribution } from './types/contribution.interface';
+import { defaultCalendarChartOptions } from './types/chart-options.interface';
 
 @Injectable()
 export class AppService {
@@ -12,69 +14,45 @@ export class AppService {
   ) {}
 
   public async generateWall(username: string) {
-    // const data = await this._getUserContribution(username);
-    const data = await this._render(null);
-    return data;
+    const res: any = await this._getUserContribution(username);
+    const user = res.data.user;
+    if (!user) throw new NotFoundException(`Cannot find user of '${username}'`);
+    const chart = await this._render(user);
+    return chart;
   }
 
   /**
    * RenderChart
    */
-  private async _render(data: any) {
-    const { createCanvas } = await require('canvas');
-    // echarts.setPlatformAPI({
-    //   createCanvas: () => {
-    //     return new Canvas(100, 100);
-    //   },
-    // });
-    echarts.setPlatformAPI({
-      createCanvas: () => createCanvas(500, 500),
+  private async _render(data: Contribution) {
+    const size = 'midium';
+    const width =
+      {
+        midium: 400,
+      }[size] || 400;
+    const height =
+      {
+        midium: 200,
+      }[size] || 200;
+
+    // In SSR mode the first parameter does not need to be passed in as a DOM object
+    const chart = echarts.init(null, null, {
+      renderer: 'svg', // must use SVG mode
+      ssr: true, // enable SSR
+      width, // need to specify height and width
+      height,
     });
 
-    const { window } = new JSDOM();
-    global.window = window;
-    global.navigator = window.navigaror;
-    global.document = window.document;
-
-    const root = document.createElement('div');
-    root.style.cssText = 'width: 500px; height: 500px;';
-    Object.defineProperty(root, 'clientWidth', { value: 500 });
-    Object.defineProperty(root, 'clientHeight', { value: 500 });
-
-    const chart = echarts.init(root, null, {
-      renderer: 'canvas',
+    // setOption as normal
+    const opt = calendarProcessor(data, {
+      ...defaultCalendarChartOptions,
     });
+    console.log(JSON.stringify(opt));
+    chart.setOption(opt);
 
-    chart.setOption({
-      title: {
-        text: 'ECharts 入门示例',
-      },
-      tooltip: {},
-      legend: {
-        data: ['销量'],
-      },
-      xAxis: {
-        data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子'],
-      },
-      yAxis: {},
-      series: [
-        {
-          animation: false,
-          name: '销量',
-          type: 'bar',
-          data: [5, 20, 36, 10, 10, 20],
-        },
-      ],
-    });
-
-    const base64 = chart.getDataURL({
-      type: 'jpg',
-      pixelRatio: 2,
-      backgroundColor: '#fff',
-    });
-    const buff = Buffer.from(base64, 'base64');
-    chart.dispose();
-    return buff;
+    // Output string
+    const svgStr = chart.renderToSVGString();
+    return svgStr;
   }
 
   /**
