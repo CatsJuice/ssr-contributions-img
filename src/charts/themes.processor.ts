@@ -1,5 +1,8 @@
 import { themes } from 'src/utils/get-theme';
+import * as path from 'path';
 
+path.resolve(process.cwd(), 'fonts', 'fonts.conf');
+path.resolve(process.cwd(), 'fonts', 'CascadiaCode.ttf');
 export const themesProcessor = () => {
   const themeCount = Object.keys(themes).length;
   const labelWidth = 100;
@@ -25,11 +28,12 @@ export const themesProcessor = () => {
               font-size="12px"
               dx="${padding}"
               dy="${y + 12}"
+              font-family="Roboto"
             >
               ${themeName}
             </text>`
         .trim()
-        .replace(/\n/g, ' ');
+        .replace(/(\n|\r|\s)+/g, ' ');
       const nodes = colors
         .map((color, colNum) => {
           const x = padding + labelWidth + colNum * (unit + colGap);
@@ -43,7 +47,7 @@ export const themesProcessor = () => {
                 ry="4"
               />`
             .trim()
-            .replace(/\n/g, ' ');
+            .replace(/(\n|\r|\s)+/g, ' ');
         })
         .join('\n');
       return `<g>${text}\n${nodes}</g>`;
@@ -60,6 +64,13 @@ export const themesProcessor = () => {
           baseProfile="full"
           viewBox="0 0 ${width} ${height}"
         >
+
+          <style type="text/css">
+            @font-face {
+              font-family: CascadiaCode;
+              src: './fonts/CascadiaCode.ttf';
+            }
+          </style>
           ${body}
         </svg>`;
   return svg;
