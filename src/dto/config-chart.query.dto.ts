@@ -1,3 +1,7 @@
+import { Transform } from 'class-transformer';
+import { IsOptional, IsArray, IsString } from 'class-validator';
+import { isArray } from 'util';
+
 export enum OutputFormat {
   SVG = 'svg',
   XML = 'xml',
@@ -63,5 +67,11 @@ export class ConfigChartQueryDto {
    * custom colors, hex value join with ","
    * @default {undefined}
    */
-  colors?: string;
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @Transform(({ value }) =>
+    (isArray(value) ? value : (value || '').split(',')).map((v) => `#${v}`),
+  )
+  colors?: string[];
 }

@@ -65,6 +65,7 @@ export class AppService {
       ...defaultCalendarChartConfig,
       ...conf,
     };
+    const colors = conf.colors?.length ? conf.colors : getTheme(config.theme);
     // 1. calc chart width & height
     const size = config.widget_size;
     let weeks = Math.min(50, Math.max(0, parseInt(`${config.weeks}`) || 0));
@@ -94,7 +95,7 @@ export class AppService {
           ...defaultCalendarChartConfig,
           weeks,
           widgetSize: config.widget_size || config.widgetSize,
-          colors: config.colors || getTheme(config.theme),
+          colors,
         }),
       );
     } else {
