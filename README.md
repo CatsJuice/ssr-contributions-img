@@ -1,19 +1,22 @@
 <div align="center">
   <h1>SSR-Contribution-Svg</h1>
-   <img src="./assets/ipad.png" style="max-width: 90%" />
+  <span>English</span>
+  |
+  <a href="./README-CN.md">简体中文</a>
+  <img src="./assets/ipad.png" style="max-width: 90%" />
   <h4>A Nest.js API to render GitHub user's contributions to chart</h4>
   <p style="color: grey;font-size: 0.9rem">
   Just pass GitHub username in route <code>param</code>, you will get the contribution wall render by svg. Support custom
   <b>output format</b>,
   <b>color</b>,
-  <b>quantity</b>, 
+  <b>quality</b>, 
   <b>size</b>
   and so on
   </p>
   <br />
   <span>Real-time rendering example：</span>
   <br />
-  <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20" style="max-height: 180px;max-width: 100%" />
+  <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20" style="height: 180px;max-width: 100%;" />
 </div>
 
 ## Usage
@@ -53,7 +56,7 @@
     <td><code>enum</code></td>
     <td>
       Preset themes, avaiable values:
-      See <a href="#Themes">Themes</a>
+      See <a href="#themes">Themes</a>
     </td>
     <td><code>green</code></td>
   </tr>
