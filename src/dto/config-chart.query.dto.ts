@@ -1,14 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsOptional, IsArray, IsString } from 'class-validator';
 import { isArray } from 'util';
-
-export enum OutputFormat {
-  SVG = 'svg',
-  XML = 'xml',
-  PNG = 'png',
-  HTML = 'html',
-  JPEG = 'jpeg',
-}
+import { Mixin } from 'ts-mixer';
+import { OutputFormatDto } from './output-format.dto';
+import { QualityDto } from './quality.dto';
 
 export enum WidgetSize {
   SMALL = 'small',
@@ -25,9 +20,10 @@ export enum PresetTheme {
   RED = 'red',
   PURPLE = 'purple',
   BLUE = 'blue',
+  YELLOW = 'yellow',
 }
 
-export class ConfigChartQueryDto {
+export class ConfigChartQueryDto extends Mixin(OutputFormatDto, QualityDto) {
   /**
    * Preset colors
    */
@@ -38,18 +34,6 @@ export class ConfigChartQueryDto {
    * @default {"calendar"}
    */
   chart?: ChartTpl;
-
-  /**
-   * Response type
-   * @default {"html"}
-   */
-  format?: OutputFormat;
-
-  /**
-   * png quality, only works when format=png|jpeg, [0.1, 10]
-   * @default {1}
-   */
-  quality?: number;
 
   /**
    * ios Widget size, Affect weeks
