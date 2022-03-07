@@ -135,10 +135,25 @@
 
   <tr>
     <td>colors</td>
-    <td><code>string</code></td>
+    <td><code>string | string[]</code></td>
     <td>
-      Hex colors value join with 
+      Hex colors value (without <code>#</code> prefix) join with 
       <code>,</code>.
+      <br />
+      <span>Or multiple colors.</span>
+      <br />
+      <span>e.g.</span>
+      <br />
+      <ul>
+        <li>
+          <span><code>colors=f00,0f0,00f,0ff,f0f,ff0</code></span>
+        </li>
+        <li>
+          <span>
+          <code>colors=f00&colors=0f0&colors=00f&colors=0ff&colors=f0f&colors=ff0</code>
+          </span>
+        </li>
+      </ul>
       <b>
         This will override 
         <code>theme</code> property

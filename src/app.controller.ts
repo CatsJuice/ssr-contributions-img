@@ -5,6 +5,7 @@ import {
   Param,
   Query,
   Res,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { generateHtml } from './utils/generate-html';
@@ -21,9 +22,10 @@ export class AppController {
   async get(
     @Res() res,
     @Param('username') username: string,
-    @Query() query: ConfigChartQueryDto,
+    @Query(new ValidationPipe({ transform: true })) query: ConfigChartQueryDto,
   ) {
     console.log('Request /:username, username = ', username);
+    console.log(JSON.stringify(query));
     if (!username)
       throw new NotFoundException('Cannot find user with that username');
 
