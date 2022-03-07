@@ -18,6 +18,10 @@ import {
   WidgetSize,
 } from './dto/config-chart.query.dto';
 import { getTheme } from './utils/get-theme';
+import { Response } from 'express';
+import { OutputFormat } from './dto/output-format.dto';
+import { generateHtml } from './utils/generate-html';
+import { themesProcessor } from './charts/themes.processor';
 
 @Injectable()
 export class AppService {
@@ -25,6 +29,65 @@ export class AppService {
     private readonly _httpSrv: HttpService,
     private readonly _cfgSrv: ConfigService,
   ) {}
+
+  public async renderTheme2svg() {
+    return themesProcessor();
+  }
+
+  /**
+   *
+   * @param res
+   * @param svgCode
+   * @param format
+   * @param quality
+   * @param filename
+   */
+  public async resolveResponseByFormat(
+    res: Response,
+    svgCode: string,
+    format?: OutputFormat,
+    quality?: number,
+    filename = `${Date.now()}`,
+  ) {
+    if (format === OutputFormat.SVG) {
+      res.header('Content-Type', 'image/svg;charset=utf-8');
+      res.header('Content-Disposition', `inline; filename=${filename}.svg`);
+      res.send(Buffer.from(svgCode));
+    } else if (format === OutputFormat.XML) {
+      res.header('Content-Type', 'application/xml;charset=utf-8');
+      res.send(svgCode);
+    } else if (format === OutputFormat.HTML) {
+      res.header('Content-Type', 'text/html;charset=utf-8');
+      res.send(generateHtml(svgCode, filename));
+    } else if (format === OutputFormat.PNG) {
+      res.header('Content-Type', 'image/png;charset=utf-8');
+      res.header('Content-Disposition', `inline; filename=${filename}.png`);
+      res.send(
+        await this.transformSvg2Image(
+          svgCode,
+          'png',
+          Math.min(10, Math.max(0.1, parseFloat(`${quality}`) || 1)),
+        ),
+      );
+    } else if (format === OutputFormat.JPEG) {
+      res.header('Content-Type', 'image/jpeg;charset=utf-8');
+      res.header('Content-Disposition', `inline; filename=${filename}.jpg`);
+      res.send(
+        await this.transformSvg2Image(
+          svgCode,
+          'jpeg',
+          Math.min(10, Math.max(0.1, parseFloat(`${quality}`) || 1)),
+        ),
+      );
+    } else
+      this.resolveResponseByFormat(
+        res,
+        svgCode,
+        OutputFormat.HTML,
+        quality,
+        filename,
+      );
+  }
 
   public async generateWall(username: string, config: ConfigChartQueryDto) {
     const res: any = await this._getUserContribution(username);
