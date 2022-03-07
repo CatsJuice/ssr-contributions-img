@@ -53,17 +53,12 @@
     <td><code>enum</code></td>
     <td>
       Preset themes, avaiable values:
-      <ul>
-        <li><code>green</code></li>
-        <li><code>red</code></li>
-        <li><code>purple</code></li>
-        <li><code>blue</code></li>
-      </ul>
+      See <a href="#Themes">Themes</a>
     </td>
     <td><code>green</code></td>
   </tr>
 
-   <tr>
+  <tr>
     <td>chart</td>
     <td><code>enum</code></td>
     <td>
@@ -171,13 +166,18 @@
   </tr>
 </table>
 
+## Themes
 
-### Example
+All avaiable themes(live update):
+
+<img src="https://ssr-contributions-svg.vercel.app/themes?format=png&quality=0.5" >
+
+## Example
 
 - pin to notion
   ![notion](./assets/notion.png)
 
-- Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188), example code:
+- Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188), code example:
   ```js
     let url = "https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&quality=2&theme=red&widget_size=midium"
 
