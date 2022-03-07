@@ -36,8 +36,6 @@ export const calendarProcessor = (
     [],
   );
 
-  console.log(cfg.colors);
-
   const opt = {
     calendar: [
       {
