@@ -1,21 +1,18 @@
-import { CalendarChartOptions } from 'src/types/chart-options.interface';
+import * as moment from 'moment';
+import { WidgetSize } from 'src/dto/config-chart.query.dto';
+import { CalendarChartConfig } from 'src/types/chart-config.interface';
+
 import {
   Contribution,
   ContributionDay,
   ContributionWeek,
 } from 'src/types/contribution.interface';
-import * as moment from 'moment';
 
 export const calendarProcessor = (
   data: Contribution,
-  opts: CalendarChartOptions = {},
+  cfg: CalendarChartConfig = {},
 ) => {
-  const weekCount =
-    {
-      small: 7,
-      midium: 16,
-      large: 32,
-    }[opts.widgetSize] || 7;
+  const weekCount = cfg.weeks;
   const slicedData = data.contributionsCollection.contributionCalendar.weeks
     .sort(
       (w1, w2) =>
@@ -39,12 +36,25 @@ export const calendarProcessor = (
     [],
   );
 
+  console.log(cfg.colors);
+
   const opt = {
     calendar: [
       {
         color: 'transparent',
-        left: 'center',
-        top: 'middle',
+        ...(cfg.widgetSize === WidgetSize.LARGE
+          ? {
+              width: 20 * weekCount + (weekCount - 1) * 4,
+              height: 20 * 7 + 6 * 4,
+              left: 'center',
+              top: 'middle',
+            }
+          : {
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: 20,
+            }),
         cellSize: [20, 20],
         itemStyle: { borderColor: 'transparent', opacity: 0 },
         splitLine: { show: false },
@@ -61,7 +71,7 @@ export const calendarProcessor = (
       type: 'piecewise',
       min: 0,
       max,
-      inRange: { color: opts.colors.slice(1) },
+      inRange: { color: cfg.colors.slice(1) },
       show: false,
     },
     series: [
@@ -86,7 +96,7 @@ export const calendarProcessor = (
             },
             position: cellPoint,
             style: {
-              fill: value ? api.visual('color') : opts.colors[0],
+              fill: value ? api.visual('color') : cfg.colors[0],
             },
           };
         },

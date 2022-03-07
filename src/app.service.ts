@@ -2,11 +2,22 @@ import * as sharp from 'sharp';
 import * as echarts from 'echarts';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Contribution } from './types/contribution.interface';
 import { calendarProcessor } from './charts/calendar.processor';
-import { defaultCalendarChartOptions } from './types/chart-options.interface';
+import { defaultCalendarChartConfig } from './types/chart-config.interface';
+
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  ChartTpl,
+  ConfigChartQueryDto,
+  WidgetSize,
+} from './dto/config-chart.query.dto';
+import { getTheme } from './utils/get-theme';
 
 @Injectable()
 export class AppService {
@@ -15,45 +26,83 @@ export class AppService {
     private readonly _cfgSrv: ConfigService,
   ) {}
 
-  public async generateWall(username: string) {
+  public async generateWall(username: string, config: ConfigChartQueryDto) {
     const res: any = await this._getUserContribution(username);
     const user = res.data.user;
     if (!user) throw new NotFoundException(`Cannot find user of '${username}'`);
-    const chart = await this._render(user);
+    const chart = await this._render(user, config);
     return chart;
   }
 
-  public async transformSvg2Png(svgRaw: string) {
-    return await sharp(Buffer.from(svgRaw)).png().toBuffer();
+  /**
+   * svg code => png buffer
+   * @param svgRaw
+   * @param resize
+   * @returns
+   */
+  public async transformSvg2Image(svgRaw: string, format: string, resize = 1) {
+    const buf = Buffer.from(svgRaw);
+    return await sharp(buf)
+      .metadata()
+      .then(({ width }) => {
+        let ref = sharp(buf);
+        // TODO: add to configuration
+        if (format === 'jpeg') ref = ref.flatten({ background: '#fff' });
+        return ref
+          .toFormat(format)
+          .resize(Math.round(width * resize) * 2)
+          .toBuffer();
+      });
   }
 
   /**
    * RenderChart
    */
-  private async _render(data: Contribution) {
-    const size = 'midium';
-    const width =
-      {
-        midium: 400,
-      }[size] || 400;
-    const height =
-      {
-        midium: 200,
-      }[size] || 200;
+  private async _render(data: Contribution, conf: ConfigChartQueryDto) {
+    // set default configurations
+    const config = {
+      chart: ChartTpl.CALENDAR,
+      ...defaultCalendarChartConfig,
+      ...conf,
+    };
+    const colors = conf.colors?.length ? conf.colors : getTheme(config.theme);
+    // 1. calc chart width & height
+    const size = config.widget_size;
+    let weeks = Math.min(50, Math.max(0, parseInt(`${config.weeks}`) || 0));
+    if (!weeks)
+      weeks =
+        {
+          [WidgetSize.LARGE]: 40,
+          [WidgetSize.MIDIUM]: 16,
+          [WidgetSize.SMALL]: 7,
+        }[size] || 16;
+    const calc = (count) => count * 20 + (count - 1) * 4 + 40;
+    const width = calc(weeks);
+    const height = size === WidgetSize.LARGE ? calc(18) : calc(7);
 
-    // In SSR mode the first parameter does not need to be passed in as a DOM object
+    // 2. init instance
     const chart = echarts.init(null, null, {
-      renderer: 'svg', // must use SVG mode
-      ssr: true, // enable SSR
-      width, // need to specify height and width
+      renderer: 'svg',
+      ssr: true,
+      width,
       height,
     });
 
-    // setOption as normal
-    const opt = calendarProcessor(data, {
-      ...defaultCalendarChartOptions,
-    });
-    chart.setOption(opt);
+    // 3. render by chart type
+    if (config.chart === ChartTpl.CALENDAR) {
+      chart.setOption(
+        calendarProcessor(data, {
+          ...defaultCalendarChartConfig,
+          weeks,
+          widgetSize: config.widget_size || config.widgetSize,
+          colors,
+        }),
+      );
+    } else {
+      throw new BadRequestException(
+        'Unimplemented chart type: ' + config.chart,
+      );
+    }
 
     // Output string
     const svgStr = chart.renderToSVGString();
@@ -75,17 +124,12 @@ export class AppService {
       data: {
         query: `query {
           user(login: "${username}") {
-              name
               contributionsCollection {
                   contributionCalendar {
-                      colors
-                      totalContributions
                       weeks {
                           contributionDays {
-                              color
                               contributionCount
                               date
-                              weekday
                           }
                           firstDay
                       }

@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+if [ "$SCRIPT" = "true" ]; then
+  echo "script mode enabled, skip \"prepare-commit-msg\" hooks"
+  exit 0
+else
+  exec </dev/tty && git cz --hook || true
+fi
