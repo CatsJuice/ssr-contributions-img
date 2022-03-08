@@ -2,8 +2,10 @@ import { Transform } from 'class-transformer';
 import { IsOptional, IsArray, IsString } from 'class-validator';
 import { isArray } from 'util';
 import { Mixin } from 'ts-mixer';
-import { OutputFormatDto } from './output-format.dto';
-import { QualityDto } from './quality.dto';
+import { OutputFormatDto } from './base/output-format.dto';
+import { QualityDto } from './base/quality.dto';
+import { PresetTheme } from 'src/types/theme.enum';
+import { TZDto } from './base/tz.dto';
 
 export enum WidgetSize {
   SMALL = 'small',
@@ -14,16 +16,11 @@ export enum WidgetSize {
 export enum ChartTpl {
   CALENDAR = 'calendar',
 }
-
-export enum PresetTheme {
-  GREEN = 'green',
-  RED = 'red',
-  PURPLE = 'purple',
-  BLUE = 'blue',
-  YELLOW = 'yellow',
-}
-
-export class ConfigChartQueryDto extends Mixin(OutputFormatDto, QualityDto) {
+export class ConfigChartQueryDto extends Mixin(
+  OutputFormatDto,
+  QualityDto,
+  // TZDto,
+) {
   /**
    * Preset colors
    */

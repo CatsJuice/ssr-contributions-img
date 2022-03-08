@@ -3,6 +3,7 @@ import * as path from 'path';
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf');
 path.resolve(process.cwd(), 'fonts', 'CascadiaCode.ttf');
+
 export const themesProcessor = () => {
   const themeCount = Object.keys(themes).length;
   const labelWidth = 100;

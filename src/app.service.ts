@@ -19,7 +19,7 @@ import {
 } from './dto/config-chart.query.dto';
 import { getTheme } from './utils/get-theme';
 import { Response } from 'express';
-import { OutputFormat } from './dto/output-format.dto';
+import { OutputFormat } from './dto/base/output-format.dto';
 import { generateHtml } from './utils/generate-html';
 import { themesProcessor } from './charts/themes.processor';
 
@@ -159,6 +159,7 @@ export class AppService {
           weeks,
           widgetSize: config.widget_size || config.widgetSize,
           colors,
+          tz: config.tz,
         }),
       );
     } else {
