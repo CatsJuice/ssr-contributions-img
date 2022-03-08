@@ -8,8 +8,10 @@ export interface BaseChartConfig {
 export const defaultCalendarChartConfig: CalendarChartConfig = {
   widgetSize: WidgetSize.MIDIUM,
   quality: 1,
+  tz: 'Asia/Shanghai',
 };
 export interface CalendarChartConfig extends BaseChartConfig {
   colors?: string[];
   weeks?: number;
+  tz?: string;
 }

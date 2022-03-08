@@ -7,6 +7,7 @@ import {
   Res,
   ValidationPipe,
 } from '@nestjs/common';
+import * as momentTz from 'moment-timezone';
 import { AppService } from './app.service';
 import { ConfigChartQueryDto } from './dto/config-chart.query.dto';
 import { GetThemeQueryDto } from './dto/get-theme.query.dto';
@@ -49,5 +50,17 @@ export class AppController {
       query.quality,
       filename,
     );
+  }
+
+  @Get('time')
+  async testGetTime(@Query('tz') tz: string) {
+    const osTime = momentTz.tz(Date.now(), process.env.TZ);
+    const tzTime = osTime.clone().tz(tz);
+    const format = 'YYYY-MM-DD HH:mm:ss';
+    return {
+      tz,
+      osTime: osTime.format(format),
+      tzTime: tzTime.format(format),
+    };
   }
 }
