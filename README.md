@@ -43,6 +43,14 @@
 
 ## Configuration
 
+```
+${host}/_/${username}?${queryString}
+```
+
+- `username`: Github username
+- `queryString`
+
+**Common parameters:**
 <table>
   <tr>
     <th>param</th>
@@ -65,7 +73,7 @@
     <td>chart</td>
     <td><code>enum</code></td>
     <td>
-      Chart type, only <code>calendar</code> supported yet
+      Chart type, See <a href="#charts">Charts</a>
     </td>
     <td><code>calendar</code></td>
   </tr>
@@ -156,7 +164,7 @@
         </li>
         <li>
           <span>
-          <code>colors=f00&colors=0f0&colors=00f&colors=0ff&colors=f0f&colors=ff0</code>
+          <code>colors=f00&colors=0f0</code>
           </span>
         </li>
       </ul>
@@ -167,7 +175,68 @@
     </td>
     <td><code>undefined</code></td>
   </tr>
+
 </table>
+
+**3DBar chart parameters:**
+
+<table>
+  <tr>
+    <th>param</th>
+    <th>type</th>
+    <th>desc</th>
+    <th>default</th>
+  </tr>
+
+  <tr>
+    <td>gap</td>
+    <td><code>number</code></td>
+    <td>
+    Gap size between cubes, allowed numbers from <code>0</code> to <code>20</code>
+    </td>
+    <td>
+      <code>1.2</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td>scale</td>
+    <td><code>number</code></td>
+    <td>
+      Adjust vertical top view, allowed numbers not less than <code>1</code>
+    </td>
+    <td><code>2</code></td>
+  </tr>
+
+  <tr>
+    <td>light</td>
+    <td><code>number</code></td>
+    <td>
+      Adjust light intensity, allowed numbers from <code>1</code>
+      to <code>60</code>
+    </td>
+    <td><code>10</code></td>
+  </tr>
+
+</table>
+
+
+## Charts
+
+- **calendar**
+  - use: `chart=calendar`
+  - e.g.
+    ```
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=png
+    ```
+    ![Calendar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=png)
+- **3dbar**
+  - use: `chart=3dbar`
+  - e.g.
+    ```
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png
+    ```
+    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png)
 
 ## Themes
 
