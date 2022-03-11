@@ -1,4 +1,4 @@
-import { PresetTheme } from 'src/dto/config-chart.query.dto';
+import { PresetTheme } from 'src/types/theme.enum';
 
 export const themes: Record<PresetTheme, string[]> = {
   [PresetTheme.GREEN]: ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196027'],
