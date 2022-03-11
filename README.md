@@ -218,6 +218,15 @@ ${host}/_/${username}?${queryString}
     <td><code>10</code></td>
   </tr>
 
+  <tr>
+    <td>gradient</td>
+    <td><code>boolean</code></td>
+    <td>
+      Use gradient mode to cube
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
 </table>
 
 
@@ -234,9 +243,9 @@ ${host}/_/${username}?${queryString}
   - use: `chart=3dbar`
   - e.g.
     ```
-    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png&gradient=true
     ```
-    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png)
+    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png&gradient=true)
 
 ## Themes
 

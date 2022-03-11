@@ -219,6 +219,15 @@ ${host}/_/${username}?${queryString}
     <td><code>10</code></td>
   </tr>
 
+  <tr>
+    <td>gradient</td>
+    <td><code>boolean</code></td>
+    <td>
+      为柱子使用渐变色模式
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
 </table>
 
 ## 图表
@@ -234,9 +243,9 @@ ${host}/_/${username}?${queryString}
   - 使用: `chart=3dbar`
   - 示例
     ```
-    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png&gradient=true
     ```
-    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png)
+    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png&gradient=true)
 
 
 ## 主题
