@@ -43,6 +43,15 @@
 
 ## 配置
 
+```
+${host}/_/${username}?${queryString}
+```
+
+- `username`: Github 用户名
+- `queryString`
+
+**公共请求参数:**
+
 <table>
   <tr>
     <th>参数名</th>
@@ -65,7 +74,8 @@
     <td>chart</td>
     <td><code>enum</code></td>
     <td>
-      图表类型, 目前只支持 <code>calendar</code>
+      图表类型, 可用图表见：
+      <a href="#图表">图表</a>
     </td>
     <td><code>calendar</code></td>
   </tr>
@@ -156,7 +166,7 @@
         </li>
         <li>
           <span>
-          <code>colors=f00&colors=0f0&colors=00f&colors=0ff&colors=f0f&colors=ff0</code>
+          <code>colors=f00&colors=0f0</code>
           </span>
         </li>
       </ul>
@@ -169,6 +179,66 @@
   </tr>
 </table>
 
+**3D柱状图参数:**
+
+<table>
+  <tr>
+    <th>参数名</th>
+    <th>类型</th>
+    <th>描述</th>
+    <th>默认值</th>
+  </tr>
+
+  <tr>
+    <td>gap</td>
+    <td><code>number</code></td>
+    <td>
+    方块之间的间距, 可用值范围为 <code>0</code> 到 <code>20</code>
+    </td>
+    <td>
+      <code>1.2</code>
+    </td>
+  </tr>
+
+  <tr>
+    <td>scale</td>
+    <td><code>number</code></td>
+    <td>
+      调整俯视的角度, 允许不小于 <code>1</code> 的数值
+    </td>
+    <td><code>2</code></td>
+  </tr>
+
+  <tr>
+    <td>light</td>
+    <td><code>number</code></td>
+    <td>
+      调整光照强度, 可用范围为 <code>1</code>
+      到 <code>60</code>
+    </td>
+    <td><code>10</code></td>
+  </tr>
+
+</table>
+
+## 图表
+
+- **calendar**
+  - 使用: `chart=calendar`
+  - 示例
+    ```
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=png
+    ```
+    ![Calendar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=png)
+- **3dbar**
+  - 使用: `chart=3dbar`
+  - 示例
+    ```
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png
+    ```
+    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=png)
+
+
 ## 主题
 
 所有可用主题（实时更新）:
@@ -180,7 +250,7 @@
 - 贴到 Notion 的页面中
   ![notion](./assets/notion.png)
 
-- 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188), code example:
+- 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188), 示例代码:
   ```js
     let url = "https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&quality=2&theme=red&widget_size=midium"
 
