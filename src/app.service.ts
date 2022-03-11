@@ -1,27 +1,29 @@
 import * as sharp from 'sharp';
 import * as echarts from 'echarts';
+import { Response } from 'express';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 
+import { getTheme } from './utils/get-theme';
+import { generateHtml } from './utils/generate-html';
+import { WidgetSize } from './dto/base/widget-size.dto';
+import { OutputFormat } from './dto/base/output-format.dto';
+import { themesProcessor } from './charts/themes.processor';
 import { Contribution } from './types/contribution.interface';
 import { calendarProcessor } from './charts/calendar.processor';
-import { defaultCalendarChartConfig } from './types/chart-config.interface';
+import { ChartTpl, ConfigSvgQueryDto } from './dto/config-svg.query.dto';
+import {
+  defaultCalendarChartConfig,
+  defaultCalenderChart3dConfig,
+} from './types/chart-config.interface';
 
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  ChartTpl,
-  ConfigChartQueryDto,
-  WidgetSize,
-} from './dto/config-chart.query.dto';
-import { getTheme } from './utils/get-theme';
-import { Response } from 'express';
-import { OutputFormat } from './dto/base/output-format.dto';
-import { generateHtml } from './utils/generate-html';
-import { themesProcessor } from './charts/themes.processor';
+import { isometricSvg } from './charts/isometric-svg';
+import { check } from 'prettier';
 
 @Injectable()
 export class AppService {
@@ -35,7 +37,6 @@ export class AppService {
   }
 
   /**
-   *
    * @param res
    * @param svgCode
    * @param format
@@ -89,7 +90,7 @@ export class AppService {
       );
   }
 
-  public async generateWall(username: string, config: ConfigChartQueryDto) {
+  public async generateWall(username: string, config: ConfigSvgQueryDto) {
     const res: any = await this._getUserContribution(username);
     const user = res.data.user;
     if (!user) throw new NotFoundException(`Cannot find user of '${username}'`);
@@ -121,14 +122,20 @@ export class AppService {
   /**
    * RenderChart
    */
-  private async _render(data: Contribution, conf: ConfigChartQueryDto) {
+  private async _render(data: Contribution, conf: ConfigSvgQueryDto) {
     // set default configurations
     const config = {
       chart: ChartTpl.CALENDAR,
       ...defaultCalendarChartConfig,
       ...conf,
     };
+    const check = (obj) =>
+      Object.keys(obj).reduce((res, key) => {
+        if (obj[key]) res[key] = obj[key];
+        return res;
+      }, {});
     const colors = conf.colors?.length ? conf.colors : getTheme(config.theme);
+
     // 1. calc chart width & height
     const size = config.widget_size;
     let weeks = Math.min(50, Math.max(0, parseInt(`${config.weeks}`) || 0));
@@ -139,20 +146,20 @@ export class AppService {
           [WidgetSize.MIDIUM]: 16,
           [WidgetSize.SMALL]: 7,
         }[size] || 16;
-    const calc = (count) => count * 20 + (count - 1) * 4 + 40;
-    const width = calc(weeks);
-    const height = size === WidgetSize.LARGE ? calc(18) : calc(7);
-
-    // 2. init instance
-    const chart = echarts.init(null, null, {
-      renderer: 'svg',
-      ssr: true,
-      width,
-      height,
-    });
-
-    // 3. render by chart type
+    let svgStr = '';
     if (config.chart === ChartTpl.CALENDAR) {
+      const calc = (count) => count * 20 + (count - 1) * 4 + 40;
+      const width = calc(weeks);
+      const height = size === WidgetSize.LARGE ? calc(18) : calc(7);
+      // 2. init instance
+      const chart = echarts.init(null, null, {
+        renderer: 'svg',
+        ssr: true,
+        width,
+        height,
+      });
+
+      // 3. render by chart type
       chart.setOption(
         calendarProcessor(data, {
           ...defaultCalendarChartConfig,
@@ -162,14 +169,25 @@ export class AppService {
           tz: config.tz,
         }),
       );
+      svgStr = chart.renderToSVGString();
+    } else if (config.chart === ChartTpl.BAR3D) {
+      console.log(config.gap);
+      return isometricSvg(data, {
+        ...defaultCalenderChart3dConfig,
+        ...check({
+          weeks,
+          widgetSize: config.widget_size || config.widgetSize,
+          colors,
+          gap: config.gap,
+          scale: config.scale,
+          light: config.light,
+        }),
+      });
     } else {
       throw new BadRequestException(
         'Unimplemented chart type: ' + config.chart,
       );
     }
-
-    // Output string
-    const svgStr = chart.renderToSVGString();
     return svgStr;
   }
 
@@ -205,4 +223,59 @@ export class AppService {
     });
     return res.data;
   }
+
+  // /**
+  //  * test node-canvas
+  //  * @param username
+  //  * @returns
+  //  */
+  // public async drawCanvas(username: string) {
+  //   const res = await this._getUserContribution(username);
+  //   const user = res.data.user;
+  //   if (!user) throw new NotFoundException(`Cannot find user of '${username}'`);
+
+  //   if (!global['window']) global['window'] = {} as any;
+  //   const { createCanvas } = await require('canvas');
+  //   // console.log(Obelisk);
+  //   // const obelisk = Obelisk(Canvas);
+  //   const canvas = createCanvas(1000, 1000);
+
+  //   const obelisk = await require('obelisk.js');
+  //   // create pixel view container in point
+  //   const point = new obelisk.Point(500, 240);
+
+  //   const pixelView = new obelisk.PixelView(canvas, point);
+
+  //   // create cube
+  //   const dimension = new obelisk.CubeDimension(120, 200, 60);
+
+  //   const color = new obelisk.CubeColor().getByHorizontalColor(
+  //     Number.parseInt('#00ff00'.replace('#', ''), 16),
+  //   );
+
+  //   const cube = new obelisk.Cube(dimension, color);
+
+  //   //var cube = new obelisk.Cube(dimension, color, false);
+  //   pixelView.renderObject(cube);
+
+  //   const ctx = canvas.getContext('2d');
+
+  //   // Write "Awesome!"
+  //   ctx.font = '30px Impact';
+  //   ctx.rotate(0.1);
+  //   ctx.fillText('Awesome!', 50, 100);
+
+  //   // Draw line under text
+  //   const text = ctx.measureText('Awesome!');
+  //   ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+  //   ctx.beginPath();
+  //   ctx.lineTo(50, 102);
+  //   ctx.lineTo(50 + text.width, 102);
+  //   ctx.stroke();
+
+  //   const stream = canvas.createPNGStream();
+  //   console.log(stream);
+  //   if (!stream) throw new BadRequestException('Cannot create PNG stream');
+  //   return stream;
+  // }
 }
