@@ -29,4 +29,5 @@ export interface CalendarChart3DConfig extends BaseChartConfig {
   colors?: string[];
   weeks?: number;
   light?: number;
+  gradient?: boolean;
 }

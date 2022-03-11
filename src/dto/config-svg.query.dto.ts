@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsNumber, Min, Max } from 'class-validator';
+import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
 
 import { decorate, Mixin } from 'ts-mixer';
 import { ColorsDto } from './base/colors.dto';
@@ -39,6 +39,11 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(Min(1))
   @decorate(Max(60))
   light?: number;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => value.toLowerCase() === 'true'))
+  @decorate(IsBoolean())
+  gradient?: boolean;
 }
 
 export class ConfigSvgQueryDto extends Mixin(
