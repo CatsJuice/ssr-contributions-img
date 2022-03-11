@@ -57,13 +57,50 @@ export const isometricSvg = (
   const maxHeight = 80;
   const minHeight = 3.2;
   const size = 16;
-  const { scale, colors, gap, light } = cfg;
+  const { scale, colors, gap, light, gradient } = cfg;
+
+  const shadeColorLeft = (color) => shadeColor(color, -(15 + light));
+  const shadeColorRight = (color) => shadeColor(color, -(5 + light));
+
+  const gradientArr = colors.slice(1).map((color, index) => {
+    // const step = fix(100 / (index + 1));
+    const subColors = colors.slice(1, 1 + index + 1).reverse();
+    const sides = ['left', 'right'];
+    return sides
+      .map((side) => {
+        return `<linearGradient id="grident_${side}_${index}" gradientTransform="rotate(90)">
+      ${
+        // subColors
+        // .map(
+        //   (c, i) =>
+        //     `<stop offset="${fix(i * step)}%" stop-color="${
+        //       side === 'left' ? shadeColorLeft(c) : shadeColorRight(c)
+        //     }" />`,
+        // )
+        // .join('\n')
+        ''
+      }
+      <stop offset="0%" stop-color="${
+        side === 'left'
+          ? shadeColorLeft(subColors[0])
+          : shadeColorRight(subColors[0])
+      }" />
+      <stop offset="100%" stop-color="${
+        side === 'left'
+          ? shadeColorLeft(subColors[1] || '')
+          : shadeColorRight(subColors[1] || '')
+      }" />
+    </linearGradient>`;
+      })
+      .join('\n');
+  });
 
   const coord = (day: ContributionDay) => {
-    const i = Math.ceil((day.contributionCount / max) * colors.length);
+    const i = Math.ceil((day.contributionCount / max) * (colors.length - 1));
     const _h = Math.ceil((day.contributionCount / max) * maxHeight);
     const height = _h ? _h + minHeight : minHeight;
     return {
+      level: i,
       color: colors[Math.max(0, Math.min(i, colors.length - 1))],
       height,
     };
@@ -71,7 +108,8 @@ export const isometricSvg = (
 
   const dayBuilder = (contributionDay: ContributionDay, offset) => {
     offset = 6 - offset;
-    const { color, height } = coord(contributionDay);
+    const { color, height, level } = coord(contributionDay);
+    const count = contributionDay.contributionCount;
     const appendHeight = (arr) =>
       arr.map((_arr) => [_arr[0], _arr[1] + maxHeight - height]);
     const leftPath = appendHeight([
@@ -94,10 +132,26 @@ export const isometricSvg = (
     ]);
     const tx = fix(size * offset + offset * gap);
     const ty = fix((size / scale) * offset + offset * gap);
-    return `<g transform='scale(1) translate(${tx},-${ty})'>
-      <path fill='${shadeColor(color, -10 + light)}' d='${d(topPath)}' />
-      <path fill='${shadeColor(color, -(15 + light))}' d='${d(leftPath)}' />
-      <path fill='${shadeColor(color, -(5 + light))}' d='${d(rightPath)}' />
+    // return `<g transform='scale(1) translate(${tx},-${ty})'>
+    //   <path fill='${shadeColor(color, -10 + light)}' d='${d(topPath)}' />
+    //   <path fill='${shadeColor(color, -(15 + light))}' d='${d(leftPath)}' />
+    //   <path fill='${shadeColor(color, -(5 + light))}' d='${d(rightPath)}' />
+    // </g>`;
+    let path = '';
+
+    if (gradient && contributionDay.contributionCount && level > 1) {
+      path = `
+        <path fill='${shadeColor(color, -10 + light)}' d='${d(topPath)}' />
+        <path fill='url(#grident_left_${level - 1})' d='${d(leftPath)}' />
+        <path fill='url(#grident_right_${level - 1})' d='${d(rightPath)}' />`;
+    } else {
+      path = `
+        <path fill='${shadeColor(color, -10 + light)}' d='${d(topPath)}' />
+        <path fill='${shadeColor(color, -(15 + light))}' d='${d(leftPath)}' />
+        <path fill='${shadeColor(color, -(5 + light))}' d='${d(rightPath)}' />`;
+    }
+    return `<g data-count="${count}" transform='scale(1) translate(${tx},-${ty})'>
+      ${path}
     </g>`;
   };
 
@@ -126,6 +180,9 @@ export const isometricSvg = (
       viewBox='0 0 ${svgWidth} ${svgHeight}' 
       xml:space='preserve'
     >
+      <defs>
+        ${gradient ? gradientArr.join('\n') : ''}
+      </defs>
       <g class="weeks" transform="translate(0,${minHeight / 2})">
         ${slicedData.map((week, index) => weekBuilder(week, index)).join('\n')}
       </g>

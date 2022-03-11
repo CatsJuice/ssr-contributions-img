@@ -21,6 +21,7 @@ export const themesProcessor = () => {
   const height = padding * 2 + unit * themeCount + rowGap * (themeCount - 1);
 
   const body = Object.keys(themes)
+    .sort((a, b) => themes[a].length - themes[b].length)
     .map((themeName, rowNum) => {
       const colors = themes[themeName];
       const y = padding + rowNum * (unit + rowGap);

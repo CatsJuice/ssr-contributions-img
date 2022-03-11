@@ -23,7 +23,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { isometricSvg } from './charts/isometric-svg';
-import { check } from 'prettier';
 
 @Injectable()
 export class AppService {
@@ -171,7 +170,6 @@ export class AppService {
       );
       svgStr = chart.renderToSVGString();
     } else if (config.chart === ChartTpl.BAR3D) {
-      console.log(config.gap);
       return isometricSvg(data, {
         ...defaultCalenderChart3dConfig,
         ...check({
@@ -181,6 +179,7 @@ export class AppService {
           gap: config.gap,
           scale: config.scale,
           light: config.light,
+          gradient: config.gradient,
         }),
       });
     } else {
