@@ -271,8 +271,10 @@ ${host}/_/${username}?${queryString}
 所有可用主题（实时更新）:
 
 - `亮色模式`
+  <br />
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5" >
 - `暗黑模式`
+  <br />
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5&dark=true" >
 
 ## 使用场景
