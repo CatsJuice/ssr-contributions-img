@@ -267,8 +267,10 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 All avaiable themes(live update):
 
 - `light`
+  <br />
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5" >
 - `dark`
+  <br />
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5&dark=true" >
 
 ## Example
