@@ -1,6 +1,5 @@
 import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
 import {
-  Contribution,
   ContributionDay,
   ContributionWeek,
 } from 'src/types/contribution.interface';
@@ -33,64 +32,40 @@ function fix(num, len = 2) {
   return num.toFixed(len);
 }
 
-export const isometricSvg = (
-  data: Contribution,
+export const isometricProcessor = (
+  contributiuonWeeks: ContributionWeek[],
+  max: number,
   cfg: CalendarChart3DConfig = {},
 ) => {
   const weekCount = cfg.weeks;
-  const slicedData = data.contributionsCollection.contributionCalendar.weeks
-    .sort(
-      (w1, w2) =>
-        new Date(w2.firstDay).getTime() - new Date(w1.firstDay).getTime(),
-    )
-    .slice(0, weekCount)
-    .reverse();
-  const max = slicedData.reduce((prev: number, curr: ContributionWeek) => {
-    return Math.max(
-      prev,
-      curr.contributionDays.reduce((_prev: number, _curr: ContributionDay) => {
-        return Math.max(_prev, _curr.contributionCount);
-      }, 0),
-    );
-  }, 0);
 
   const maxHeight = 80;
   const minHeight = 3.2;
   const size = 16;
+
   const { scale, colors, gap, light, gradient } = cfg;
 
   const shadeColorLeft = (color) => shadeColor(color, -(15 + light));
   const shadeColorRight = (color) => shadeColor(color, -(5 + light));
 
+  // generate gradient defs
   const gradientArr = colors.slice(1).map((color, index) => {
-    // const step = fix(100 / (index + 1));
     const subColors = colors.slice(1, 1 + index + 1).reverse();
     const sides = ['left', 'right'];
     return sides
       .map((side) => {
         return `<linearGradient id="grident_${side}_${index}" gradientTransform="rotate(90)">
-      ${
-        // subColors
-        // .map(
-        //   (c, i) =>
-        //     `<stop offset="${fix(i * step)}%" stop-color="${
-        //       side === 'left' ? shadeColorLeft(c) : shadeColorRight(c)
-        //     }" />`,
-        // )
-        // .join('\n')
-        ''
-      }
-      <stop offset="0%" stop-color="${
-        side === 'left'
-          ? shadeColorLeft(subColors[0])
-          : shadeColorRight(subColors[0])
-      }" />
-      <stop offset="100%" stop-color="${
-        side === 'left'
-          ? shadeColorLeft(subColors[1] || '')
-          : shadeColorRight(subColors[1] || '')
-      }" />
-    </linearGradient>`;
+                <stop offset="0%" stop-color="${
+                  side === 'left'
+                    ? shadeColorLeft(subColors[0])
+                    : shadeColorRight(subColors[0])
+                }" />
+                <stop offset="100%" stop-color="${
+                  side === 'left'
+                    ? shadeColorLeft(subColors[1] || '')
+                    : shadeColorRight(subColors[1] || '')
+                }" />
+              </linearGradient>`;
       })
       .join('\n');
   });
@@ -106,6 +81,7 @@ export const isometricSvg = (
     };
   };
 
+  // generate day path
   const dayBuilder = (contributionDay: ContributionDay, offset) => {
     offset = 6 - offset;
     const { color, height, level } = coord(contributionDay);
@@ -132,11 +108,6 @@ export const isometricSvg = (
     ]);
     const tx = fix(size * offset + offset * gap);
     const ty = fix((size / scale) * offset + offset * gap);
-    // return `<g transform='scale(1) translate(${tx},-${ty})'>
-    //   <path fill='${shadeColor(color, -10 + light)}' d='${d(topPath)}' />
-    //   <path fill='${shadeColor(color, -(15 + light))}' d='${d(leftPath)}' />
-    //   <path fill='${shadeColor(color, -(5 + light))}' d='${d(rightPath)}' />
-    // </g>`;
     let path = '';
 
     if (gradient && contributionDay.contributionCount && level > 1) {
@@ -155,6 +126,7 @@ export const isometricSvg = (
     </g>`;
   };
 
+  // generate week path
   const weekBuilder = (contributionWeek: ContributionWeek, offset) => {
     const tx = fix(offset * size + offset * gap);
     const ty = fix((size / scale) * offset + offset * gap);
@@ -166,7 +138,7 @@ export const isometricSvg = (
   };
 
   const svgWidth = fix((weekCount + 7) * (size + gap));
-  const svgHeight = fix((weekCount + 9) * (size / scale + gap) + maxHeight);
+  const svgHeight = fix((weekCount + 9) * (size / scale + gap) + maxHeight * 2);
 
   return `
     <svg 
@@ -183,8 +155,11 @@ export const isometricSvg = (
       <defs>
         ${gradient ? gradientArr.join('\n') : ''}
       </defs>
-      <g class="weeks" transform="translate(0,${minHeight / 2})">
-        ${slicedData.map((week, index) => weekBuilder(week, index)).join('\n')}
+      <g class="weeks" transform="translate(0,${maxHeight})">
+        ${contributiuonWeeks
+          .reverse()
+          .map((week, index) => weekBuilder(week, index))
+          .join('\n')}
       </g>
     </svg>
   `

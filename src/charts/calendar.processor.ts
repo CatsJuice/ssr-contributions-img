@@ -2,33 +2,16 @@ import * as moment from 'moment';
 import { WidgetSize } from 'src/dto/base/widget-size.dto';
 import { CalendarChartConfig } from 'src/types/chart-config.interface';
 
-import {
-  Contribution,
-  ContributionDay,
-  ContributionWeek,
-} from 'src/types/contribution.interface';
+import { ContributionWeek } from 'src/types/contribution.interface';
 
 export const calendarProcessor = (
-  data: Contribution,
+  contributionWeeks: ContributionWeek[],
+  max: number,
   cfg: CalendarChartConfig = {},
 ) => {
   const weekCount = cfg.weeks;
-  const slicedData = data.contributionsCollection.contributionCalendar.weeks
-    .sort(
-      (w1, w2) =>
-        new Date(w2.firstDay).getTime() - new Date(w1.firstDay).getTime(),
-    )
-    .slice(0, weekCount);
-  const max = slicedData.reduce((prev: number, curr: ContributionWeek) => {
-    return Math.max(
-      prev,
-      curr.contributionDays.reduce((_prev: number, _curr: ContributionDay) => {
-        return Math.max(_prev, _curr.contributionCount);
-      }, 0),
-    );
-  }, 0);
 
-  const seriesData = slicedData.reduce(
+  const seriesData = contributionWeeks.reduce(
     (res, week) => [
       ...res,
       ...week.contributionDays.map((day) => [day.date, day.contributionCount]),
@@ -40,7 +23,7 @@ export const calendarProcessor = (
     calendar: [
       {
         color: 'transparent',
-        ...(cfg.widgetSize === WidgetSize.LARGE
+        ...(cfg.widget_size === WidgetSize.LARGE
           ? {
               width: 20 * weekCount + (weekCount - 1) * 4,
               height: 20 * 7 + 6 * 4,
@@ -60,7 +43,7 @@ export const calendarProcessor = (
         dayLabel: { show: false },
         monthLabel: { show: false },
         range: [
-          slicedData[slicedData.length - 1].firstDay,
+          contributionWeeks[contributionWeeks.length - 1].firstDay,
           moment().format('YYYY-MM-DD'),
         ],
       },

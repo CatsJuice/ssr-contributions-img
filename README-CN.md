@@ -177,6 +177,19 @@ ${host}/_/${username}?${queryString}
     </td>
     <td><code>undefined</code></td>
   </tr>
+
+  <tr>
+    <td>dark</td>
+    <td>boolean</td>
+    <td>
+      启用 “暗黑模式”，详见
+      <a href="#暗黑模式">暗黑模式</a>
+    </td>
+    <td>
+      <code>false</code>
+    </td>
+  </tr>
+
 </table>
 
 **3D柱状图参数:**
@@ -230,6 +243,11 @@ ${host}/_/${username}?${queryString}
 
 </table>
 
+## 暗黑模式
+
+实际上，图表的显示由主题（ `theme` ）决定，而主题会被颜色（ `colors` ）属性覆盖。在这里启用暗黑模式，影响的是**内置主题的配色**和输出 `jpeg` 或 `html` 时的背景颜色，而其他输出格式下，背景都是透明的，暗黑模式下的主题色可参考 [主题](#主题)
+
+
 ## 图表
 
 - **calendar**
@@ -252,7 +270,10 @@ ${host}/_/${username}?${queryString}
 
 所有可用主题（实时更新）:
 
-<img src="https://ssr-contributions-svg.vercel.app/themes?format=png&quality=0.5" >
+- `亮色模式`
+  <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5" >
+- `暗黑模式`
+  <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5&dark=true" >
 
 ## 使用场景
 
@@ -261,22 +282,51 @@ ${host}/_/${username}?${queryString}
 
 - 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188), 示例代码:
   ```js
-    let url = "https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&quality=2&theme=red&widget_size=midium"
+  let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
+    .split(",")
+    .map((v) => v.trim());
+  chart = chart || "calendar";
+  widgetSize = widgetSize || "midium";
+  theme = theme || "green";
+  const darkMode = Device.isUsingDarkAppearance();
+  let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
 
-    let w = await createWidget();
-    Script.setWidget(w);
+  if (weeks) url += `&weeks=${weeks}`;
 
-    async function createWidget() {
-      let w = new ListWidget();
-      let random = (Math.random()*100000000).toFixed(0);
-      let data = await new Request(url + "&random=" + random).load();
-      let image = Image.fromData(data);
-      w.backgroundImage = image;
-      return w;
-    }
+  let w = await createWidget();
+  Script.setWidget(w);
+
+  async function createWidget() {
+    let w = new ListWidget();
+    let random = (Math.random() * 100000000).toFixed(0);
+    let data = await new Request(url + "&random=" + random).load();
+    let image = Image.fromData(data);
+    w.backgroundImage = image;
+    return w;
+  }
   ```
 
   添加 scriptable 小组件到桌面，并在组件设置中选择对应的脚本
+
+  **注意：**
+  以上脚本依赖于 `parameter` 参数的输入，依次填入 `chart`, `widgetSize`, `theme`, `weeks` 使用 `,` 分割, 以下是一些示例:
+
+  - `3dbar,large,,30`
+    ```
+    chart=3dbar&widgetSize=large&weeks=30
+    ```
+  - `3dbar,,yellow_wine,20`
+    ```
+    chart=3dbar&theme=yellow_wine&weeks=20
+    ```
+  - `,,blue`
+    ```
+    theme=blue
+    ```
+  - `,small,purple`
+    ```
+    widgetSize=small&theme=purple
+    ```
 
   <br />
 

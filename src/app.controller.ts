@@ -3,15 +3,16 @@ import {
   Get,
   Param,
   Query,
+  Request,
   Res,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import * as momentTz from 'moment-timezone';
 import { AppService } from './app.service';
 import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
 import { GetThemeQueryDto } from './dto/get-theme.query.dto';
 import { UsernameExistsGuard } from './guards/username-exists.guard';
+import { ExtendedRequest } from './types/extended-request.interface';
 
 @Controller()
 export class AppController {
@@ -21,60 +22,35 @@ export class AppController {
   @UseGuards(UsernameExistsGuard)
   async get(
     @Res() res,
+    @Request() req: ExtendedRequest,
     @Param('username') username: string,
     @Query(new ValidationPipe({ transform: true })) query: ConfigSvgQueryDto,
   ) {
     console.log('Request svg/:username, username = ', username);
     console.log(JSON.stringify(query));
 
-    const raw = await this.appService.generateWall(username, query);
-    const filename = `${username}_${Date.now()}`;
-
-    this.appService.resolveResponseByFormat(
-      res,
-      raw,
-      query.format,
-      query.quality,
-      filename,
+    const svgCode = await this.appService.generateChartSvgCode(
+      req.user, // user was recorded in UsernameExistsGuard
+      query,
     );
-  }
 
-  // @Get(['/canvas/:username'])
-  // @UseGuards(UsernameExistsGuard)
-  // async getCanvas(
-  //   @Response({ passthrough: true }) res,
-  //   @Param('username') username: string,
-  //   @Query(new ValidationPipe({ transform: true })) query: ConfigCanvasQueryDto,
-  // ): Promise<StreamableFile> {
-  //   console.log('Request canvas/:username, username = ', username);
-  //   console.log(JSON.stringify(query));
-  //   res.header('Content-Type', 'img/png');
-  //   res.header('Content-Disposition', `inline; filename="${username}.png"`);
-  //   return new StreamableFile(await this.appService.drawCanvas(username));
-  // }
+    this.appService.resolveResponseByFormat(res, svgCode, {
+      format: query.format,
+      quality: query.quality,
+      filename: `${username}_${Date.now()}`,
+      dark: query.dark,
+    });
+  }
 
   @Get('themes')
   async getThems(@Query() query: GetThemeQueryDto, @Res() res) {
-    const raw = await this.appService.renderTheme2svg();
-    const filename = `themes_${Date.now()}`;
-    this.appService.resolveResponseByFormat(
-      res,
-      raw,
-      query.format,
-      query.quality,
-      filename,
-    );
-  }
+    const raw = await this.appService.generateThemeSvgCode(query.dark);
 
-  @Get('time')
-  async testGetTime(@Query('tz') tz: string) {
-    const osTime = momentTz.tz(Date.now(), process.env.TZ);
-    const tzTime = osTime.clone().tz(tz);
-    const format = 'YYYY-MM-DD HH:mm:ss';
-    return {
-      tz,
-      osTime: osTime.format(format),
-      tzTime: tzTime.format(format),
-    };
+    this.appService.resolveResponseByFormat(res, raw, {
+      format: query.format,
+      quality: query.quality,
+      filename: `themes_${Date.now()}`,
+      dark: query.dark,
+    });
   }
 }

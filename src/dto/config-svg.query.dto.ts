@@ -10,6 +10,7 @@ import { WeeksDto } from './base/weeks.dto';
 import { WidgetSizeDto } from './base/widget-size.dto';
 import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
 import { IsOptional } from 'class-validator';
+import { DarkDto } from './base/dark.dto';
 
 export enum ChartTpl {
   CALENDAR = 'calendar',
@@ -41,7 +42,7 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   light?: number;
 
   @decorate(IsOptional())
-  @decorate(Transform(({ value }) => value.toLowerCase() === 'true'))
+  @decorate(Transform(({ value }) => value && value.toLowerCase() === 'true'))
   @decorate(IsBoolean())
   gradient?: boolean;
 }
@@ -53,6 +54,7 @@ export class ConfigSvgQueryDto extends Mixin(
   ColorsDto,
   WeeksDto,
   ThemeDto,
+  DarkDto,
 
   Bar3DQueryDto,
 ) {

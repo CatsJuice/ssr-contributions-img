@@ -1,4 +1,4 @@
-export interface Contribution {
+export interface GithubUser {
   // username
   name: string;
 
