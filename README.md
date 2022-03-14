@@ -176,6 +176,18 @@ ${host}/_/${username}?${queryString}
     <td><code>undefined</code></td>
   </tr>
 
+  <tr>
+    <td>dark</td>
+    <td>boolean</td>
+    <td>
+      Enable dark-mode, See
+      <a href="#darkmode">DarkMode</a>
+    </td>
+    <td>
+      <code>false</code>
+    </td>
+  </tr>
+
 </table>
 
 **3DBar chart parameters:**
@@ -229,6 +241,9 @@ ${host}/_/${username}?${queryString}
 
 </table>
 
+## DarkMode
+
+In fact, the display of the chart is determined by the `theme`, which is overridden by the `color` property. Enabling dark mode here affects **the display of the built-in theme** and the **background color** when outputting `jpeg` or `html`, while the background is `transparent` in all other output formats. For more details, see [Themes](#themes)
 
 ## Charts
 
@@ -251,7 +266,10 @@ ${host}/_/${username}?${queryString}
 
 All avaiable themes(live update):
 
-<img src="https://ssr-contributions-svg.vercel.app/themes?format=png&quality=0.5" >
+- `light`
+  <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5" >
+- `dark`
+  <img src="https://ssr-contributions-svg.vercel.app/themes?format=jpeg&quality=0.5&dark=true" >
 
 ## Example
 
@@ -260,22 +278,52 @@ All avaiable themes(live update):
 
 - Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188), code example:
   ```js
-    let url = "https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&quality=2&theme=red&widget_size=midium"
+  let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
+    .split(",")
+    .map((v) => v.trim());
+  chart = chart || "calendar";
+  widgetSize = widgetSize || "midium";
+  theme = theme || "green";
+  const darkMode = Device.isUsingDarkAppearance();
+  let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
 
-    let w = await createWidget();
-    Script.setWidget(w);
+  if (weeks) url += `&weeks=${weeks}`;
 
-    async function createWidget() {
-      let w = new ListWidget();
-      let random = (Math.random()*100000000).toFixed(0);
-      let data = await new Request(url + "&random=" + random).load();
-      let image = Image.fromData(data);
-      w.backgroundImage = image;
-      return w;
-    }
+  let w = await createWidget();
+  Script.setWidget(w);
+
+  async function createWidget() {
+    let w = new ListWidget();
+    let random = (Math.random() * 100000000).toFixed(0);
+    let data = await new Request(url + "&random=" + random).load();
+    let image = Image.fromData(data);
+    w.backgroundImage = image;
+    return w;
+  }
   ```
 
   Add scritable widget to home screen, and select script in widget configuration.
+
+  **Note:**
+  The above script relies on the input of the `parameter` parameter, filling in `chart`, `widgetSize`, `theme`, `weeks` in order using the `,` division. here are some examples:
+
+  - `3dbar,large,,30`
+    ```
+    chart=3dbar&widgetSize=large&weeks=30
+    ```
+  - `3dbar,,yellow_wine,20`
+    ```
+    chart=3dbar&theme=yellow_wine&weeks=20
+    ```
+  - `,,blue`
+    ```
+    theme=blue
+    ```
+  - `,small,purple`
+    ```
+    widgetSize=small&theme=purple
+    ```
+
   <br />
 
   ![iPhone 11 Pro](./assets/iphone11pro.png)

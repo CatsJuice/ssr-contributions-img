@@ -1,10 +1,23 @@
-import { themes } from 'src/utils/get-theme';
 import * as path from 'path';
+import { PresetTheme } from 'src/types/theme.enum';
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf');
 path.resolve(process.cwd(), 'fonts', 'CascadiaCode.ttf');
 
-export const themesProcessor = () => {
+export const themesProcessor = (
+  _themes: Record<PresetTheme, { light: string[]; dark: string[] }>,
+  dark: boolean,
+) => {
+  const themes: Record<PresetTheme, string[]> = Object.keys(_themes).reduce(
+    (dict, key) => {
+      return {
+        ...dict,
+        [key]: _themes[key][dark ? 'dark' : 'light'],
+      };
+    },
+    {} as Record<PresetTheme, string[]>,
+  );
+
   const themeCount = Object.keys(themes).length;
   const labelWidth = 100;
   const unit = 20;
@@ -31,6 +44,7 @@ export const themesProcessor = () => {
               dx="${padding}"
               dy="${y + 12}"
               font-family="Roboto"
+              fill="${dark ? '#fff' : '#000'}"
             >
               ${themeName}
             </text>`
