@@ -180,7 +180,7 @@ ${host}/_/${username}?${queryString}
 
   <tr>
     <td>dark</td>
-    <td>boolean</td>
+    <td><code>boolean</code></td>
     <td>
       启用 “暗黑模式”，详见
       <a href="#暗黑模式">暗黑模式</a>
