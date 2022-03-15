@@ -178,7 +178,7 @@ ${host}/_/${username}?${queryString}
 
   <tr>
     <td>dark</td>
-    <td>boolean</td>
+    <td><code>boolean</code></td>
     <td>
       Enable dark-mode, See
       <a href="#darkmode">DarkMode</a>
