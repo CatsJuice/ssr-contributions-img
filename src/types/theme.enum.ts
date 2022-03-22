@@ -8,4 +8,5 @@ export enum PresetTheme {
   DARK_GREEN = 'dark_green',
   YELLOW_WINE = 'yellow_wine',
   PINK = 'pink',
+  SUNSET = 'sunset',
 }
