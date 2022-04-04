@@ -113,3 +113,10 @@ export const getTheme = (themeName: PresetTheme, dark = false) => {
     ? themes[themeName][dark ? 'dark' : 'light']
     : getTheme(PresetTheme.GREEN, dark);
 };
+
+export const getRandomTheme = (dark = false) => {
+  const allThemes = Object.keys(themes) as PresetTheme[];
+  const randomThemeName =
+    allThemes[Math.floor(Math.random() * allThemes.length)];
+  return getTheme(randomThemeName, dark);
+};
