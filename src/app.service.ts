@@ -1,11 +1,10 @@
 import * as echarts from 'echarts';
 import { Response } from 'express';
-import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { svgCode2image } from './utils/svg2image';
-import { getTheme, themes } from './utils/get-theme';
+import { getRandomTheme, getTheme, themes } from './utils/get-theme';
 import { generateHtml } from './utils/generate-html';
 import { WidgetSize } from './dto/base/widget-size.dto';
 import { OutputFormat } from './dto/base/output-format.dto';
@@ -50,6 +49,8 @@ export class AppService {
       ..._config,
       colors: _config.colors?.length
         ? _config.colors
+        : _config.theme === 'random'
+        ? getRandomTheme(_config.dark)
         : getTheme(_config.theme, _config.dark),
       weeks:
         _config.weeks ||
