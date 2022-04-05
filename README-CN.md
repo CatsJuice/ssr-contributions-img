@@ -64,8 +64,10 @@ ${host}/_/${username}?${queryString}
     <td>theme</td>
     <td><code>enum</code></td>
     <td>
-      内置主题，可用值见：
-      <a href="#主题">主题</a>
+      内置主题，可用值：
+      <code>random</code>（使用随机主题）
+      或
+      <a href="#主题">主题枚举值</a>
     </td>
     <td><code>green</code></td>
   </tr>

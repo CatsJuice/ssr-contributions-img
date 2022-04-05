@@ -64,7 +64,8 @@ ${host}/_/${username}?${queryString}
     <td><code>enum</code></td>
     <td>
       Preset themes, avaiable values:
-      See <a href="#themes">Themes</a>
+      <code>random</code>(use random theme) or 
+      <a href="#themes">Theme Enums</a>
     </td>
     <td><code>green</code></td>
   </tr>
