@@ -132,8 +132,8 @@ export class AppService {
     );
     const bg = this._cfgSrv.get(`theme.bg.${dark ? 'dark' : 'light'}`);
     if (format === OutputFormat.SVG) {
-      res.header('Content-Type', 'image/svg;charset=utf-8');
-      res.header('Content-Disposition', `inline; filename=${filename}.svg`);
+      res.header('Content-Type', 'image/svg+xml; charset=utf-8');
+      // res.header('Content-Disposition', `inline; filename=${filename}.svg`);
       res.send(Buffer.from(svgCode));
     } else if (format === OutputFormat.XML) {
       res.header('Content-Type', 'application/xml;charset=utf-8');
