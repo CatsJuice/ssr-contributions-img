@@ -79,6 +79,7 @@ export const themesProcessor = (
           version="1.1"
           baseProfile="full"
           viewBox="0 0 ${width} ${height}"
+          ${dark ? 'style="background: #22272e"' : ''}
         >
 
           <style type="text/css">
