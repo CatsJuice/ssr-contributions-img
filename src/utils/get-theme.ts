@@ -106,6 +106,10 @@ export const themes: Record<PresetTheme, { dark: string[]; light: string[] }> =
       dark: ['#2D3135', '#2E1B77', '#5a1459', '#91145c', '#c8135e', '#ff1361'],
       light: ['#EBEDF0', '#DDD7F5', '#FFA8CD', '#FF73AF', '#db357c', '#ff1361'],
     },
+    [PresetTheme.NATIVE]: {
+      dark: ['#2d333b', '#0e4429', '#006d32', '#26a641', '#39d353'],
+      light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+    },
   };
 
 export const getTheme = (themeName: PresetTheme, dark = false) => {
