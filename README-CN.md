@@ -134,7 +134,7 @@ ${host}/_/${username}?${queryString}
      通过指定这一属性，自动计算周的数量 和 最佳的 ios 小组件，可用值为：
       <ul>
         <li><code>small</code></li>
-        <li><code>midiun</code></li>
+        <li><code>midium</code></li>
         <li><code>large</code></li>
       </ul>
     </td>
@@ -255,6 +255,7 @@ ${host}/_/${username}?${queryString}
 - **calendar**
   - 使用: `chart=calendar`
   - 示例
+  
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=svg
     ```
@@ -262,6 +263,7 @@ ${host}/_/${username}?${queryString}
 - **3dbar**
   - 使用: `chart=3dbar`
   - 示例
+  
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=svg&gradient=true
     ```
@@ -272,16 +274,16 @@ ${host}/_/${username}?${queryString}
 
 所有可用主题（实时更新）:
 
-- `亮色模式`
-  <br />
+- `亮色模式`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5" >
 - `暗黑模式`
-  <br />
+  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5&dark=true" >
 
 ## 使用场景
 
 - 贴到 Notion 的页面中
+  
   ![notion](./assets/notion.png)
 
 - 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188), 示例代码:
@@ -316,22 +318,27 @@ ${host}/_/${username}?${queryString}
   以上脚本依赖于 `parameter` 参数的输入，依次填入 `chart`, `widgetSize`, `theme`, `weeks` 使用 `,` 分割, 以下是一些示例:
 
   - `3dbar,large,,30`
+  
     ```
     chart=3dbar&widgetSize=large&weeks=30
     ```
   - `3dbar,,yellow_wine,20`
+  
     ```
     chart=3dbar&theme=yellow_wine&weeks=20
     ```
   - `,,blue`
+  
     ```
     theme=blue
     ```
   - `,small,purple`
+  
     ```
     widgetSize=small&theme=purple
     ```
 
   <br />
-
-  ![iPhone 11 Pro](./assets/iphone11pro.png)
+  <div align="center">
+    <img src="./assets/iphone11pro.png" alt="iPhone 11 Pro"/>
+  </div>
