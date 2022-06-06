@@ -130,7 +130,7 @@ ${host}/_/${username}?${queryString}
       Automatically calculate the number of weeks and size needed for the ios widget by specifying this property, avaiable values:
       <ul>
         <li><code>small</code></li>
-        <li><code>midiun</code></li>
+        <li><code>midium</code></li>
         <li><code>large</code></li>
       </ul>
     </td>
@@ -251,6 +251,7 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 - **calendar**
   - use: `chart=calendar`
   - e.g.
+    
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg
     ```
@@ -258,6 +259,7 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 - **3dbar**
   - use: `chart=3dbar`
   - e.g.
+  
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&gradient=true
     ```
@@ -267,16 +269,16 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 
 All avaiable themes(live update):
 
-- `light`
-  <br />
+- `light`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg" >
 - `dark`
-  <br />
+  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5&dark=true" >
 
 ## Example
 
 - pin to notion
+  
   ![notion](./assets/notion.png)
 
 - Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188), code example:
@@ -311,22 +313,27 @@ All avaiable themes(live update):
   The above script relies on the input of the `parameter` parameter, filling in `chart`, `widgetSize`, `theme`, `weeks` in order using the `,` division. here are some examples:
 
   - `3dbar,large,,30`
+    
     ```
     chart=3dbar&widgetSize=large&weeks=30
     ```
   - `3dbar,,yellow_wine,20`
+    
     ```
     chart=3dbar&theme=yellow_wine&weeks=20
     ```
   - `,,blue`
+    
     ```
     theme=blue
     ```
   - `,small,purple`
+    
     ```
     widgetSize=small&theme=purple
     ```
 
   <br />
-
-  ![iPhone 11 Pro](./assets/iphone11pro.png)
+  <div align="center">
+    <img src="./assets/iphone11pro.png" alt="iPhone 11 Pro"/>
+  </div>
