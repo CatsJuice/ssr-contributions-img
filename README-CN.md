@@ -16,7 +16,11 @@
   <br />
   <span>实时渲染示例：</span>
   <br />
-  <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=20" style="height: 180px;max-width: 100%;" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50">
+    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50" max-height="150">
+  </picture>
 </div>
 
 ## 使用
@@ -259,7 +263,13 @@ ${host}/_/${username}?${queryString}
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=svg
     ```
-    ![Calendar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=svg)
+
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg&dark=true">
+      <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg&dark=false">
+      <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg" width="400" />
+    </picture>
+
 - **3dbar**
   - 使用: `chart=3dbar`
   - 示例
@@ -267,7 +277,12 @@ ${host}/_/${username}?${queryString}
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=svg&gradient=true
     ```
-    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=svg&gradient=true)
+
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&dark=true">
+      <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg">
+      <img alt="3DBar" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg" width="400" />
+    </picture>
 
 
 ## 主题
