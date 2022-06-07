@@ -17,9 +17,9 @@
   <span>Real-time rendering example：</span>
   <br />
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20&dark=true">
-    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20">
-    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20" width="400">
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50">
+    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50" max-height="150">
   </picture>
 </div>
 
