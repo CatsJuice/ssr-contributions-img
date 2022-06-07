@@ -16,7 +16,11 @@
   <br />
   <span>Real-time rendering example：</span>
   <br />
-  <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=20" style="height: 180px;max-width: 100%;" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20">
+    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=20" width="400">
+  </picture>
 </div>
 
 ## Usage
@@ -251,28 +255,38 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 - **calendar**
   - use: `chart=calendar`
   - e.g.
-    
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg
     ```
-    ![Calendar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg)
+  
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg&dark=true">
+      <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg&dark=false">
+      <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg" width="400" />
+    </picture>
+  
 - **3dbar**
   - use: `chart=3dbar`
   - e.g.
   
     ```
-    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&gradient=true
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg
     ```
-    ![3DBar](https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&gradient=true)
+  
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&dark=true">
+      <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg">
+      <img alt="3DBar" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg" width="400" />
+    </picture>
 
 ## Themes
 
 All avaiable themes(live update):
 
-- `light`  
+- `light`    
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg" >
-- `dark`
   
+- `dark`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5&dark=true" >
 
 ## Example
