@@ -17,9 +17,9 @@
   <span>实时渲染示例：</span>
   <br />
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50&dark=true">
-    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50">
-    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50" max-height="150">
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=50&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=50">
+    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=50" max-height="150">
   </picture>
 </div>
 
@@ -247,6 +247,23 @@ ${host}/_/${username}?${queryString}
     <td><code>false</code></td>
   </tr>
 
+  <tr>
+    <td>flatten</td>
+    <td><code>number</code></td>
+    <td>
+      使用扁平模式，支持两种样式：
+      <br>
+      <code>1</code>: 所有方块都扁平化
+      <br>
+      <code>2</code>: 忽略空值
+      <br>
+      See <a href="#扁平模式">扁平模式示例</a>
+    </td>
+    <td>
+      <code>0</code>
+    </td>
+  </tr>
+
 </table>
 
 ## 暗黑模式
@@ -297,63 +314,85 @@ ${host}/_/${username}?${queryString}
 
 ## 使用场景
 
-- 贴到 Notion 的页面中
+### 贴到 Notion 的页面中
   
   ![notion](./assets/notion.png)
 
-- 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188), 示例代码:
-  ```js
-  let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
-    .split(",")
-    .map((v) => v.trim());
-  chart = chart || "calendar";
-  widgetSize = widgetSize || "midium";
-  theme = theme || "green";
-  const darkMode = Device.isUsingDarkAppearance();
-  let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
+### 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188)
 
-  if (weeks) url += `&weeks=${weeks}`;
+**示例代码:**
 
-  let w = await createWidget();
-  Script.setWidget(w);
+```js
+let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
+  .split(",")
+  .map((v) => v.trim());
+chart = chart || "calendar";
+widgetSize = widgetSize || "midium";
+theme = theme || "green";
+const darkMode = Device.isUsingDarkAppearance();
+let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
 
-  async function createWidget() {
-    let w = new ListWidget();
-    let random = (Math.random() * 100000000).toFixed(0);
-    let data = await new Request(url + "&random=" + random).load();
-    let image = Image.fromData(data);
-    w.backgroundImage = image;
-    return w;
-  }
+if (weeks) url += `&weeks=${weeks}`;
+
+let w = await createWidget();
+Script.setWidget(w);
+
+async function createWidget() {
+  let w = new ListWidget();
+  let random = (Math.random() * 100000000).toFixed(0);
+  let data = await new Request(url + "&random=" + random).load();
+  let image = Image.fromData(data);
+  w.backgroundImage = image;
+  return w;
+}
+```
+
+添加 scriptable 小组件到桌面，并在组件设置中选择对应的脚本
+
+**注意：**
+以上脚本依赖于 `parameter` 参数的输入，依次填入 `chart`, `widgetSize`, `theme`, `weeks` 使用 `,` 分割, 以下是一些示例:
+
+- `3dbar,large,,30`
+
+  ```
+  chart=3dbar&widgetSize=large&weeks=30
+  ```
+- `3dbar,,yellow_wine,20`
+
+  ```
+  chart=3dbar&theme=yellow_wine&weeks=20
+  ```
+- `,,blue`
+
+  ```
+  theme=blue
+  ```
+- `,small,purple`
+
+  ```
+  widgetSize=small&theme=purple
   ```
 
-  添加 scriptable 小组件到桌面，并在组件设置中选择对应的脚本
+<br />
+<div align="center">
+  <img src="./assets/iphone11pro.png" alt="iPhone 11 Pro"/>
+</div>
 
-  **注意：**
-  以上脚本依赖于 `parameter` 参数的输入，依次填入 `chart`, `widgetSize`, `theme`, `weeks` 使用 `,` 分割, 以下是一些示例:
+### 扁平模式
 
-  - `3dbar,large,,30`
+- `flatten=1&format=svg`
   
-    ```
-    chart=3dbar&widgetSize=large&weeks=30
-    ```
-  - `3dbar,,yellow_wine,20`
-  
-    ```
-    chart=3dbar&theme=yellow_wine&weeks=20
-    ```
-  - `,,blue`
-  
-    ```
-    theme=blue
-    ```
-  - `,small,purple`
-  
-    ```
-    widgetSize=small&theme=purple
-    ```
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=true&theme=native">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=false&theme=native">
+    <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&theme=native" width="400" />
+  </picture>
 
-  <br />
-  <div align="center">
-    <img src="./assets/iphone11pro.png" alt="iPhone 11 Pro"/>
-  </div>
+
+- `flatten=2&format=svg`
+  
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=true&theme=native">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=false&theme=native">
+    <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&theme=native" width="400" />
+  </picture>
