@@ -1,7 +1,7 @@
 import {
+  Injectable,
   CanActivate,
   ExecutionContext,
-  Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';

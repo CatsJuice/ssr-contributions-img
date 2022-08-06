@@ -1,16 +1,16 @@
-import { Transform } from 'class-transformer';
-import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
-
 import { decorate, Mixin } from 'ts-mixer';
-import { ColorsDto } from './base/colors.dto';
-import { OutputFormatDto } from './base/output-format.dto';
-import { QualityDto } from './base/quality.dto';
+import { Transform } from 'class-transformer';
+import { IsInt, IsOptional } from 'class-validator';
+import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
+import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
+
+import { DarkDto } from './base/dark.dto';
 import { ThemeDto } from './base/theme.dto';
 import { WeeksDto } from './base/weeks.dto';
+import { ColorsDto } from './base/colors.dto';
+import { QualityDto } from './base/quality.dto';
 import { WidgetSizeDto } from './base/widget-size.dto';
-import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
-import { IsOptional } from 'class-validator';
-import { DarkDto } from './base/dark.dto';
+import { OutputFormatDto } from './base/output-format.dto';
 
 export enum ChartTpl {
   CALENDAR = 'calendar',
@@ -45,6 +45,11 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(Transform(({ value }) => value && value.toLowerCase() === 'true'))
   @decorate(IsBoolean())
   gradient?: boolean;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => parseInt(value)))
+  @decorate(IsInt())
+  flatten?: number;
 }
 
 export class ConfigSvgQueryDto extends Mixin(
