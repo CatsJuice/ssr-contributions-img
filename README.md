@@ -17,9 +17,9 @@
   <span>Real-time rendering example：</span>
   <br />
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50&dark=true">
-    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50">
-    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=png&weeks=50" max-height="150">
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=50&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=50">
+    <img alt="" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=svg&weeks=50" max-height="150">
   </picture>
 </div>
 
@@ -244,6 +244,23 @@ ${host}/_/${username}?${queryString}
     <td><code>false</code></td>
   </tr>
 
+  <tr>
+    <td>flatten</td>
+    <td><code>number</code></td>
+    <td>
+      Enable flatten-mode, 2 styles are avaiable:
+      <br>
+      <code>1</code>: flatten all blocks
+      <br>
+      <code>2</code>: ignore empty blocks
+      <br>
+      See <a href="#flatten-mode">flatten-mode examples</a>
+    </td>
+    <td>
+      <code>0</code>
+    </td>
+  </tr>
+
 </table>
 
 ## DarkMode
@@ -289,65 +306,87 @@ All avaiable themes(live update):
 - `dark`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5&dark=true" >
 
-## Example
+## Examples
 
-- pin to notion
+### pin to notion
   
   ![notion](./assets/notion.png)
 
-- Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188), code example:
-  ```js
-  let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
-    .split(",")
-    .map((v) => v.trim());
-  chart = chart || "calendar";
-  widgetSize = widgetSize || "midium";
-  theme = theme || "green";
-  const darkMode = Device.isUsingDarkAppearance();
-  let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
+### Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188)
 
-  if (weeks) url += `&weeks=${weeks}`;
+**code example:**
 
-  let w = await createWidget();
-  Script.setWidget(w);
+```js
+let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
+  .split(",")
+  .map((v) => v.trim());
+chart = chart || "calendar";
+widgetSize = widgetSize || "midium";
+theme = theme || "green";
+const darkMode = Device.isUsingDarkAppearance();
+let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
 
-  async function createWidget() {
-    let w = new ListWidget();
-    let random = (Math.random() * 100000000).toFixed(0);
-    let data = await new Request(url + "&random=" + random).load();
-    let image = Image.fromData(data);
-    w.backgroundImage = image;
-    return w;
-  }
+if (weeks) url += `&weeks=${weeks}`;
+
+let w = await createWidget();
+Script.setWidget(w);
+
+async function createWidget() {
+  let w = new ListWidget();
+  let random = (Math.random() * 100000000).toFixed(0);
+  let data = await new Request(url + "&random=" + random).load();
+  let image = Image.fromData(data);
+  w.backgroundImage = image;
+  return w;
+}
+```
+
+Add scritable widget to home screen, and select script in widget configuration.
+
+**Note:**
+The above script relies on the input of the `parameter` parameter, filling in `chart`, `widgetSize`, `theme`, `weeks` in order using the `,` division. here are some examples:
+
+- `3dbar,large,,30`
+  
+  ```
+  chart=3dbar&widgetSize=large&weeks=30
+  ```
+- `3dbar,,yellow_wine,20`
+  
+  ```
+  chart=3dbar&theme=yellow_wine&weeks=20
+  ```
+- `,,blue`
+  
+  ```
+  theme=blue
+  ```
+- `,small,purple`
+  
+  ```
+  widgetSize=small&theme=purple
   ```
 
-  Add scritable widget to home screen, and select script in widget configuration.
+<br />
+<div align="center">
+  <img src="./assets/iphone11pro.png" alt="iPhone 11 Pro"/>
+</div>
 
-  **Note:**
-  The above script relies on the input of the `parameter` parameter, filling in `chart`, `widgetSize`, `theme`, `weeks` in order using the `,` division. here are some examples:
+### flatten-mode
 
-  - `3dbar,large,,30`
-    
-    ```
-    chart=3dbar&widgetSize=large&weeks=30
-    ```
-  - `3dbar,,yellow_wine,20`
-    
-    ```
-    chart=3dbar&theme=yellow_wine&weeks=20
-    ```
-  - `,,blue`
-    
-    ```
-    theme=blue
-    ```
-  - `,small,purple`
-    
-    ```
-    widgetSize=small&theme=purple
-    ```
+- `flatten=1&format=svg`
+  
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=true&theme=native">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=false&theme=native">
+    <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&theme=native" width="400" />
+  </picture>
 
-  <br />
-  <div align="center">
-    <img src="./assets/iphone11pro.png" alt="iPhone 11 Pro"/>
-  </div>
+
+- `flatten=2&format=svg`
+  
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=true&theme=native">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=false&theme=native">
+    <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&theme=native" width="400" />
+  </picture>
