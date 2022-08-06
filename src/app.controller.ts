@@ -1,18 +1,19 @@
+import { AppService } from './app.service';
+import { GetThemeQueryDto } from './dto/get-theme.query.dto';
+import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
+import { UsernameExistsGuard } from './guards/username-exists.guard';
+import { ExtendedRequest } from './types/extended-request.interface';
+
 import {
-  Controller,
+  Res,
   Get,
   Param,
   Query,
   Request,
-  Res,
   UseGuards,
+  Controller,
   ValidationPipe,
 } from '@nestjs/common';
-import { AppService } from './app.service';
-import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
-import { GetThemeQueryDto } from './dto/get-theme.query.dto';
-import { UsernameExistsGuard } from './guards/username-exists.guard';
-import { ExtendedRequest } from './types/extended-request.interface';
 
 @Controller()
 export class AppController {
@@ -44,9 +45,9 @@ export class AppController {
 
   @Get('themes')
   async getThems(@Query() query: GetThemeQueryDto, @Res() res) {
-    const raw = await this.appService.generateThemeSvgCode(query.dark);
+    const svgCode = await this.appService.generateThemeSvgCode(query.dark);
 
-    this.appService.resolveResponseByFormat(res, raw, {
+    this.appService.resolveResponseByFormat(res, svgCode, {
       format: query.format,
       quality: query.quality,
       filename: `themes_${Date.now()}`,

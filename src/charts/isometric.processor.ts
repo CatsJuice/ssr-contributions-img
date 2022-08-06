@@ -84,7 +84,13 @@ export const isometricProcessor = (
   // generate day path
   const dayBuilder = (contributionDay: ContributionDay, offset) => {
     offset = 6 - offset;
-    const { color, height, level } = coord(contributionDay);
+    const coordRes = coord(contributionDay);
+    const { level, color } = coordRes;
+    let height = coordRes.height;
+    if (cfg.flatten) {
+      height =
+        cfg.flatten === 2 ? (minHeight === height ? minHeight : size) : size;
+    }
     const count = contributionDay.contributionCount;
     const appendHeight = (arr) =>
       arr.map((_arr) => [_arr[0], _arr[1] + maxHeight - height]);

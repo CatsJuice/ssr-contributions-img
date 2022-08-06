@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { svgCode2image } from './utils/svg2image';
-import { getRandomTheme, getTheme, themes } from './utils/get-theme';
+import { maxInArray } from './utils/max-in-array';
 import { generateHtml } from './utils/generate-html';
 import { WidgetSize } from './dto/base/widget-size.dto';
 import { OutputFormat } from './dto/base/output-format.dto';
@@ -13,13 +13,14 @@ import { GithubUser } from './types/contribution.interface';
 import { filterEmptyKeys } from './utils/filter-empty-keys';
 import { calendarProcessor } from './charts/calendar.processor';
 import { isometricProcessor } from './charts/isometric.processor';
+import { getRandomTheme, getTheme, themes } from './utils/get-theme';
 import { ChartTpl, ConfigSvgQueryDto } from './dto/config-svg.query.dto';
+import { SvgResponseResolverOptions } from './types/svg-res-resolver-opt.interface';
 
 import {
   defaultCalendarChartConfig,
   defaultCalenderChart3dConfig,
 } from './types/chart-config.interface';
-import { SvgResponseResolverOptions } from './types/svg-res-resolver-opt.interface';
 
 @Injectable()
 export class AppService {
@@ -69,20 +70,16 @@ export class AppService {
             new Date(w2.firstDay).getTime() - new Date(w1.firstDay).getTime(),
         )
         .slice(0, config.weeks);
-    const max = contributionWeeks.reduce((prev: number, curr) => {
-      return Math.max(
-        prev,
-        curr.contributionDays.reduce(
-          (_prev: number, _curr) => Math.max(_prev, _curr.contributionCount),
-          0,
-        ),
-      );
-    }, 0);
+    const max = maxInArray(
+      contributionWeeks.map((week) =>
+        maxInArray(week.contributionDays.map((day) => day.contributionCount)),
+      ),
+    );
 
     // 1. calc chart width & height
     let svgStr = '';
     if (config.chart === ChartTpl.CALENDAR) {
-      const calc = (count) => count * 20 + (count - 1) * 4 + 40;
+      const calc = (weekCount) => weekCount * 20 + (weekCount - 1) * 4 + 40;
       const width = calc(config.weeks);
       const height =
         _config.widget_size === WidgetSize.LARGE ? calc(18) : calc(7);
