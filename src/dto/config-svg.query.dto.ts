@@ -1,6 +1,6 @@
 import { decorate, Mixin } from 'ts-mixer';
 import { Transform } from 'class-transformer';
-import { IsInt, IsOptional } from 'class-validator';
+import { IsEnum, IsInt, IsOptional } from 'class-validator';
 import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
 import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
 
@@ -11,6 +11,7 @@ import { ColorsDto } from './base/colors.dto';
 import { QualityDto } from './base/quality.dto';
 import { WidgetSizeDto } from './base/widget-size.dto';
 import { OutputFormatDto } from './base/output-format.dto';
+import { Bar3DAnimation } from 'src/types/3dbar-animation.enum';
 
 export enum ChartTpl {
   CALENDAR = 'calendar',
@@ -50,6 +51,25 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(Transform(({ value }) => parseInt(value)))
   @decorate(IsInt())
   flatten?: number;
+
+  @decorate(IsOptional())
+  @decorate(IsEnum(Bar3DAnimation))
+  animation?: Bar3DAnimation;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => parseFloat(value)))
+  @IsNumber()
+  animation_duration?: number;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => parseFloat(value)))
+  @IsNumber()
+  animation_delay?: number;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => parseFloat(value)))
+  @IsNumber()
+  animation_distance?: number;
 }
 
 export class ConfigSvgQueryDto extends Mixin(
