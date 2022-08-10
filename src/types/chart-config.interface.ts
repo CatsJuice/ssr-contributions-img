@@ -1,4 +1,5 @@
 import { WidgetSize } from 'src/dto/base/widget-size.dto';
+import { Bar3DAnimation } from './3dbar-animation.enum';
 
 export interface BaseChartConfig {
   widget_size?: WidgetSize;
@@ -31,4 +32,8 @@ export interface CalendarChart3DConfig extends BaseChartConfig {
   light?: number;
   gradient?: boolean;
   flatten?: number;
+  animation?: Bar3DAnimation;
+  animation_duration?: number;
+  animation_delay?: number;
+  animation_distance?: number;
 }

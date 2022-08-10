@@ -43,6 +43,10 @@ export class AppService {
     user: GithubUser,
     _config: ConfigSvgQueryDto,
   ) {
+    // disable animation for png | jpeg
+    if ([OutputFormat.PNG, OutputFormat.JPEG].includes(_config.format)) {
+      delete _config.animation;
+    }
     // set default configurations
     const config = {
       chart: ChartTpl.CALENDAR,
