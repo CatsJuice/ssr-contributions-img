@@ -1,5 +1,6 @@
 import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
 import { Bar3DAnimation } from '../types/3dbar-animation.enum';
+import { generate3dbarAnimation } from './animations/3dbar-animator';
 import {
   ContributionDay,
   ContributionWeek,
@@ -31,56 +32,6 @@ function shadeColor(color, percent) {
 
 function fix(num, len = 2) {
   return num.toFixed(len);
-}
-
-function generateAnimation(weekCount: number, cfg: CalendarChart3DConfig) {
-  const type = cfg.animation;
-  if (!type) return '';
-  const duration = cfg.animation_duration || 1;
-  const delay = cfg.animation_delay || 0.005;
-  const distance = cfg.animation_distance || 560;
-
-  if (type === Bar3DAnimation.FALL) {
-    const delays = [];
-    let _delay = 0;
-    for (let week = 0; week < weekCount; week++) {
-      for (let day = 6; day >= 0; day--) {
-        delays.push(
-          `g[data-week="${week}"][data-day="${day}"] { animation-delay: ${_delay}s; }`,
-        );
-        _delay += delay;
-      }
-    }
-    return `g.day {
-      animation: fall ${duration}s ease 0s 1 normal forwards;
-      transform: translate(0px, -${distance}px);
-    }
-    @keyframes fall {
-      to { transform: translate(0px, 0px); }
-    }
-    ${delays.join('\n')}
-    `;
-  } else if (type === Bar3DAnimation.RAISE) {
-    const delays = [];
-    let _delay = 0;
-    for (let week = weekCount - 1; week >= 0; week--) {
-      for (let day = 0; day < 7; day++) {
-        delays.push(
-          `g[data-week="${week}"][data-day="${day}"] { animation-delay: ${_delay}s; }`,
-        );
-        _delay += delay;
-      }
-    }
-    return `g.day {
-      animation: fall ${duration}s ease 0s 1 normal forwards;
-      transform: translate(0px, ${distance}px);
-    }
-    @keyframes fall {
-      to { transform: translate(0px, 0px); }
-    }
-    ${delays.join('\n')}
-    `;
-  }
 }
 
 export const isometricProcessor = (
@@ -179,7 +130,7 @@ export const isometricProcessor = (
         <path fill='${shadeColor(color, -(5 + light))}' d='${d(rightPath)}' />`;
     }
     return `<g data-count="${count}" transform='scale(1) translate(${tx},-${ty})'>
-      <g class="day" data-week="${week}" data-day="${offset}">${path}</g>
+      <g class="day" data-week="${week}" data-day="${6 - offset}">${path}</g>
     </g>`;
   };
 
@@ -196,7 +147,10 @@ export const isometricProcessor = (
 
   const svgWidth = fix((weekCount + 7) * (size + gap));
   const svgHeight = fix((weekCount + 9) * (size / scale + gap) + maxHeight * 2);
-  const animation = generateAnimation(weekCount, cfg);
+  const animation = generate3dbarAnimation(weekCount, cfg, {
+    width: svgWidth,
+    height: svgHeight,
+  });
 
   return `
     <svg 
