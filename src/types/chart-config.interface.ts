@@ -35,5 +35,7 @@ export interface CalendarChart3DConfig extends BaseChartConfig {
   animation?: Bar3DAnimation;
   animation_duration?: number;
   animation_delay?: number;
-  animation_distance?: number;
+  animation_amplitude?: number;
+  animation_frequency?: number;
+  animation_wave_center?: Array<number>;
 }

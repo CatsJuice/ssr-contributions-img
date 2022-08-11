@@ -1,6 +1,6 @@
 import { decorate, Mixin } from 'ts-mixer';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, isArray } from 'class-validator';
 import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
 import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
 
@@ -69,7 +69,21 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(IsOptional())
   @decorate(Transform(({ value }) => parseFloat(value)))
   @IsNumber()
-  animation_distance?: number;
+  animation_amplitude?: number;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => parseFloat(value)))
+  @IsNumber()
+  @Min(0.01)
+  @Max(0.5)
+  animation_frequency?: number;
+
+  @decorate(IsOptional())
+  @decorate(
+    Transform(({ value }) => (isArray(value) ? value : value.split('_'))),
+  )
+  @IsNumber({ allowNaN: false }, { each: true })
+  animation_wave_center?: Array<number>;
 }
 
 export class ConfigSvgQueryDto extends Mixin(
