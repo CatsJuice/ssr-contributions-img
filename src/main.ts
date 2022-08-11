@@ -18,6 +18,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const cfgSrv = app.get(ConfigService);
 
+  app.setGlobalPrefix('/');
+
   await app.listen(parseInt(cfgSrv.get('SERVER_PORT')) || 3000, '::');
   logger.log(`App is running on ${await app.getUrl()}`);
 }
