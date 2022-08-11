@@ -264,7 +264,104 @@ ${host}/_/${username}?${queryString}
     </td>
   </tr>
 
+  <tr>
+    <td>animation</td>
+    <td><code>enum</code></td>
+    <td>启用动画, 见 <a href="#3dbar-动画">3dbar 动画</a></td>
+    <td><code>undefined</td></td>
+  </tr>
+
+
 </table>
+
+## 3dbar 动画
+
+## 3dbar Animation
+
+Enable animation by passing <code>animation</code> property, available values:
+
+- `fall` (仅入场动画)
+  ```
+  chart=3dbar&weeks=20&flatten=1&animation=fall
+  ```
+  
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg">
+    <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg" width="400" />
+  </picture>
+- `raise` (仅入场动画)
+  ```
+  chart=3dbar&weeks=20&flatten=1&animation=raise
+  ```
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg">
+    <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg" width="400" />
+  </picture>
+- `wave` (循环播放)
+  ```
+  chart=3dbar&weeks=20&flatten=1&animation=wave
+  ```
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg">
+    <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg" width="400" />
+  </picture>
+
+
+**自定义动画细节**: (在 url 中作为 `query` 参数传递)
+
+<details>
+  <summary>
+    <code>fall</code> | <code>raise</code>
+  </summary>
+  <ul>
+    <li>
+      <code>animation_duration</code>
+      <code>&lt;Number&gt;</code>
+      动画持续时长，单位为秒
+    </li>
+    <li>
+      <code>animation_delay</code>
+      <code>&lt;Number&gt;</code>
+      方块播放的间隔时长，单位为秒
+    </li>
+  </ul>
+</details>
+
+<details>
+  <summary>
+    <code>wave</code></code>
+  </summary>
+  <ul>
+    <li>
+      <code>animation_amplitude</code>
+      <code>&lt;Number&gt;</code>
+      <br>
+      方块的移动范围，单位为像素（px）
+    </li>
+    <li>
+      <code>animation_frequency</code>
+      <code>&lt;Number&gt;</code>
+      <br>
+      方块移动频率，范围为 <code>[0.01, 0.5]</code>
+    </li>
+    <li>
+      <code>animation_wave_center</code>
+      <code>&lt;Number&gt;_&lt;Number&gt;</code>
+      <br>
+      波纹动画的中心点， 将坐标点 <code>x</code>, <code>y</code> 以 <code>${x}_${y}</code> 的格式传递(使用 <code>_</code> 拼接x, y)。例如：<code>0_0</code>
+    </li>
+  </ul>
+</details>
+
+
+
+
+
 
 ## 暗黑模式
 
