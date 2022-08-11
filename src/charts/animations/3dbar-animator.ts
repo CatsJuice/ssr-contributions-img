@@ -77,14 +77,16 @@ function raise(...[weekCount, cfg, options]: Args) {
 }
 
 function wave(...[weekCount, cfg]: Args) {
-  const duration = cfg.animation_duration || 1;
-  const delay = cfg.animation_delay || 0.005;
+  const duration = cfg.animation_duration || 3;
+  const delay = cfg.animation_delay || 0.025;
   const amplitude = cfg.animation_amplitude || 10;
   const waveCenter = cfg.animation_wave_center || [];
+  const centerDft = [0, 0];
+  // const centerDft = [(weekCount - 1) / 2, (7 - 1) / 2]
 
   const center = [
-    waveCenter[0] || (weekCount - 1) / 2,
-    waveCenter[1] || (7 - 1) / 2,
+    waveCenter[0] || centerDft[0],
+    waveCenter[1] || centerDft[1],
   ];
   const frequency = Math.min(
     0.5,
