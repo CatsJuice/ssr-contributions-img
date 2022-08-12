@@ -23,6 +23,10 @@
   </picture>
 </div>
 
+## Playground
+
+Now you can config and preview your contribution wall in the [Playground](https://ssr-contributions-svg.vercel.app/)
+
 ## Usage
 
 - **prepare your github pat for Github OpenAPI:**

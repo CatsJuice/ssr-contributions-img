@@ -23,6 +23,11 @@
   </picture>
 </div>
 
+## 在线预览与配置
+
+现在你可以通过 [Playground](https://ssr-contributions-svg.vercel.app/) 在线预览与配置。
+
+
 ## 使用
 
 - **为 GitHub OpenAPI 准备 PAT:**
