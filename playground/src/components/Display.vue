@@ -3,6 +3,7 @@ import { useConfig } from '../hooks/useConfig';
 import { copyTextToClipboard } from './utils/copy2clipboard';
 import { validatePath } from './utils/validatePath';
 import { useQuasar } from 'quasar';
+import Github from './Github.vue';
 const { svgCode, locale, username, queryStr, loadingConfig, loadingSvg } =
   useConfig();
 const $q = useQuasar();
@@ -60,6 +61,8 @@ function copy() {
         <span>{{ locale === 'zh' ? '复制链接' : 'Copy link' }}</span>
       </q-btn>
     </div>
+
+    <Github id="github" />
   </div>
 </template>
 
@@ -85,6 +88,13 @@ function copy() {
     height: 100%;
     background-color: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(10px) saturate(180%);
+  }
+
+  #github {
+    position: absolute;
+    top: 30px;
+    /* right: 30px; */
+    left: 30px;
   }
 }
 
