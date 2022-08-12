@@ -3,6 +3,7 @@ import { GetThemeQueryDto } from './dto/get-theme.query.dto';
 import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
 import { UsernameExistsGuard } from './guards/username-exists.guard';
 import { ExtendedRequest } from './types/extended-request.interface';
+import { config } from './libs/config.constant';
 
 import {
   Res,
@@ -53,5 +54,10 @@ export class AppController {
       filename: `themes_${Date.now()}`,
       dark: query.dark,
     });
+  }
+
+  @Get('config')
+  async getConfig() {
+    return config;
   }
 }

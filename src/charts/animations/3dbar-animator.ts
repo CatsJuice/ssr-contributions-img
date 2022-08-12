@@ -84,10 +84,7 @@ function wave(...[weekCount, cfg]: Args) {
   const centerDft = [0, 0];
   // const centerDft = [(weekCount - 1) / 2, (7 - 1) / 2]
 
-  const center = [
-    waveCenter[0] || centerDft[0],
-    waveCenter[1] || centerDft[1],
-  ];
+  const center = [waveCenter[0] || centerDft[0], waveCenter[1] || centerDft[1]];
   const frequency = Math.min(
     0.5,
     Math.max(0.01, cfg.animation_frequency || 0.05),
