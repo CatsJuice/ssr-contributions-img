@@ -96,9 +96,9 @@ function wave(...[weekCount, cfg]: Args) {
     for (let day = 0; day < 7; day++) {
       const distance = Math.abs(center[0] - week) + Math.abs(center[1] - day);
       delays.push(
-        `g[data-week="${week}"][data-day="${day}"] { animation-delay: ${
+        `g[data-week="${week}"][data-day="${day}"] { animation-delay: ${(
           delay * distance
-        }s; }`,
+        ).toFixed(3)}s; }`,
       );
     }
   }

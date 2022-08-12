@@ -48,7 +48,7 @@ const cubeAnimationFallCfgs: ConfigItem[] = [
     key: 'animation_duration',
     label: {
       en: 'Animation duration(s)',
-      zh: '动画时长(s)',
+      zh: '动画时长(单位：秒)',
     },
     type: 'float',
     default: 3,
@@ -63,10 +63,10 @@ const cubeAnimationFallCfgs: ConfigItem[] = [
     key: 'animation_delay',
     label: {
       en: 'Animation delay(s)',
-      zh: '动画延迟(s)',
+      zh: '动画延迟(单位：秒)',
     },
     type: 'float',
-    default: 0,
+    default: 0.03,
     required: false,
     description: {
       en: 'Set the delay of animation',
@@ -84,6 +84,7 @@ const cubeAnimationWaveCfgs: ConfigItem[] = [
       zh: '动画振幅',
     },
     type: 'float',
+    default: 24,
     description: {
       en: 'Set the amplitude of wave animation',
       zh: '设置波纹动画振幅',
@@ -97,6 +98,7 @@ const cubeAnimationWaveCfgs: ConfigItem[] = [
       zh: '动画频率',
     },
     type: 'float',
+    default: 0.1,
     description: {
       en: 'Set the frequency of wave animation',
       zh: '设置波纹动画频率',
@@ -113,10 +115,10 @@ const cubeAnimationWaveCfgs: ConfigItem[] = [
     },
     type: 'point',
     description: {
-      en: 'Set the center of wave animation',
-      zh: '设置波纹动画中心',
+      en: 'Set the center of wave animation, x means week index, y means day index',
+      zh: '设置波纹动画中心, x表示第几周，y表示第几天',
     },
-    default: '0_0',
+    default: '19_3',
   },
 ];
 
@@ -130,6 +132,7 @@ const bar3dCfg: ConfigItem[] = [
     type: 'float',
     min: 0,
     max: 20,
+    default: 0.6,
     description: {
       en: 'Set the gap between cubes',
       zh: '设置立方体间距',
@@ -141,7 +144,7 @@ const bar3dCfg: ConfigItem[] = [
       en: 'Cube skew',
       zh: '立方体倾斜',
     },
-    default: 1.7,
+    default: 2,
     type: 'float',
     min: 1,
     max: 100,
@@ -185,6 +188,7 @@ const bar3dCfg: ConfigItem[] = [
       zh: '平面化',
     },
     type: 'enum',
+    default: '1',
     optioins: [
       { value: '0', label: { en: 'None', zh: '无' } },
       { value: '1', label: { en: 'All', zh: '全部扁平化' } },
@@ -203,6 +207,7 @@ const bar3dCfg: ConfigItem[] = [
       zh: '动画',
     },
     type: 'enum',
+    default: Bar3DAnimation.WAVE,
     description: {
       en: 'Enable the animation of cubes',
       zh: '启用立方体动画',
@@ -237,7 +242,7 @@ export const config: ConfigItem[] = [
       zh: '图表模板',
     },
     type: 'enum',
-    default: ChartTpl.CALENDAR,
+    default: ChartTpl.BAR3D,
     required: false,
     description: {
       en: 'Select which chart you want to generate',
@@ -292,6 +297,7 @@ export const config: ConfigItem[] = [
       zh: '周数',
     },
     type: 'int',
+    default: 40,
     description: {
       en: 'Weeks count, will override the num calculated by widget_size',
       zh: '周数，会覆盖widget_size计算的周数',
