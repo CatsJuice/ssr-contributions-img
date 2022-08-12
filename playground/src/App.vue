@@ -52,6 +52,7 @@ watch(darkMode, (darkMode) => $q.dark.set(darkMode), { immediate: true });
   }
   body {
     overflow-y: auto !important;
+    top: 0 !important;
   }
   .wrapper.fit {
     flex-direction: column;
@@ -86,5 +87,9 @@ watch(darkMode, (darkMode) => $q.dark.set(darkMode), { immediate: true });
       } */
     }
   }
+}
+
+body.mobile {
+  top: 0 !important;
 }
 </style>

@@ -75,6 +75,7 @@ function copy() {
 
   & svg {
     max-width: 95%;
+    max-height: calc(100% - 2 * var(--gap));
   }
 
   .exportor {
@@ -113,7 +114,7 @@ function copy() {
   --gap: 20px;
   #logo {
     transform: scale(0.7);
-    transform-origin: left center;
+    transform-origin: left top;
   }
 }
 
