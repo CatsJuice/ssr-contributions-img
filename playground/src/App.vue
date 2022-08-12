@@ -1,31 +1,40 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import Display from './components/Display.vue';
+import Configuration from './components/Configuration.vue';
+import { useConfig } from './hooks/useConfig';
+import { watch } from 'vue';
+import { useQuasar } from 'quasar';
+
+const { darkMode } = useConfig();
+const $q = useQuasar();
+
+watch(
+  darkMode,
+  (darkMode) => {
+    $q.dark.set(darkMode);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="fit row no-wrap items-center" :class="{ dark: darkMode }">
+    <Display id="display" class="col-grow fit-grow full-height"></Display>
+    <Configuration id="configuration" class="full-height"></Configuration>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
+<style lang="scss">
+#display {
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+#configuration {
+  width: 320px;
+  flex-shrink: 0;
+  box-shadow: -5px 0px 20px rgba(0, 0, 0, 0.05);
+  background-color: white;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.dark #configuration {
+  background-color: var(--q-dark);
 }
 </style>

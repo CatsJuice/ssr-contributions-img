@@ -4,6 +4,22 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .transition-1 {
   transition: all .23s ease !important;
+}
+
+
+.row > .col-grow.fit-grow {
+  width: 0;
+}
+.column > .col-grow.fit-grow {
+  height: 0;
 }

@@ -11,8 +11,12 @@ import 'quasar/src/css/index.sass';
 // Import override css
 import './styles/quasar.override.scss';
 
+import { Notify } from 'quasar';
+
 export default {
-  config: {},
-  plugins: {},
+  config: { notify: {} },
+  plugins: {
+    Notify,
+  },
   iconSet,
 };
