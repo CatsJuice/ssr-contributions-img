@@ -99,7 +99,7 @@ export class AppService {
       chart.setOption(calendarProcessor(contributionWeeks, max, config));
       svgStr = chart.renderToSVGString();
     } else if (config.chart === ChartTpl.BAR3D) {
-      return isometricProcessor(contributionWeeks, max, {
+      svgStr = isometricProcessor(contributionWeeks, max, {
         ...defaultCalenderChart3dConfig,
         ...filterEmptyKeys(config),
       });
@@ -108,7 +108,7 @@ export class AppService {
         'Unimplemented chart type: ' + config.chart,
       );
     }
-    return svgStr;
+    return svgStr.replace(/\n/g, ' ').replace(/\s+/g, ' ');
   }
 
   /**

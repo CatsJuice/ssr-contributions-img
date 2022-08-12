@@ -4,6 +4,7 @@ import { copyTextToClipboard } from './utils/copy2clipboard';
 import { validatePath } from './utils/validatePath';
 import { useQuasar } from 'quasar';
 import Github from './Github.vue';
+import Logo from './Logo.vue';
 const { svgCode, locale, username, queryStr, loadingConfig, loadingSvg } =
   useConfig();
 const $q = useQuasar();
@@ -63,6 +64,7 @@ function copy() {
     </div>
 
     <Github id="github" />
+    <Logo id="logo" />
   </div>
 </template>
 
@@ -90,10 +92,16 @@ function copy() {
     backdrop-filter: blur(10px) saturate(180%);
   }
 
-  #github {
+  #github,
+  #logo {
     position: absolute;
     top: 30px;
     /* right: 30px; */
+  }
+  #github {
+    right: 30px;
+  }
+  #logo {
     left: 30px;
   }
 }

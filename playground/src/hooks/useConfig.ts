@@ -33,8 +33,9 @@ const config = ref([] as ConfigItem[]);
 const loadingConfig = ref(false);
 const loadingSvg = ref(false);
 const svgCode = ref('');
+const themeOptions = ref([] as Choice[]);
 
-const state = useStorage('__debug_state', {} as Record<string, any>);
+const state = useStorage('__cfgState', {} as Record<string, any>);
 const darkMode = computed(() => !!state.value['dark']);
 const activeReqParams = ref(
   {} as {
@@ -89,7 +90,7 @@ export function useConfig() {
     return configItems.value.reduce((prev, curr) => {
       const value = state.value[curr.key] ? `${state.value[curr.key]}` : '';
       return value ? { ...prev, [curr.key]: value } : prev;
-    }, {});
+    }, {} as Record<string, string>);
   });
   const queryStr = computed(() => {
     return Object.entries(query.value)
@@ -98,11 +99,18 @@ export function useConfig() {
   });
   const confirmDisabled = computed(
     () =>
-      JSON.stringify(reuestParams.value) ===
+      JSON.stringify(requestParams.value) ===
       JSON.stringify(activeReqParams.value),
   );
-  const reuestParams = computed(() => {
+  const requestParams = computed(() => {
     return { query: query.value, username: username.value };
+  });
+
+  const selectedTheme = computed(() => {
+    const dft = 'green';
+    const value = activeReqParams.value?.query?.theme || dft;
+    const theme = themeOptions.value.find((item) => item.value === value);
+    return theme;
   });
 
   async function loadSvg() {
@@ -133,6 +141,10 @@ export function useConfig() {
       if (value === undefined && cfg.default !== undefined) {
         state.value[key] = cfg.default;
       }
+
+      // store themes
+      if (key === 'theme' && cfg.optioins) themeOptions.value = cfg.optioins;
+
       (cfg.optioins || []).forEach((opt) => {
         if (opt.config?.length) {
           opt.config.forEach(walk);
@@ -144,7 +156,7 @@ export function useConfig() {
   }
 
   function confirm() {
-    activeReqParams.value = JSON.parse(JSON.stringify(reuestParams.value));
+    activeReqParams.value = JSON.parse(JSON.stringify(requestParams.value));
     loadSvg();
   }
 
@@ -155,6 +167,8 @@ export function useConfig() {
     locale,
     config,
     state,
+    selectedTheme,
+    themeOptions,
 
     query,
     queryStr,

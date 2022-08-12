@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
 import { computed } from '@vue/reactivity';
 
 const maxColors = 10;

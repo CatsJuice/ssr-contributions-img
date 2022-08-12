@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
 import { useConfig } from '../../hooks/useConfig';
 import { computed } from '@vue/reactivity';
 
