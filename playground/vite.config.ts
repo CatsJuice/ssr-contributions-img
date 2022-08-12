@@ -7,6 +7,7 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   return defineConfig({
     server: {
+      host: '0.0.0.0',
       proxy: {
         '/api': {
           target: process.env.VITE_DEV_SERVER_PROXY_TARGET,

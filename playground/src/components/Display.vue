@@ -33,14 +33,14 @@ function copy() {
 
 <template>
   <div class="display column flex-center">
-    <div v-html="svgCode"></div>
+    <div class="row flex-center" v-html="svgCode"></div>
     <div
       class="loading-mask column flex-center"
       v-if="loadingConfig || loadingSvg"
     >
       <q-spinner />
     </div>
-    <div class="exportor">
+    <div class="exportor row no-wrap flex-center full-width">
       <q-btn
         :loading="loadingConfig || loadingSvg"
         outline
@@ -70,16 +70,19 @@ function copy() {
 
 <style lang="scss">
 .display {
+  --gap: 30px;
   position: relative;
+
   & svg {
-    max-width: 100%;
+    max-width: 95%;
   }
 
   .exportor {
     position: absolute;
-    bottom: 50px;
+    bottom: var(--gap);
     left: 50%;
     transform: translateX(-50%);
+    max-width: 100%;
   }
 
   .loading-mask {
@@ -95,14 +98,22 @@ function copy() {
   #github,
   #logo {
     position: absolute;
-    top: 30px;
-    /* right: 30px; */
+    top: var(--gap);
+    /* right: var(--gap); */
   }
   #github {
-    right: 30px;
+    right: var(--gap);
   }
   #logo {
-    left: 30px;
+    left: var(--gap);
+  }
+}
+
+.mobile .display {
+  --gap: 20px;
+  #logo {
+    transform: scale(0.7);
+    transform-origin: left center;
   }
 }
 

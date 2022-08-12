@@ -1,23 +1,31 @@
 <script lang="ts" setup>
+import { QScrollArea } from 'quasar';
+import { computed } from '@vue/reactivity';
+import { useWindowSize } from '@vueuse/core';
+
+import ConfigRaw from './configs/config-raw.vue';
 import ConfigEnum from './configs/config-enum.vue';
-import ConfigBoolean from './configs/config-boolean.vue';
+import ConfigPoint from './configs/config-point.vue';
 import ConfigNumber from './configs/config-number.vue';
 import ConfigColors from './configs/config-colors.vue';
-import ConfigPoint from './configs/config-point.vue';
-import ConfigRaw from './configs/config-raw.vue';
+import ConfigBoolean from './configs/config-boolean.vue';
+import TinyDropdownSelect from './base/TinyDropdownSelect.vue';
 
 import { useConfig } from '../hooks/useConfig';
-import TinyDropdownSelect from './base/TinyDropdownSelect.vue';
+
+const { isMobile } = useConfig();
+
+const scrollComponent = computed(() => (isMobile.value ? 'div' : QScrollArea));
 
 const {
   state,
   locale,
   username,
+  loadingSvg,
   configItems,
   localeOptions,
-  confirmDisabled,
-  loadingSvg,
   loadingConfig,
+  confirmDisabled,
   confirm,
 } = useConfig();
 </script>
@@ -34,9 +42,15 @@ const {
         </TinyDropdownSelect>
       </div>
 
-      <q-input class="q-mt-md" dense filled label="Github Username" v-model="username" />
+      <q-input
+        class="q-mt-md"
+        dense
+        filled
+        label="Github Username"
+        v-model="username"
+      />
     </header>
-    <q-scroll-area class="col-grow fit-grow q-my-md">
+    <component :is="scrollComponent" class="col-grow fit-grow q-my-md">
       <div class="q-pa-md">
         <div
           :class="{ [`config-item-${cfg.type}`]: true }"
@@ -72,7 +86,7 @@ const {
           />
         </div>
       </div>
-    </q-scroll-area>
+    </component>
     <footer class="q-pa-md">
       <q-btn
         :loading="loadingSvg || loadingConfig"
