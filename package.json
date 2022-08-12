@@ -1,6 +1,6 @@
 {
   "name": "ssr-contributions-svg",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "",
   "author": "",
   "private": true,
@@ -8,7 +8,8 @@
   "scripts": {
     "prepare": "husky install",
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build:playground": "cd playground && yarn build",
+    "build": "yarn build:playground && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -27,6 +28,7 @@
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.8",
     "@nestjs/platform-express": "^9.0.8",
+    "@nestjs/serve-static": "^3.0.0",
     "canvas": "^2.9.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

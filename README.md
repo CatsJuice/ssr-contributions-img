@@ -261,7 +261,99 @@ ${host}/_/${username}?${queryString}
     </td>
   </tr>
 
+
+  <tr>
+    <td>animation</td>
+    <td><code>enum</code></td>
+    <td>Enable animation, See <a href="#3dbar-animation">3dbar Animation</a></td>
+    <td><code>undefined</td></td>
+  </tr>
+
 </table>
+
+## 3dbar Animation
+
+Enable animation by passing <code>animation</code> property, available values:
+
+- `fall` (apper only)
+  ```
+  chart=3dbar&weeks=20&flatten=1&animation=fall
+  ```
+  
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg">
+    <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg" width="400" />
+  </picture>
+- `raise` (apper only)
+  ```
+  chart=3dbar&weeks=20&flatten=1&animation=raise
+  ```
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg">
+    <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg" width="400" />
+  </picture>
+- `wave` (loop)
+  ```
+  chart=3dbar&weeks=20&flatten=1&animation=wave
+  ```
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg&dark=true">
+    <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg">
+    <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg" width="400" />
+  </picture>
+
+**Custome animation details**: (pass as url query parameters)
+
+<details>
+  <summary>
+    <code>fall</code> | <code>raise</code>
+  </summary>
+  <ul>
+    <li>
+      <code>animation_duration</code>
+      <code>&lt;Number&gt;</code>
+      Animation duration in seconds.
+    </li>
+    <li>
+      <code>animation_delay</code>
+      <code>&lt;Number&gt;</code>
+      Animation delay in seconds.
+    </li>
+  </ul>
+</details>
+
+<details>
+  <summary>
+    <code>wave</code></code>
+  </summary>
+  <ul>
+    <li>
+      <code>animation_amplitude</code>
+      <code>&lt;Number&gt;</code>
+      <br>
+      The extent of the square's movement in pixel(px).
+    </li>
+    <li>
+      <code>animation_frequency</code>
+      <code>&lt;Number&gt;</code>
+      <br>
+      Frequency of movement of the square, between <code>[0.01, 0.5]</code>,
+    </li>
+    <li>
+      <code>animation_wave_center</code>
+      <code>&lt;Number&gt;_&lt;Number&gt;</code>
+      <br>
+      The center of the wave, pass coordinate points <code>x</code>, <code>y</code> as <code>${x}_${y}</code>(Join x, y with <code>_</code>) for example <code>0_0</code>.
+    </li>
+  </ul>
+</details>
+
+
+
 
 ## DarkMode
 
