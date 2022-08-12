@@ -27,8 +27,11 @@
 
 现在你可以通过 [Playground](https://ssr-contributions-svg.vercel.app/) 在线预览与配置。
 
+<div align="center">
+  <img src="./assets/anim/wave-light-en.gif" />
+</div>
 
-## 使用
+## 本地运行
 
 - **为 GitHub OpenAPI 准备 PAT:**
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
