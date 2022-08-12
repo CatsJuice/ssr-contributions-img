@@ -27,7 +27,12 @@
 
 Now you can config and preview your contribution wall in the [Playground](https://ssr-contributions-svg.vercel.app/)
 
-## Usage
+<div align="center">
+  <img src="./assets/anim/wave-light-en.gif" />
+</div>
+
+
+## Run locally
 
 - **prepare your github pat for Github OpenAPI:**
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
