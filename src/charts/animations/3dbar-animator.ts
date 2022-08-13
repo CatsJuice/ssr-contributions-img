@@ -21,7 +21,9 @@ export function generate3dbarAnimation(...args: Args) {
     return raise(...args);
   } else if (type === Bar3DAnimation.WAVE) {
     return wave(...args);
-  }
+  } else if (type === Bar3DAnimation.MESS) {
+    return mess(...args);
+  } else return '';
 }
 
 // function animation(opt: { name: string; delay?: number }) {}
@@ -112,4 +114,45 @@ function wave(...[weekCount, cfg]: Args) {
   }
   ${delays.join('\n')}
   `;
+}
+
+function mess(...[weekCount, cfg, options]: Args) {
+  const { width, height } = options;
+  const loop = cfg.animation_loop || false;
+  const duration = loop
+    ? (cfg.animation_duration || 3) * 2
+    : cfg.animation_duration || 3;
+
+  let style = '';
+
+  for (let week = 0; week < weekCount; week++) {
+    for (let day = 0; day < 7; day++) {
+      const animName = `mess_${week}_${day}`;
+      style += ` g[data-week="${week}"][data-day="${day}"] { animation: ${duration}s ${animName} ease; animation-iteration-count: ${
+        loop ? 'infinite' : '1'
+      };}`;
+      const dx = Math.random() > 0.5 ? '' : '-';
+      const dy = Math.random() > 0.5 ? '' : '-';
+      const tx = `${dx}${(width + Math.random() * 500).toFixed(0)}px`;
+      const ty = `${dy}${(height + Math.random() * 500).toFixed(0)}px`;
+      const transform = `transform: translate(${tx}, ${ty}) `;
+      const transformO = `transform: translate(0, 0)`;
+      const breakPoint1 = (20 + Math.random() * 20).toFixed(0);
+      const breakPoint2 = (60 + Math.random() * 20).toFixed(0);
+      style += ` @keyframes ${animName} { 0% { ${transform}; }`;
+      if (loop) {
+        style += ` ${breakPoint1}% { ${transformO}; }`;
+        style += ` ${breakPoint2}% { ${transformO} }`;
+        style += ` 100% { ${transform} }`;
+      } else {
+        // const breakPoint3 = (10 + Math.random() * 60).toFixed(0);
+        style += ` ${breakPoint1}% { ${transform}; }`;
+        style += ` ${breakPoint1}% { ${transformO} }`;
+        style += ` 100% { ${transformO} }`;
+      }
+      style += ' }';
+    }
+  }
+
+  return style;
 }
