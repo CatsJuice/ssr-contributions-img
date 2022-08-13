@@ -61,7 +61,7 @@ export class AppService {
         _config.weeks ||
         {
           [WidgetSize.LARGE]: 40,
-          [WidgetSize.MIDIUM]: 16,
+          [WidgetSize.MEDIUM]: 16,
           [WidgetSize.SMALL]: 7,
         }[_config.widget_size] ||
         16,
