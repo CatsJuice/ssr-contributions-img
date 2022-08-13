@@ -31,6 +31,12 @@ Now you can config and preview your contribution wall in the [Playground](https:
   <img src="./assets/anim/wave-light-en.gif" />
 </div>
 
+## Principle of 3dbar implementation
+
+- Read on [Medium](https://medium.com/@catsjuice/fake-3d-bar-chart-with-svg-js-134684bd5100)
+- View minimum realization code on [Codepen](https://codepen.io/catsjuice/pen/MWVqNdQ)
+
+
 
 ## Run locally
 

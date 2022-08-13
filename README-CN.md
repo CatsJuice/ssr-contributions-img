@@ -31,6 +31,13 @@
   <img src="./assets/anim/wave-light-en.gif" />
 </div>
 
+
+## 实现原理
+
+- 在 [Medium](https://medium.com/@catsjuice/fake-3d-bar-chart-with-svg-js-134684bd5100) 上查看实现原理。
+- 在 [Codepen](https://codepen.io/catsjuice/pen/MWVqNdQ) 上查看最小实现。
+
+
 ## 本地运行
 
 - **为 GitHub OpenAPI 准备 PAT:**
