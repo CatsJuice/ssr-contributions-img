@@ -153,11 +153,11 @@ ${host}/_/${username}?${queryString}
      通过指定这一属性，自动计算周的数量 和 最佳的 ios 小组件，可用值为：
       <ul>
         <li><code>small</code></li>
-        <li><code>midium</code></li>
+        <li><code>medium</code></li>
         <li><code>large</code></li>
       </ul>
     </td>
-    <td><code>midium</code></td>
+    <td><code>medium</code></td>
   </tr>
 
   <tr>

@@ -1,13 +1,19 @@
+import { Transform } from 'class-transformer';
+import { decorate } from 'ts-mixer';
+
 export enum WidgetSize {
   SMALL = 'small',
-  MIDIUM = 'midium',
+  MEDIUM = 'medium',
   LARGE = 'large',
 }
 
 export class WidgetSizeDto {
   /**
    * ios Widget size, Affect weeks
-   * @default {"midium"}
+   * @default {"medium"}
    */
+  @decorate(
+    Transform(({ value }) => (value === 'midium' ? WidgetSize.MEDIUM : value)),
+  )
   widget_size?: WidgetSize;
 }

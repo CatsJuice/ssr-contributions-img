@@ -342,7 +342,7 @@ export const config: ConfigItem[] = [
     },
     optioins: [
       { value: WidgetSize.SMALL, label: { en: 'Small', zh: '小' } },
-      { value: WidgetSize.MIDIUM, label: { en: 'Midium', zh: '中' } },
+      { value: WidgetSize.MEDIUM, label: { en: 'Medium', zh: '中' } },
       { value: WidgetSize.SMALL, label: { en: 'Large', zh: '大' } },
     ],
   },

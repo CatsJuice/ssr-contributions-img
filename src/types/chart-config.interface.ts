@@ -7,7 +7,7 @@ export interface BaseChartConfig {
 }
 
 export const defaultCalendarChartConfig: CalendarChartConfig = {
-  widget_size: WidgetSize.MIDIUM,
+  widget_size: WidgetSize.MEDIUM,
   quality: 1,
   tz: 'Asia/Shanghai',
 };
@@ -18,7 +18,7 @@ export interface CalendarChartConfig extends BaseChartConfig {
 }
 
 export const defaultCalenderChart3dConfig: CalendarChart3DConfig = {
-  widget_size: WidgetSize.MIDIUM,
+  widget_size: WidgetSize.MEDIUM,
   quality: 1,
   scale: 2,
   gap: 1.2,

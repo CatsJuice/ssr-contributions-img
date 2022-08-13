@@ -149,11 +149,11 @@ ${host}/_/${username}?${queryString}
       Automatically calculate the number of weeks and size needed for the ios widget by specifying this property, avaiable values:
       <ul>
         <li><code>small</code></li>
-        <li><code>midium</code></li>
+        <li><code>medium</code></li>
         <li><code>large</code></li>
       </ul>
     </td>
-    <td><code>midium</code></td>
+    <td><code>medium</code></td>
   </tr>
 
   <tr>
@@ -428,7 +428,7 @@ let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
   .split(",")
   .map((v) => v.trim());
 chart = chart || "calendar";
-widgetSize = widgetSize || "midium";
+widgetSize = widgetSize || "medium";
 theme = theme || "green";
 const darkMode = Device.isUsingDarkAppearance();
 let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
