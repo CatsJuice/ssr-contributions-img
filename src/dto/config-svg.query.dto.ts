@@ -84,6 +84,11 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   )
   @IsNumber({ allowNaN: false }, { each: true })
   animation_wave_center?: Array<number>;
+
+  @decorate(Transform(({ value }) => value && value.toLowerCase() === 'true'))
+  @decorate(IsOptional())
+  @decorate(IsBoolean())
+  animation_loop?: boolean;
 }
 
 export class ConfigSvgQueryDto extends Mixin(

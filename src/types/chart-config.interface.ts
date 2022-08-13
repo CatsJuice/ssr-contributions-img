@@ -38,4 +38,5 @@ export interface CalendarChart3DConfig extends BaseChartConfig {
   animation_amplitude?: number;
   animation_frequency?: number;
   animation_wave_center?: Array<number>;
+  animation_loop?: boolean;
 }
