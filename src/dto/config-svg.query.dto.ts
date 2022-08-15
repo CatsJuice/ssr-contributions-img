@@ -1,7 +1,7 @@
 import { decorate, Mixin } from 'ts-mixer';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, isArray } from 'class-validator';
 import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, isArray } from 'class-validator';
 import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
 
 import { DarkDto } from './base/dark.dto';
@@ -89,6 +89,11 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(IsOptional())
   @decorate(IsBoolean())
   animation_loop?: boolean;
+
+  @decorate(Transform(({ value }) => value && value.toLowerCase() === 'true'))
+  @decorate(IsOptional())
+  @decorate(IsBoolean())
+  animation_reverse?: boolean;
 }
 
 export class ConfigSvgQueryDto extends Mixin(

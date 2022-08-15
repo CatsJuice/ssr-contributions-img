@@ -1,7 +1,9 @@
 export enum Bar3DAnimation {
-  FALL = 'fall',
   RAISE = 'raise',
+  FALL = 'fall',
   WAVE = 'wave',
   MESS = 'mess',
+  SPIN = 'spin',
+  FADE = 'fadeIn',
   NONE = 'none',
 }

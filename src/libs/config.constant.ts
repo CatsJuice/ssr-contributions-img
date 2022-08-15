@@ -4,6 +4,11 @@ import { WidgetSize } from '../dto/base/widget-size.dto';
 import { OutputFormat } from '../dto/base/output-format.dto';
 import { Bar3DAnimation } from '../types/3dbar-animation.enum';
 import { ConfigSvgQueryDto, ChartTpl } from '../dto/config-svg.query.dto';
+import { cubeAnimationFallCfgs } from './animation-config/cube-fall.config';
+import { cubeAnimationWaveCfgs } from './animation-config/cube-wave.config';
+import { cubeAnimationMessCfgs } from './animation-config/cube-mass.config';
+import { cubeAnimationSpinCfgs } from './animation-config/cube-spin.config';
+import { cubeAnimationFadeCfgs } from './animation-config/cube-fade.config';
 
 type Locale = 'en' | 'zh';
 
@@ -42,117 +47,6 @@ const qualityCfg: ConfigItem = {
   min: 0.1,
   max: 10,
 };
-
-const cubeAnimationFallCfgs: ConfigItem[] = [
-  {
-    key: 'animation_duration',
-    label: {
-      en: 'Animation duration(s)',
-      zh: '动画时长(单位：秒)',
-    },
-    type: 'float',
-    default: 3,
-    required: false,
-    description: {
-      en: 'Set the duration of animation',
-      zh: '设置动画时长',
-    },
-  },
-
-  {
-    key: 'animation_delay',
-    label: {
-      en: 'Animation delay(s)',
-      zh: '动画延迟(单位：秒)',
-    },
-    type: 'float',
-    default: 0.03,
-    required: false,
-    description: {
-      en: 'Set the delay of animation',
-      zh: '设置动画延迟',
-    },
-  },
-];
-
-const cubeAnimationWaveCfgs: ConfigItem[] = [
-  ...cubeAnimationFallCfgs,
-  {
-    key: 'animation_amplitude',
-    label: {
-      en: 'Animation amplitude',
-      zh: '动画振幅',
-    },
-    type: 'float',
-    default: 24,
-    description: {
-      en: 'Set the amplitude of wave animation',
-      zh: '设置波纹动画振幅',
-    },
-  },
-
-  {
-    key: 'animation_frequency',
-    label: {
-      en: 'Animation frequency',
-      zh: '动画频率',
-    },
-    type: 'float',
-    default: 0.1,
-    description: {
-      en: 'Set the frequency of wave animation',
-      zh: '设置波纹动画频率',
-    },
-    min: 0.01,
-    max: 0.5,
-  },
-
-  {
-    key: 'animation_wave_center',
-    label: {
-      en: 'Animation wave center',
-      zh: '动画波纹中心',
-    },
-    type: 'point',
-    description: {
-      en: 'Set the center of wave animation, x means week index, y means day index',
-      zh: '设置波纹动画中心, x表示第几周，y表示第几天',
-    },
-    default: '19_3',
-  },
-];
-
-const cubeAnimationMessCfgs: ConfigItem[] = [
-  {
-    key: 'animation_duration',
-    label: {
-      en: 'Animation duration(s)',
-      zh: '动画时长(单位：秒)',
-    },
-    type: 'float',
-    default: 3,
-    required: false,
-    description: {
-      en: 'Set the duration of animation',
-      zh: '设置动画时长',
-    },
-  },
-
-  {
-    key: 'animation_loop',
-    label: {
-      en: 'Animation loop',
-      zh: '循环播放',
-    },
-    type: 'boolean',
-    default: false,
-    required: false,
-    description: {
-      en: 'Whether to play the animation in loop',
-      zh: '是否循环播放动画',
-    },
-  },
-];
 
 const bar3dCfg: ConfigItem[] = [
   {
@@ -265,6 +159,16 @@ const bar3dCfg: ConfigItem[] = [
         value: Bar3DAnimation.MESS,
         label: { en: 'mess', zh: '杂乱' },
         config: cubeAnimationMessCfgs,
+      },
+      {
+        value: Bar3DAnimation.SPIN,
+        label: { en: 'spin', zh: '转啊转' },
+        config: cubeAnimationSpinCfgs,
+      },
+      {
+        value: Bar3DAnimation.FADE,
+        label: { en: 'fadeIn', zh: '淡入' },
+        config: cubeAnimationFadeCfgs,
       },
     ],
   },

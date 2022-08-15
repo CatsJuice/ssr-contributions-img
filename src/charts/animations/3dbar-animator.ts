@@ -23,6 +23,10 @@ export function generate3dbarAnimation(...args: Args) {
     return wave(...args);
   } else if (type === Bar3DAnimation.MESS) {
     return mess(...args);
+  } else if (type === Bar3DAnimation.SPIN) {
+    return spin(...args);
+  } else if (type === Bar3DAnimation.FADE) {
+    return fadeIn(...args);
   } else return '';
 }
 
@@ -155,4 +159,67 @@ function mess(...[weekCount, cfg, options]: Args) {
   }
 
   return style;
+}
+
+function spin(...[weekCount, cfg, options]: Args) {
+  const loop = cfg.animation_loop || false;
+  const delay = cfg.animation_delay || 0.01;
+  const duration = cfg.animation_duration || 3;
+
+  const delays = [];
+  for (let week = 0; week < weekCount; week++) {
+    for (let day = 0; day < 7; day++) {
+      const index = week * 7 + day;
+      delays.push(
+        `g[data-week="${week}"][data-day="${day}"] { animation-delay: ${(
+          index * delay
+        ).toFixed(3)}s; }`,
+      );
+    }
+  }
+  return `* {transform-box: fill-box;}
+  g.day {
+    animation: ${duration}s swing;
+    transform-origin: center;
+    ${loop ? 'animation-iteration-count: infinite;' : ''}
+    animation-timing-function: linear;
+  }
+  @keyframes swing {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  ${delays.join(' ')}
+  `;
+}
+
+function fadeIn(...[weekCount, cfg]: Args) {
+  const duration = cfg.animation_duration || 0.5;
+  const delay = cfg.animation_delay || 0.01;
+  const reverse = cfg.animation_reverse || false;
+
+  const delays = [];
+  const totalTime = delay * (weekCount * 7);
+  for (let week = 0; week < weekCount; week++) {
+    for (let day = 0; day < 7; day++) {
+      const index = week * 7 + day;
+      delays.push(
+        `g[data-week="${week}"][data-day="${day}"] { animation-delay: ${(reverse
+          ? totalTime - index * delay
+          : index * delay
+        ).toFixed(3)}s; }`,
+      );
+    }
+  }
+
+  return `g.day {
+    opacity: 0;
+    animation: ${duration}s fadeIn;
+    animation-fill-mode: forwards;
+  }
+  @keyframes fadeIn {
+    from: { opacity: 0 }
+    to { opacity: 1 }
+  }
+  ${delays.join(' ')}
+  `;
 }
