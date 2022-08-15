@@ -1,13 +1,27 @@
 <script lang="ts" setup>
-import { useConfig } from '../hooks/useConfig';
-import { copyTextToClipboard } from './utils/copy2clipboard';
-import { validatePath } from './utils/validatePath';
-import { useQuasar } from 'quasar';
-import Github from './Github.vue';
+import { onMounted, ref } from 'vue';
+import { throttle, useQuasar } from 'quasar';
+import { useWindowSize } from '@vueuse/core';
+
 import Logo from './Logo.vue';
-const { svgCode, locale, username, queryStr, loadingConfig, loadingSvg } =
-  useConfig();
+import Github from './Github.vue';
+
+import { useConfig } from '../hooks/useConfig';
+import { validatePath } from './utils/validatePath';
+import { copyTextToClipboard } from './utils/copy2clipboard';
+
+const {
+  svgCode,
+  locale,
+  username,
+  queryStr,
+  loadingConfig,
+  loadingSvg,
+  isMobile,
+} = useConfig();
+const { height } = useWindowSize();
 const $q = useQuasar();
+const scrollY = ref(0);
 
 function download() {
   const a = document.createElement('a');
@@ -29,11 +43,29 @@ function copy() {
     position: 'top',
   });
 }
+
+onMounted(() => {
+  document.body.addEventListener('scroll', (e: Event) => {
+    if (!isMobile) return;
+    const distance = document.body.scrollTop;
+    // console.log(distance);
+    const halfWindowHeight = height.value / 2;
+    if (distance > halfWindowHeight) return;
+    scrollY.value = (distance / halfWindowHeight) * 100;
+  });
+});
 </script>
 
 <template>
-  <div class="display column flex-center">
-    <div class="row flex-center" v-html="svgCode"></div>
+  <div
+    class="display column flex-center"
+    :style="{
+      transform: `translateY(${-scrollY / 2}%)`,
+    }"
+  >
+    <div class="row flex-center" v-html="svgCode" :style="{
+      transform: `scale(${Math.max(1, 1 - scrollY / 200)})`,
+    }"></div>
     <div
       class="loading-mask column flex-center"
       v-if="loadingConfig || loadingSvg"

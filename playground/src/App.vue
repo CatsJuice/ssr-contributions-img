@@ -92,4 +92,23 @@ watch(darkMode, (darkMode) => $q.dark.set(darkMode), { immediate: true });
 body.mobile {
   top: 0 !important;
 }
+
+body.mobile #configuration {
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  padding-top: 20px;
+  box-shadow: 0px -5px 20px rgba(0, 0, 0, 0.05);
+  position: relative;
+  /* drag indicator */
+  /* &::after {
+    position: absolute;
+    content: "";
+    top: 10px;
+    left: calc(50% - 50px);
+    width: 100px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #ccc;
+  } */
+}
 </style>
