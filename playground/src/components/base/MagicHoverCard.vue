@@ -53,9 +53,9 @@ const handleMouseout = (e: MouseEvent) => {
       <div class="fit relative-position magic-hover-card-display">
         <slot></slot>
       </div>
-      <div class="magic-hover-card-highlight-mask fit absolute">
-        <!-- <div class="magic-hover-card-highlight" :style="highlightStyle"></div> -->
-      </div>
+      <!-- <div class="magic-hover-card-highlight-mask fit absolute">
+        <div class="magic-hover-card-highlight" :style="highlightStyle"></div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -73,8 +73,8 @@ const handleMouseout = (e: MouseEvent) => {
   &-display {
     z-index: 1;
     border-radius: inherit;
-    box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.02),
-      0px 10px 40px rgba(0, 0, 0, 0.03);
+    /* box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.02),
+      0px 10px 40px rgba(0, 0, 0, 0.03); */
   }
   &-mask {
     border-radius: inherit;
