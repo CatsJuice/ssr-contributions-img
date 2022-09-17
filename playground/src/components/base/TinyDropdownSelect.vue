@@ -49,3 +49,10 @@ const activeItem = computed(() => {
     </q-menu>
   </div>
 </template>
+
+<style lang="scss">
+.tiny-dropdown-select-item.active {
+  color: var(--q-primary);
+  font-weight: bold;
+}
+</style>
