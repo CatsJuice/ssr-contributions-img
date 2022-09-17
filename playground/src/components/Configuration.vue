@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { QScrollArea } from 'quasar';
 import { computed } from '@vue/reactivity';
-import { useWindowSize } from '@vueuse/core';
 
+import Preset from './Preset/index.vue';
 import ConfigRaw from './configs/config-raw.vue';
 import ConfigEnum from './configs/config-enum.vue';
 import ConfigPoint from './configs/config-point.vue';
 import ConfigNumber from './configs/config-number.vue';
-import ConfigColors from './configs/config-colors.vue';
 import ConfigBoolean from './configs/config-boolean.vue';
+// import ConfigColors from './configs/config-colors.vue';
 import TinyDropdownSelect from './base/TinyDropdownSelect.vue';
 
 import { useConfig } from '../hooks/useConfig';
@@ -52,6 +52,7 @@ const {
     </header>
     <component :is="scrollComponent" class="col-grow fit-grow q-my-md">
       <div class="q-pa-md">
+        <Preset />
         <div
           :class="{ [`config-item-${cfg.type}`]: true }"
           class="config-item"

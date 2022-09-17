@@ -1,8 +1,9 @@
 import { ref } from 'vue';
-import { useStorage, useWindowSize } from '@vueuse/core';
 import { computed } from '@vue/reactivity';
-import { getConfig } from '../api/get-config';
+import { useStorage, useWindowSize } from '@vueuse/core';
+
 import { getWall } from '../api/get-wall';
+import { getConfig } from '../api/get-config';
 
 type Locale = 'en' | 'zh';
 interface Choice {
@@ -165,6 +166,11 @@ export function useConfig() {
     loadSvg();
   }
 
+  function usePreset(newState: Record<string, any>) {
+    state.value = { ...newState, dark: darkMode.value };
+    confirm();
+  }
+
   return {
     state,
     query,
@@ -185,5 +191,6 @@ export function useConfig() {
 
     confirm,
     loadSvg,
+    usePreset,
   };
 }
