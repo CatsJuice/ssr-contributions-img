@@ -1,5 +1,9 @@
 <div align="center">
-  <h1>SSR-Contribution-Svg</h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/cube-logo-dark.png">
+    <img height="40" src="./assets/cube-logo-light.png">
+  </picture>
+  <br>
   <span>English</span>
   |
   <a href="./README-CN.md">简体中文</a>
@@ -28,7 +32,10 @@
 Now you can config and preview your contribution wall in the [Playground](https://ssr-contributions-svg.vercel.app/)
 
 <div align="center">
-  <img src="./assets/anim/wave-light-en.gif" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/anim/playground-en-dark.gif">
+    <img src="./assets/anim/playground-en-light.gif">
+  </picture>
 </div>
 
 ## Principle of 3dbar implementation
