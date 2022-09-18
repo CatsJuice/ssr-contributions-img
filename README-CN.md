@@ -1,5 +1,9 @@
 <div align="center">
-  <h1>SSR-Contribution-Svg</h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/cube-logo-dark.png">
+    <img height="40" src="./assets/cube-logo-light.png">
+  </picture>
+  <br>
   <a href="./README.md">English</a>
   |
   <span>简体中文</span>
@@ -28,7 +32,10 @@
 现在你可以通过 [Playground](https://ssr-contributions-svg.vercel.app/) 在线预览与配置。
 
 <div align="center">
-  <img src="./assets/anim/wave-light-en.gif" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/anim/playground-zh-dark.gif">
+    <img src="./assets/anim/playground-zh-light.gif">
+  </picture>
 </div>
 
 
