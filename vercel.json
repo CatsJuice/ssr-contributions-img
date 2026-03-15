@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "yarn build:playground",
+  "buildCommand": "cd playground && yarn install --frozen-lockfile --production=false && yarn build",
   "outputDirectory": "playground/dist",
   "rewrites": [
     {
