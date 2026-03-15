@@ -50,6 +50,8 @@
 - **为 GitHub OpenAPI 准备 PAT:**
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
+  `GITHUB_PAT` 现在是可选的。服务会优先使用 GitHub 个人主页上的 contribution graph，因此会尽量与用户主页保持一致，包括用户是否开启“显示私有贡献计数”这一偏好。PAT 只作为 GraphQL 回退和诊断用途。
+
 - **在根目录下创建 `.env` 文件， 并参考 `.env.example` 填写**
 
 - **使用以下命令安装依赖:**

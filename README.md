@@ -50,6 +50,8 @@ Now you can config and preview your contribution wall in the [Playground](https:
 - **prepare your github pat for Github OpenAPI:**
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
+  `GITHUB_PAT` is optional now. The server prefers GitHub's profile contribution graph so the output matches the user's profile page, including whether they chose to show private contribution counts. The PAT is only used as a GraphQL fallback / diagnostic path.
+
 - **create a `.env` file in the root of project, Fill it with reference `.env.example`**
 
 - **install packages with:**
