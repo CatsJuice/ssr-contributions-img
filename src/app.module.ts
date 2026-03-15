@@ -1,12 +1,12 @@
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { allConfigs } from './config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { UsernameExistsGuard } from './guards/username-exists.guard';
 
 @Module({
   imports: [
@@ -19,9 +19,8 @@ import { AppController } from './app.controller';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../playground/dist'),
     }),
-    HttpModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UsernameExistsGuard],
 })
 export class AppModule {}

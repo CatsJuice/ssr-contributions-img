@@ -1,10 +1,10 @@
 import {
   Injectable,
+  Inject,
   CanActivate,
   ExecutionContext,
   NotFoundException,
 } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { ExtendedRequest } from 'src/types/extended-request.interface';
 import {
@@ -38,10 +38,7 @@ function getPrivateContributionsMode(
 
 @Injectable()
 export class UsernameExistsGuard implements CanActivate {
-  constructor(
-    private readonly _httpSrv: HttpService,
-    private readonly _cfgSrv: ConfigService,
-  ) {}
+  constructor(@Inject(ConfigService) private readonly _cfgSrv: ConfigService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: ExtendedRequest = context.switchToHttp().getRequest();
@@ -61,13 +58,13 @@ export class UsernameExistsGuard implements CanActivate {
       return true;
     }
 
-    const githubRes = await this._httpSrv.axiosRef({
+    const githubRes = await fetch('https://api.github.com/graphql', {
       method: 'POST',
-      baseURL: 'https://api.github.com/graphql',
       headers: {
         Authorization: `Bearer ${this._cfgSrv.get('github.pat')}`,
+        'Content-Type': 'application/json',
       },
-      data: {
+      body: JSON.stringify({
         query: `query ($username: String!) {
             viewer {
                 login
@@ -89,10 +86,11 @@ export class UsernameExistsGuard implements CanActivate {
         variables: {
           username,
         },
-      },
+      }),
     });
-    const scopes = parseOauthScopes(githubRes.headers?.['x-oauth-scopes']);
-    const viewerLogin = githubRes.data?.data?.viewer?.login;
+    const githubData = await githubRes.json();
+    const scopes = parseOauthScopes(githubRes.headers.get('x-oauth-scopes'));
+    const viewerLogin = githubData?.data?.viewer?.login;
     const privateContributionsMode = getPrivateContributionsMode(
       scopes,
       viewerLogin,
@@ -111,7 +109,7 @@ export class UsernameExistsGuard implements CanActivate {
     );
     res.setHeader('X-GitHub-Contributions-Source', 'graphql_fallback');
 
-    const user = githubRes.data?.data?.user;
+    const user = githubData?.data?.user;
     if (!user) throw new NotFoundException(`User ${username} not found`);
     req.user = user;
     return true;
@@ -120,24 +118,26 @@ export class UsernameExistsGuard implements CanActivate {
   private async fetchUserFromProfileContributionGraph(username: string) {
     const { years, startDate, endDate } = getContributionYearsForProfileWindow();
     const pages = await Promise.all(
-      years.map((year) =>
-        this._httpSrv.axiosRef({
+      years.map(async (year) => {
+        const pageUrl = new URL(
+          `https://github.com/users/${username}/contributions`,
+        );
+        pageUrl.searchParams.set('from', `${year}-01-01`);
+        pageUrl.searchParams.set('to', `${year}-12-31`);
+
+        const response = await fetch(pageUrl.toString(), {
           method: 'GET',
-          baseURL: `https://github.com/users/${username}/contributions`,
-          params: {
-            from: `${year}-01-01`,
-            to: `${year}-12-31`,
-          },
           headers: {
             'Accept-Language': 'en-US,en;q=0.9',
             'User-Agent': 'ssr-contributions-svg',
           },
-          responseType: 'text',
-          validateStatus(status) {
-            return status === 200 || status === 404;
-          },
-        }),
-      ),
+        });
+
+        return {
+          status: response.status,
+          data: await response.text(),
+        };
+      }),
     );
 
     if (pages.some((page) => page.status === 404)) {

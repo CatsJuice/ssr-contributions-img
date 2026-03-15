@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { WidgetSize } from 'src/dto/base/widget-size.dto';
 import { CalendarChartConfig } from 'src/types/chart-config.interface';
 

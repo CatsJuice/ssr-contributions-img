@@ -1,16 +1,23 @@
 {
-  "version": 2,
-  "name": "ssr-contributions-svg",
-  "builds": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "yarn build:playground",
+  "outputDirectory": "playground/dist",
+  "rewrites": [
     {
-      "src": "dist/main.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
+      "source": "/_/:username",
+      "destination": "/api?__pathname=/_/:username"
+    },
     {
-      "src": "/(.*)",
-      "dest": "dist/main.js"
+      "source": "/svg/:username",
+      "destination": "/api?__pathname=/svg/:username"
+    },
+    {
+      "source": "/themes",
+      "destination": "/api?__pathname=/themes"
+    },
+    {
+      "source": "/config",
+      "destination": "/api?__pathname=/config"
     }
   ]
 }

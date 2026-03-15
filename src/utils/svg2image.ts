@@ -1,5 +1,3 @@
-import * as sharp from 'sharp';
-
 /**
  * Convert svg code to image buffer
  * @param svgCode
@@ -13,6 +11,7 @@ export const svgCode2image = async (
   resize = 1,
   bg = '#fff',
 ) => {
+  const { default: sharp } = await import('sharp');
   const buf = Buffer.from(svgCode);
   return await sharp(buf)
     .metadata()

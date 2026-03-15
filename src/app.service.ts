@@ -1,7 +1,7 @@
 import * as echarts from 'echarts';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { svgCode2image } from './utils/svg2image';
 import { maxInArray } from './utils/max-in-array';
@@ -24,7 +24,7 @@ import {
 
 @Injectable()
 export class AppService {
-  constructor(private readonly _cfgSrv: ConfigService) {}
+  constructor(@Inject(ConfigService) private readonly _cfgSrv: ConfigService) {}
   /**
    * Create theme graph svg code
    * @returns

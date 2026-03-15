@@ -8,6 +8,7 @@ import { config } from './libs/config.constant';
 import {
   Res,
   Get,
+  Inject,
   Param,
   Query,
   Request,
@@ -18,7 +19,7 @@ import {
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(@Inject(AppService) private readonly appService: AppService) {}
 
   @Get(['/_/:username', '/svg/:username'])
   @UseGuards(UsernameExistsGuard)

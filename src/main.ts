@@ -1,9 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
-import './utils/echarts-ssr.polyfill';
-import { AppModule } from './app.module';
+import { createApp } from './create-app';
 
 // import {
 //   FastifyAdapter,
@@ -12,14 +10,12 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('APP_BOOTSTRAP');
-  // const app = await NestFactory.create<NestFastifyApplication>(
+  // const app = await createApp<NestFastifyApplication>(
   //   AppModule,
   //   new FastifyAdapter(),
   // );
-  const app = await NestFactory.create(AppModule);
+  const app = await createApp();
   const cfgSrv = app.get(ConfigService);
-
-  app.setGlobalPrefix('/');
 
   await app.listen(parseInt(cfgSrv.get('SERVER_PORT')) || 3000, '::');
   logger.log(`App is running on ${await app.getUrl()}`);

@@ -95,3 +95,5 @@ if (!globalScope.document) {
 }
 
 globalScope.window.navigator = globalScope.navigator;
+
+export {};
