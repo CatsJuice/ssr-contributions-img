@@ -1,10 +1,11 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { useQuasar } from 'quasar';
+import { getApiBaseUrl } from '../utils/runtime-env';
 
 export async function request(cfg: AxiosRequestConfig = {}) {
   try {
     const response = await axios({
-      baseURL: import.meta.env.VITE_API_BASE_URL,
+      baseURL: getApiBaseUrl(),
       ...cfg,
     });
     return response.data;

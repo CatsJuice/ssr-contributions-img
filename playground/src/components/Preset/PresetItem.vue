@@ -5,6 +5,7 @@ import { computed } from '@vue/reactivity';
 import { validatePath } from '../utils/validatePath';
 import { useConfig, ConfigItem } from '../../hooks/useConfig';
 import MagicHoverCard from '../base/MagicHoverCard.vue';
+import { getApiPath } from '../../utils/runtime-env';
 
 const { username, config, locale } = useConfig();
 
@@ -71,8 +72,7 @@ const queryStr = computed(() => {
 });
 
 const src = computed(() => {
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-  return validatePath(`${baseURL}/_/${username.value}?${queryStr.value}`);
+  return validatePath(`${getApiPath(`/_/${username.value}`)}?${queryStr.value}`);
 });
 </script>
 

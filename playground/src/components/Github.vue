@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-const href = import.meta.env.VITE_GITHUB_REPO_URL;
+import { getGithubRepoUrl } from '../utils/runtime-env';
+
+const href = getGithubRepoUrl();
 </script>
 
 <template>

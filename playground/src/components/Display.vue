@@ -9,6 +9,7 @@ import Github from './Github.vue';
 import { useConfig } from '../hooks/useConfig';
 import { validatePath } from './utils/validatePath';
 import { copyTextToClipboard } from './utils/copy2clipboard';
+import { getApiPath } from '../utils/runtime-env';
 
 const {
   svgCode,
@@ -33,8 +34,9 @@ function download() {
 
 function copy() {
   const orign = window.location.origin;
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const path = validatePath(`${baseUrl}/_/${username.value}?${queryStr.value}`);
+  const path = validatePath(
+    `${getApiPath(`/_/${username.value}`)}?${queryStr.value}`,
+  );
   const url = `${orign}${path}`;
   copyTextToClipboard(url);
   $q.notify({
