@@ -1,4 +1,4 @@
-import { themes } from 'src/utils/get-theme';
+import { themes } from '../utils/get-theme';
 
 import { WidgetSize } from '../dto/base/widget-size.dto';
 import { OutputFormat } from '../dto/base/output-format.dto';

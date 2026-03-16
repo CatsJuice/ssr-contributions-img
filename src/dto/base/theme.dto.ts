@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { PresetTheme } from 'src/types/theme.enum';
+import { PresetTheme } from '../../types/theme.enum';
 import { decorate } from 'ts-mixer';
 
 export class ThemeDto {

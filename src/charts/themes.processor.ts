@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { PresetTheme } from 'src/types/theme.enum';
+import { PresetTheme } from '../types/theme.enum';
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf');
 path.resolve(process.cwd(), 'fonts', 'CascadiaCode.ttf');

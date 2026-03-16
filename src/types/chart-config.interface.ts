@@ -1,4 +1,4 @@
-import { WidgetSize } from 'src/dto/base/widget-size.dto';
+import { WidgetSize } from '../dto/base/widget-size.dto';
 import { Bar3DAnimation } from './3dbar-animation.enum';
 
 export interface BaseChartConfig {

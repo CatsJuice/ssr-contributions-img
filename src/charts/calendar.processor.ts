@@ -1,8 +1,8 @@
 import moment from 'moment';
-import { WidgetSize } from 'src/dto/base/widget-size.dto';
-import { CalendarChartConfig } from 'src/types/chart-config.interface';
+import { WidgetSize } from '../dto/base/widget-size.dto';
+import { CalendarChartConfig } from '../types/chart-config.interface';
 
-import { ContributionWeek } from 'src/types/contribution.interface';
+import { ContributionWeek } from '../types/contribution.interface';
 
 export const calendarProcessor = (
   contributionWeeks: ContributionWeek[],

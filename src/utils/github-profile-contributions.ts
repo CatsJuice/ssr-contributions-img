@@ -1,4 +1,8 @@
-import { ContributionDay, ContributionWeek, GithubUser } from 'src/types/contribution.interface';
+import {
+  ContributionDay,
+  ContributionWeek,
+  GithubUser,
+} from '../types/contribution.interface';
 
 const PROFILE_WEEKS_WINDOW = 53;
 const WINDOW_DAYS = 400;

@@ -2,7 +2,7 @@ import { decorate, Mixin } from 'ts-mixer';
 import { Transform } from 'class-transformer';
 import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
 import { IsEnum, IsInt, IsOptional, isArray } from 'class-validator';
-import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
+import { CalendarChart3DConfig } from '../types/chart-config.interface';
 
 import { DarkDto } from './base/dark.dto';
 import { ThemeDto } from './base/theme.dto';
@@ -11,7 +11,7 @@ import { ColorsDto } from './base/colors.dto';
 import { QualityDto } from './base/quality.dto';
 import { WidgetSizeDto } from './base/widget-size.dto';
 import { OutputFormatDto } from './base/output-format.dto';
-import { Bar3DAnimation } from 'src/types/3dbar-animation.enum';
+import { Bar3DAnimation } from '../types/3dbar-animation.enum';
 
 export enum ChartTpl {
   CALENDAR = 'calendar',

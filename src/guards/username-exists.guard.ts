@@ -6,12 +6,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ExtendedRequest } from 'src/types/extended-request.interface';
+import { ExtendedRequest } from '../types/extended-request.interface';
 import {
   buildGithubUserFromContributionDays,
   getContributionYearsForProfileWindow,
   mergeContributionDaysByDate,
-} from 'src/utils/github-profile-contributions';
+} from '../utils/github-profile-contributions';
 
 type PrivateContributionsMode = 'eligible' | 'limited' | 'disabled';
 

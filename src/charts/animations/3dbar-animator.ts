@@ -1,4 +1,4 @@
-import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
+import { CalendarChart3DConfig } from '../../types/chart-config.interface';
 import { Bar3DAnimation } from '../../types/3dbar-animation.enum';
 
 type Args = [

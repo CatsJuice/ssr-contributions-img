@@ -1,4 +1,4 @@
-import { PresetTheme } from 'src/types/theme.enum';
+import { PresetTheme } from '../types/theme.enum';
 
 export const themes: Record<PresetTheme, { dark: string[]; light: string[] }> =
   {

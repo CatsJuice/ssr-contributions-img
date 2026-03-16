@@ -1,9 +1,6 @@
-import { CalendarChart3DConfig } from 'src/types/chart-config.interface';
+import { CalendarChart3DConfig } from '../types/chart-config.interface';
 import { generate3dbarAnimation } from './animations/3dbar-animator';
-import {
-  ContributionDay,
-  ContributionWeek,
-} from 'src/types/contribution.interface';
+import { ContributionDay, ContributionWeek } from '../types/contribution.interface';
 
 function d(pathArr: number[][]) {
   return `M${pathArr.map((p) => `${fix(p[0])},${fix(p[1])}`).join(' ')} z`;
