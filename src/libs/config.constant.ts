@@ -1,4 +1,4 @@
-import { themes } from '../utils/get-theme';
+import { themes, formatPresetThemeLabel } from '../utils/get-theme';
 
 import { WidgetSize } from '../dto/base/widget-size.dto';
 import { OutputFormat } from '../dto/base/output-format.dto';
@@ -261,7 +261,10 @@ export const config: ConfigItem[] = [
     },
     optioins: Object.keys(themes).map((themeName) => ({
       value: themeName,
-      label: { en: themeName, zh: themeName },
+      label: {
+        en: formatPresetThemeLabel(themeName),
+        zh: formatPresetThemeLabel(themeName),
+      },
       info: {
         colors: themes[themeName],
       },

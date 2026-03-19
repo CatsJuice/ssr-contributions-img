@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { PresetTheme } from '../types/theme.enum';
+import { formatPresetThemeLabel } from '../utils/get-theme';
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf');
 path.resolve(process.cwd(), 'fonts', 'CascadiaCode.ttf');
@@ -19,7 +20,7 @@ export const themesProcessor = (
   );
 
   const themeCount = Object.keys(themes).length;
-  const labelWidth = 100;
+  const labelWidth = 140;
   const unit = 20;
   const padding = 20;
   const rowGap = 10;
@@ -46,7 +47,7 @@ export const themesProcessor = (
               font-family="Roboto"
               fill="${dark ? '#fff' : '#000'}"
             >
-              ${themeName}
+              ${formatPresetThemeLabel(themeName)}
             </text>`
         .trim()
         .replace(/(\n|\r|\s)+/g, ' ');
