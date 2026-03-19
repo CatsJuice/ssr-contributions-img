@@ -15,10 +15,17 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('/config (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/config')
       .expect(200)
-      .expect('Hello World!');
+      .expect((res) => {
+        expect(Array.isArray(res.body)).toBe(true);
+        expect(res.body.length).toBeGreaterThan(0);
+      });
   });
 });

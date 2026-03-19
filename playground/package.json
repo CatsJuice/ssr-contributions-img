@@ -2,6 +2,9 @@
   "name": "playground",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": "^22.0.0 || ^25.0.0"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,5 +26,6 @@
     "typescript": "^4.6.4",
     "vite": "^3.0.0",
     "vue-tsc": "^0.38.4"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }

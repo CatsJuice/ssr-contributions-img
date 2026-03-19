@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -7,6 +6,7 @@ import { allConfigs } from './config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { UsernameExistsGuard } from './guards/username-exists.guard';
+import { resolvePlaygroundDistPath } from './utils/resolve-playground-dist';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { UsernameExistsGuard } from './guards/username-exists.guard';
       load: [...allConfigs],
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../playground/dist'),
+      rootPath: resolvePlaygroundDistPath(__dirname),
     }),
   ],
   controllers: [AppController],

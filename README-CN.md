@@ -47,6 +47,8 @@
 
 ## 本地运行
 
+- **使用 Node.js `25.x`**（项目也兼容 `22.x`，但现在默认开发版本是 `25.x`）
+
 - **为 GitHub OpenAPI 准备 PAT:**
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 

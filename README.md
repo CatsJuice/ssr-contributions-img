@@ -47,6 +47,8 @@ Now you can config and preview your contribution wall in the [Playground](https:
 
 ## Run locally
 
+- **use Node.js `25.x`** (the project also keeps compatibility with `22.x`, but `25.x` is the default development target now)
+
 - **prepare your github pat for Github OpenAPI:**
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 

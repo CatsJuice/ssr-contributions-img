@@ -7,7 +7,7 @@
  */
 export const svgCode2image = async (
   svgCode: string,
-  format: string,
+  format: 'png' | 'jpeg',
   resize = 1,
   bg = '#fff',
 ) => {
