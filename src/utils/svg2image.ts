@@ -1,3 +1,22 @@
+import { injectSvgTextFontStyle } from './svg-font';
+
+type SharpFactory = typeof import('sharp');
+type SharpModule = SharpFactory | { default?: SharpFactory };
+
+export const resolveSharpFactory = (
+  sharpModule: SharpModule,
+): SharpFactory => {
+  if (typeof sharpModule === 'function') {
+    return sharpModule;
+  }
+
+  if (typeof sharpModule.default === 'function') {
+    return sharpModule.default;
+  }
+
+  throw new TypeError('Failed to resolve sharp factory from module export');
+};
+
 /**
  * Convert svg code to image buffer
  * @param svgCode
@@ -11,8 +30,9 @@ export const svgCode2image = async (
   resize = 1,
   bg = '#fff',
 ) => {
-  const { default: sharp } = await import('sharp');
-  const buf = Buffer.from(svgCode);
+  const rasterizedSvgCode = await injectSvgTextFontStyle(svgCode);
+  const sharp = resolveSharpFactory(await import('sharp'));
+  const buf = Buffer.from(rasterizedSvgCode);
   return await sharp(buf)
     .metadata()
     .then(({ width }) => {

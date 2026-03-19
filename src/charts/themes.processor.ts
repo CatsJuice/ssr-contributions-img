@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { PresetTheme } from '../types/theme.enum';
 import { formatPresetThemeLabel } from '../utils/get-theme';
+import { svgTextFontFamily } from '../utils/svg-font';
 
 path.resolve(process.cwd(), 'fonts', 'fonts.conf');
 path.resolve(process.cwd(), 'fonts', 'CascadiaCode.ttf');
@@ -44,7 +45,7 @@ export const themesProcessor = (
               font-size="12px"
               dx="${padding}"
               dy="${y + 12}"
-              font-family="Roboto"
+              font-family="${svgTextFontFamily}"
               fill="${dark ? '#fff' : '#000'}"
             >
               ${formatPresetThemeLabel(themeName)}

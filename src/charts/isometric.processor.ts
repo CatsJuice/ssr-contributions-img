@@ -8,6 +8,7 @@ import {
   ContributionDay,
   ContributionWeek,
 } from '../types/contribution.interface';
+import { svgTextFontFamily } from '../utils/svg-font';
 
 interface CubeMarkupOptions {
   color: string;
@@ -344,6 +345,7 @@ export const isometricProcessor = (
                   y: fix(legendCubeSpanHeight + legendLabelGap),
                   fill: foregroundColor,
                   'font-size': fix(legendFontSize, 0),
+                  'font-family': svgTextFontFamily,
                   'text-anchor': 'middle',
                   'dominant-baseline': 'hanging',
                 }
@@ -358,6 +360,7 @@ export const isometricProcessor = (
                   y: fix(cubeCenterY),
                   fill: foregroundColor,
                   'font-size': fix(legendFontSize, 0),
+                  'font-family': svgTextFontFamily,
                   'text-anchor':
                     legendLabelPlacement === 'left' ? 'end' : 'start',
                   'dominant-baseline': 'middle',

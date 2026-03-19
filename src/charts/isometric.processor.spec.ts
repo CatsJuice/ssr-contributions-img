@@ -71,6 +71,7 @@ describe('isometricProcessor', () => {
     expect(svgWithLegend).toContain('class="legend"');
     expect(svgWithLegend).toContain('class="legend-cube"');
     expect(svgWithLegend).toContain('class="legend-label"');
+    expect(svgWithLegend).toContain('font-family="SSRCEmbeddedFont');
     expect(svgWithLegend).toContain('>0-0</text>');
     expect(svgWithLegend).toContain('>4-4</text>');
     expect(getDimension(svgWithLegend, 'width')).toBeGreaterThan(
