@@ -1,8 +1,29 @@
-import * as moment from 'moment';
 import { WidgetSize } from '../dto/base/widget-size.dto';
 import { CalendarChartConfig } from '../types/chart-config.interface';
 
 import { ContributionWeek } from '../types/contribution.interface';
+
+function formatCurrentDate(timeZone?: string) {
+  try {
+    const parts = new Intl.DateTimeFormat('en', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date());
+    const get = (type: Intl.DateTimeFormatPartTypes) =>
+      parts.find((part) => part.type === type)?.value;
+
+    return `${get('year')}-${get('month')}-${get('day')}`;
+  } catch {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = `${today.getMonth() + 1}`.padStart(2, '0');
+    const day = `${today.getDate()}`.padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+}
 
 export const calendarProcessor = (
   contributionWeeks: ContributionWeek[],
@@ -44,7 +65,7 @@ export const calendarProcessor = (
         monthLabel: { show: false },
         range: [
           contributionWeeks[contributionWeeks.length - 1].firstDay,
-          moment().format('YYYY-MM-DD'),
+          formatCurrentDate(cfg.tz),
         ],
       },
     ],
