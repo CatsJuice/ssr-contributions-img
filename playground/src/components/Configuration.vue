@@ -75,7 +75,7 @@ const {
                 ? ConfigBoolean
                 : cfg.type === 'int' || cfg.type === 'float'
                 ? ConfigNumber
-                : cfg.type === 'colors'
+                : cfg.type === 'colors' || cfg.type === 'color'
                 ? ConfigRaw
                 : cfg.type === 'point'
                 ? ConfigPoint

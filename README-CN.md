@@ -38,18 +38,17 @@
   </picture>
 </div>
 
-
 ## 实现原理
 
 - 在 [Medium](https://medium.com/@catsjuice/fake-3d-bar-chart-with-svg-js-134684bd5100) 上查看实现原理。
 - 在 [Codepen](https://codepen.io/catsjuice/pen/MWVqNdQ) 上查看最小实现。
-
 
 ## 本地运行
 
 - **使用 Node.js `25.x`**（项目也兼容 `22.x`，但现在默认开发版本是 `25.x`）
 
 - **为 GitHub OpenAPI 准备 PAT:**
+
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
   `GITHUB_PAT` 现在是可选的。服务会优先使用 GitHub 个人主页上的 contribution graph，因此会尽量与用户主页保持一致，包括用户是否开启“显示私有贡献计数”这一偏好。PAT 只作为 GraphQL 回退和诊断用途。
@@ -67,7 +66,7 @@
   yarn start:dev
   ```
 - **在浏览器中查看效果**
-  访问 `http://localhost:${port}/_/${username}`, 
+  访问 `http://localhost:${port}/_/${username}`,
   - `port`: `.env` 文件中的`SERVE_PORT` 变量 , 默认为 `3000`
   - `username`: Github 用户名
 
@@ -224,7 +223,7 @@ ${host}/_/${username}?${queryString}
 
 </table>
 
-**3D柱状图参数:**
+**3D 柱状图参数:**
 
 <table>
   <tr>
@@ -274,6 +273,28 @@ ${host}/_/${username}?${queryString}
   </tr>
 
   <tr>
+    <td>strokeWidth</td>
+    <td><code>number</code></td>
+    <td>
+      立方体描边宽度，取值范围为 <code>0</code> 到 <code>20</code>。
+      设为 <code>0</code> 时关闭描边。若仅传入 <code>strokeColor</code>，
+      描边宽度默认使用 <code>1</code>。
+    </td>
+    <td><code>0</code></td>
+  </tr>
+
+  <tr>
+    <td>strokeColor</td>
+    <td><code>string</code></td>
+    <td>
+      立方体描边颜色。十六进制颜色值可省略 <code>#</code> 前缀，例如
+      <code>strokeColor=111827</code>。如果启用了 <code>strokeWidth</code>
+      但未显式传入该值，会自动使用比方块颜色更深的描边色。
+    </td>
+    <td><code>auto</code></td>
+  </tr>
+
+  <tr>
     <td>flatten</td>
     <td><code>number</code></td>
     <td>
@@ -297,7 +318,6 @@ ${host}/_/${username}?${queryString}
     <td><code>undefined</td></td>
   </tr>
 
-
 </table>
 
 ## 3dbar 动画
@@ -307,16 +327,19 @@ ${host}/_/${username}?${queryString}
 Enable animation by passing <code>animation</code> property, available values:
 
 - `fall` (仅入场动画)
+
   ```
   chart=3dbar&weeks=20&flatten=1&animation=fall
   ```
-  
+
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg&dark=true">
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg">
     <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg" width="400" />
   </picture>
+
 - `raise` (仅入场动画)
+
   ```
   chart=3dbar&weeks=20&flatten=1&animation=raise
   ```
@@ -326,7 +349,9 @@ Enable animation by passing <code>animation</code> property, available values:
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg">
     <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg" width="400" />
   </picture>
+
 - `wave` (循环播放)
+
   ```
   chart=3dbar&weeks=20&flatten=1&animation=wave
   ```
@@ -336,7 +361,6 @@ Enable animation by passing <code>animation</code> property, available values:
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg">
     <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=wave&format=svg" width="400" />
   </picture>
-
 
 **自定义动画细节**: (在 url 中作为 `query` 参数传递)
 
@@ -384,22 +408,17 @@ Enable animation by passing <code>animation</code> property, available values:
   </ul>
 </details>
 
-
-
-
-
-
 ## 暗黑模式
 
 实际上，图表的显示由主题（ `theme` ）决定，而主题会被颜色（ `colors` ）属性覆盖。在这里启用暗黑模式，影响的是**内置主题的配色**和输出 `jpeg` 或 `html` 时的背景颜色，而其他输出格式下，背景都是透明的，暗黑模式下的主题色可参考 [主题](#主题)
 
-
 ## 图表
 
 - **calendar**
+
   - 使用: `chart=calendar`
   - 示例
-  
+
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&quality=0.3&format=svg
     ```
@@ -411,11 +430,18 @@ Enable animation by passing <code>animation</code> property, available values:
     </picture>
 
 - **3dbar**
+
   - 使用: `chart=3dbar`
   - 示例
-  
+
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&quality=0.3&format=svg&gradient=true
+    ```
+
+    描边示例：
+
+    ```
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&strokeWidth=1.2&strokeColor=111827
     ```
 
     <picture>
@@ -424,7 +450,6 @@ Enable animation by passing <code>animation</code> property, available values:
       <img alt="3DBar" src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg" width="400" />
     </picture>
 
-
 ## 主题
 
 所有可用主题（实时更新）:
@@ -432,26 +457,26 @@ Enable animation by passing <code>animation</code> property, available values:
 - `亮色模式`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5" >
 - `暗黑模式`
-  
+
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5&dark=true" >
 
 ## 使用场景
 
 ### 贴到 Notion 的页面中
-  
-  ![notion](./assets/notion.png)
+
+![notion](./assets/notion.png)
 
 ### 作为 ios 小组件使用 [Scritable](https://apps.apple.com/cn/app/scriptable/id1405459188)
 
 **示例代码:**
 
 ```js
-let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
-  .split(",")
+let [chart, widgetSize, theme, weeks] = (args.widgetParameter || '')
+  .split(',')
   .map((v) => v.trim());
-chart = chart || "calendar";
-widgetSize = widgetSize || "midium";
-theme = theme || "green";
+chart = chart || 'calendar';
+widgetSize = widgetSize || 'midium';
+theme = theme || 'green';
 const darkMode = Device.isUsingDarkAppearance();
 let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
 
@@ -463,7 +488,7 @@ Script.setWidget(w);
 async function createWidget() {
   let w = new ListWidget();
   let random = (Math.random() * 100000000).toFixed(0);
-  let data = await new Request(url + "&random=" + random).load();
+  let data = await new Request(url + '&random=' + random).load();
   let image = Image.fromData(data);
   w.backgroundImage = image;
   return w;
@@ -480,16 +505,19 @@ async function createWidget() {
   ```
   chart=3dbar&widgetSize=large&weeks=30
   ```
+
 - `3dbar,,yellow_wine,20`
 
   ```
   chart=3dbar&theme=yellow_wine&weeks=20
   ```
+
 - `,,blue`
 
   ```
   theme=blue
   ```
+
 - `,small,purple`
 
   ```
@@ -504,16 +532,15 @@ async function createWidget() {
 ### 扁平模式
 
 - `flatten=1&format=svg`
-  
+
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=true&theme=native">
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=false&theme=native">
     <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&theme=native" width="400" />
   </picture>
 
-
 - `flatten=2&format=svg`
-  
+
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=true&theme=native">
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=false&theme=native">

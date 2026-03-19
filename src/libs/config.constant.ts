@@ -15,7 +15,7 @@ type Locale = 'en' | 'zh';
 export interface ConfigItem {
   key: keyof ConfigSvgQueryDto;
   label: Record<Locale, string>;
-  type: 'enum' | 'int' | 'float' | 'colors' | 'boolean' | 'point';
+  type: 'enum' | 'int' | 'float' | 'colors' | 'color' | 'boolean' | 'point';
   default?: any;
   required?: boolean;
   description?: Record<Locale, string>;
@@ -104,6 +104,33 @@ const bar3dCfg: ConfigItem[] = [
     description: {
       en: 'Enable the gradient mode of cubes',
       zh: '启用立方体渐变模式',
+    },
+  },
+  {
+    key: 'strokeWidth',
+    label: {
+      en: 'Stroke Width',
+      zh: '描边宽度',
+    },
+    type: 'float',
+    min: 0,
+    max: 20,
+    default: 0,
+    description: {
+      en: 'Set the outline width of cubes. Set 0 to disable the stroke.',
+      zh: '设置立方体描边宽度，设为 0 表示关闭描边。',
+    },
+  },
+  {
+    key: 'strokeColor',
+    label: {
+      en: 'Stroke Color',
+      zh: '描边颜色',
+    },
+    type: 'color',
+    description: {
+      en: 'Set the outline color of cubes. Hex values can omit "#", for example "111827".',
+      zh: '设置立方体描边颜色。十六进制颜色可省略 "#"，例如 "111827"。',
     },
   },
 

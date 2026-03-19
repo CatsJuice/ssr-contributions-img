@@ -43,13 +43,12 @@ Now you can config and preview your contribution wall in the [Playground](https:
 - Read on [Medium](https://medium.com/@catsjuice/fake-3d-bar-chart-with-svg-js-134684bd5100)
 - View minimum realization code on [Codepen](https://codepen.io/catsjuice/pen/MWVqNdQ)
 
-
-
 ## Run locally
 
 - **use Node.js `25.x`** (the project also keeps compatibility with `22.x`, but `25.x` is the default development target now)
 
 - **prepare your github pat for Github OpenAPI:**
+
   > https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
   `GITHUB_PAT` is optional now. The server prefers GitHub's profile contribution graph so the output matches the user's profile page, including whether they chose to show private contribution counts. The PAT is only used as a GraphQL fallback / diagnostic path.
@@ -67,7 +66,7 @@ Now you can config and preview your contribution wall in the [Playground](https:
   yarn start:dev
   ```
 - **try it out**
-  visit `http://localhost:${port}/_/${username}`, 
+  visit `http://localhost:${port}/_/${username}`,
   - `port`: `SERVE_PORT` variable in your `.env`, default is `3000`
   - `username`: Github username
 
@@ -81,6 +80,7 @@ ${host}/_/${username}?${queryString}
 - `queryString`
 
 **Common parameters:**
+
 <table>
   <tr>
     <th>param</th>
@@ -271,6 +271,29 @@ ${host}/_/${username}?${queryString}
   </tr>
 
   <tr>
+    <td>strokeWidth</td>
+    <td><code>number</code></td>
+    <td>
+      Cube outline width, allowed numbers from <code>0</code> to <code>20</code>.
+      Set <code>0</code> to disable the stroke. If you only pass
+      <code>strokeColor</code>, the width defaults to <code>1</code>.
+    </td>
+    <td><code>0</code></td>
+  </tr>
+
+  <tr>
+    <td>strokeColor</td>
+    <td><code>string</code></td>
+    <td>
+      Cube outline color. Hex values can omit the <code>#</code> prefix, for
+      example <code>strokeColor=111827</code>. If omitted while
+      <code>strokeWidth</code> is enabled, a darker shade of the cube color is
+      used automatically.
+    </td>
+    <td><code>auto</code></td>
+  </tr>
+
+  <tr>
     <td>flatten</td>
     <td><code>number</code></td>
     <td>
@@ -287,7 +310,6 @@ ${host}/_/${username}?${queryString}
     </td>
   </tr>
 
-
   <tr>
     <td>animation</td>
     <td><code>enum</code></td>
@@ -302,16 +324,19 @@ ${host}/_/${username}?${queryString}
 Enable animation by passing <code>animation</code> property, available values:
 
 - `fall` (apper only)
+
   ```
   chart=3dbar&weeks=20&flatten=1&animation=fall
   ```
-  
+
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg&dark=true">
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg">
     <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=fall&format=svg" width="400" />
   </picture>
+
 - `raise` (apper only)
+
   ```
   chart=3dbar&weeks=20&flatten=1&animation=raise
   ```
@@ -321,7 +346,9 @@ Enable animation by passing <code>animation</code> property, available values:
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg">
     <img src="https://ssr-contributions-svg.vercel.app/_/Catsjuice?chart=3dbar&weeks=20&flatten=1&animation=raise&format=svg" width="400" />
   </picture>
+
 - `wave` (loop)
+
   ```
   chart=3dbar&weeks=20&flatten=1&animation=wave
   ```
@@ -378,9 +405,6 @@ Enable animation by passing <code>animation</code> property, available values:
   </ul>
 </details>
 
-
-
-
 ## DarkMode
 
 In fact, the display of the chart is determined by the `theme`, which is overridden by the `color` property. Enabling dark mode here affects **the display of the built-in theme** and the **background color** when outputting `jpeg` or `html`, while the background is `transparent` in all other output formats. For more details, see [Themes](#themes)
@@ -388,26 +412,35 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 ## Charts
 
 - **calendar**
+
   - use: `chart=calendar`
   - e.g.
+
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg
     ```
-  
+
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg&dark=true">
       <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg&dark=false">
       <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=calendar&format=svg" width="400" />
     </picture>
-  
+
 - **3dbar**
+
   - use: `chart=3dbar`
   - e.g.
-  
+
     ```
     https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg
     ```
-  
+
+    Stroke example:
+
+    ```
+    https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&strokeWidth=1.2&strokeColor=111827
+    ```
+
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg&dark=true">
       <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&format=svg">
@@ -418,29 +451,28 @@ In fact, the display of the chart is determined by the `theme`, which is overrid
 
 All avaiable themes(live update):
 
-- `light`    
+- `light`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg" >
-  
 - `dark`  
   <img src="https://ssr-contributions-svg.vercel.app/themes?format=svg&quality=0.5&dark=true" >
 
 ## Examples
 
 ### pin to notion
-  
-  ![notion](./assets/notion.png)
+
+![notion](./assets/notion.png)
 
 ### Use as ios widget with [Scritable](https://apps.apple.com/us/app/scriptable/id1405459188)
 
 **code example:**
 
 ```js
-let [chart, widgetSize, theme, weeks] = (args.widgetParameter || "")
-  .split(",")
+let [chart, widgetSize, theme, weeks] = (args.widgetParameter || '')
+  .split(',')
   .map((v) => v.trim());
-chart = chart || "calendar";
-widgetSize = widgetSize || "medium";
-theme = theme || "green";
+chart = chart || 'calendar';
+widgetSize = widgetSize || 'medium';
+theme = theme || 'green';
 const darkMode = Device.isUsingDarkAppearance();
 let url = `https://ssr-contributions-svg.vercel.app/_/CatsJuice?format=jpeg&quality=2&theme=${theme}&widget_size=${widgetSize}&chart=${chart}&dark=${darkMode}`;
 
@@ -452,7 +484,7 @@ Script.setWidget(w);
 async function createWidget() {
   let w = new ListWidget();
   let random = (Math.random() * 100000000).toFixed(0);
-  let data = await new Request(url + "&random=" + random).load();
+  let data = await new Request(url + '&random=' + random).load();
   let image = Image.fromData(data);
   w.backgroundImage = image;
   return w;
@@ -465,22 +497,25 @@ Add scritable widget to home screen, and select script in widget configuration.
 The above script relies on the input of the `parameter` parameter, filling in `chart`, `widgetSize`, `theme`, `weeks` in order using the `,` division. here are some examples:
 
 - `3dbar,large,,30`
-  
+
   ```
   chart=3dbar&widgetSize=large&weeks=30
   ```
+
 - `3dbar,,yellow_wine,20`
-  
+
   ```
   chart=3dbar&theme=yellow_wine&weeks=20
   ```
+
 - `,,blue`
-  
+
   ```
   theme=blue
   ```
+
 - `,small,purple`
-  
+
   ```
   widgetSize=small&theme=purple
   ```
@@ -493,16 +528,15 @@ The above script relies on the input of the `parameter` parameter, filling in `c
 ### flatten-mode
 
 - `flatten=1&format=svg`
-  
+
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=true&theme=native">
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&dark=false&theme=native">
     <img src="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=1&format=svg&theme=native" width="400" />
   </picture>
 
-
 - `flatten=2&format=svg`
-  
+
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=true&theme=native">
     <source media="(prefers-color-scheme: light)" srcset="https://ssr-contributions-svg.vercel.app/_/CatsJuice?chart=3dbar&flatten=2&format=svg&dark=false&theme=native">

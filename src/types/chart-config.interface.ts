@@ -31,6 +31,8 @@ export interface CalendarChart3DConfig extends BaseChartConfig {
   weeks?: number;
   light?: number;
   gradient?: boolean;
+  strokeWidth?: number;
+  strokeColor?: string;
   flatten?: number;
   animation?: Bar3DAnimation;
   animation_duration?: number;

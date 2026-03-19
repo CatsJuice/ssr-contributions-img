@@ -1,6 +1,9 @@
 import { CalendarChart3DConfig } from '../types/chart-config.interface';
 import { generate3dbarAnimation } from './animations/3dbar-animator';
-import { ContributionDay, ContributionWeek } from '../types/contribution.interface';
+import {
+  ContributionDay,
+  ContributionWeek,
+} from '../types/contribution.interface';
 
 function d(pathArr: number[][]) {
   return `M${pathArr.map((p) => `${fix(p[0])},${fix(p[1])}`).join(' ')} z`;
@@ -47,6 +50,10 @@ export const isometricProcessor = (
 ) => {
   const { scale, colors, gap, light, gradient } = cfg;
   const weekCount = cfg.weeks;
+  const strokeWidth =
+    cfg.strokeWidth !== undefined || cfg.strokeColor
+      ? Math.max(cfg.strokeWidth ?? 1, 0)
+      : 0;
 
   const maxHeight = 80;
   const minHeight = 3.2;
@@ -140,10 +147,18 @@ export const isometricProcessor = (
     const fillRight = gradientMode
       ? `url(#gradient_right_${level - 1})`
       : shadeColorRight(color);
+    const stroke =
+      strokeWidth > 0
+        ? {
+            stroke: cfg.strokeColor || shadeColor(color, -(25 + light)),
+            'stroke-width': fix(strokeWidth),
+            'stroke-linejoin': 'round',
+          }
+        : {};
     const gs = [
-      { d: d(face_l), fill: fillLeft },
-      { d: d(face_r), fill: fillRight },
-      { d: d(face_t), fill: fillTop },
+      { d: d(face_l), fill: fillLeft, ...stroke },
+      { d: d(face_r), fill: fillRight, ...stroke },
+      { d: d(face_t), fill: fillTop, ...stroke },
     ];
     const paths = gs.map((g) => el('path', g));
     return el('g', info, paths);

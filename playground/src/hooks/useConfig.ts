@@ -15,7 +15,7 @@ interface Choice {
 export interface ConfigItem {
   key: string;
   label: any | string;
-  type: 'enum' | 'int' | 'float' | 'colors' | 'boolean' | 'point';
+  type: 'enum' | 'int' | 'float' | 'colors' | 'color' | 'boolean' | 'point';
   default?: any;
   required?: boolean;
   description?: any;
@@ -98,7 +98,10 @@ export function useConfig() {
   });
   const queryStr = computed(() => {
     return Object.entries(query.value)
-      .map(([key, value]) => `${key}=${value}`)
+      .map(
+        ([key, value]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+      )
       .join('&');
   });
   const confirmDisabled = computed(

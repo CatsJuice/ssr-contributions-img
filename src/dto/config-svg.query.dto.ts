@@ -1,6 +1,6 @@
 import { decorate, Mixin } from 'ts-mixer';
 import { Transform } from 'class-transformer';
-import { IsNumber, Min, Max, IsBoolean } from 'class-validator';
+import { IsNumber, Min, Max, IsBoolean, IsString } from 'class-validator';
 import { IsEnum, IsInt, IsOptional, isArray } from 'class-validator';
 import { CalendarChart3DConfig } from '../types/chart-config.interface';
 
@@ -17,6 +17,17 @@ export enum ChartTpl {
   CALENDAR = 'calendar',
   BAR3D = '3dbar',
 }
+
+const normalizeColorInput = (value: unknown) => {
+  if (typeof value !== 'string') return value;
+  const normalized = value.trim();
+  if (!normalized) return undefined;
+  return /^(?:[\da-fA-F]{3}|[\da-fA-F]{4}|[\da-fA-F]{6}|[\da-fA-F]{8})$/.test(
+    normalized,
+  )
+    ? `#${normalized}`
+    : normalized;
+};
 
 /**
  * 3D bar chart config
@@ -46,6 +57,18 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(Transform(({ value }) => value && value.toLowerCase() === 'true'))
   @decorate(IsBoolean())
   gradient?: boolean;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => parseFloat(value)))
+  @decorate(IsNumber())
+  @decorate(Min(0))
+  @decorate(Max(20))
+  strokeWidth?: number;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => normalizeColorInput(value)))
+  @decorate(IsString())
+  strokeColor?: string;
 
   @decorate(IsOptional())
   @decorate(Transform(({ value }) => parseInt(value)))

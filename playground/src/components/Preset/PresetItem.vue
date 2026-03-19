@@ -67,12 +67,17 @@ const query = computed(() => {
 });
 const queryStr = computed(() => {
   return Object.entries(query.value)
-    .map(([key, value]) => `${key}=${value}`)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    )
     .join('&');
 });
 
 const src = computed(() => {
-  return validatePath(`${getApiPath(`/_/${username.value}`)}?${queryStr.value}`);
+  return validatePath(
+    `${getApiPath(`/_/${username.value}`)}?${queryStr.value}`,
+  );
 });
 </script>
 
