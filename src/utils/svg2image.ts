@@ -1,4 +1,7 @@
-import { injectSvgTextFontStyle } from './svg-font';
+import {
+  configureSharpFontEnvironment,
+  injectSvgTextFontStyle,
+} from './svg-font';
 
 type SharpFactory = typeof import('sharp');
 type SharpModule = SharpFactory | { default?: SharpFactory };
@@ -30,6 +33,7 @@ export const svgCode2image = async (
   resize = 1,
   bg = '#fff',
 ) => {
+  await configureSharpFontEnvironment();
   const rasterizedSvgCode = await injectSvgTextFontStyle(svgCode);
   const sharp = resolveSharpFactory(await import('sharp'));
   const buf = Buffer.from(rasterizedSvgCode);

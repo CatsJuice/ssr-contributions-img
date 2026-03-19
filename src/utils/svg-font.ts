@@ -1,9 +1,13 @@
 import * as path from 'path';
 import { access } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import { readFile } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 
 const embeddedSvgFontFamily = 'SSRCEmbeddedFont';
 const embeddedSvgFontFile = path.join('fonts', 'CascadiaCode.ttf');
+const fontCacheDir = path.join('/tmp', 'fonts-cache');
+const fontConfigPath = path.join('/tmp', 'ssr-contributions-fonts.conf');
 
 export const svgTextFontFamily = [
   embeddedSvgFontFamily,
@@ -22,6 +26,7 @@ export const svgTextFontFamily = [
 ].join(', ');
 
 let rasterizationStylePromise: Promise<string> | null = null;
+let fontConfigPromise: Promise<void> | null = null;
 
 export const getEmbeddedSvgFontPathCandidates = () => {
   const cwd = process.cwd();
@@ -35,7 +40,7 @@ export const getEmbeddedSvgFontPathCandidates = () => {
   ])];
 };
 
-const resolveEmbeddedSvgFontPath = async () => {
+export const resolveEmbeddedSvgFontPath = async () => {
   for (const candidatePath of getEmbeddedSvgFontPathCandidates()) {
     try {
       await access(candidatePath);
@@ -44,6 +49,35 @@ const resolveEmbeddedSvgFontPath = async () => {
   }
 
   return null;
+};
+
+export const buildFontConfigXml = (fontDir: string) => `<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <dir>${fontDir}</dir>
+  <cachedir>${fontCacheDir}</cachedir>
+  <config></config>
+</fontconfig>
+`;
+
+export const configureSharpFontEnvironment = async () => {
+  if (!fontConfigPromise) {
+    fontConfigPromise = (async () => {
+      const embeddedFontPath = await resolveEmbeddedSvgFontPath();
+      if (!embeddedFontPath) return;
+
+      await mkdir(fontCacheDir, { recursive: true });
+      await writeFile(
+        fontConfigPath,
+        buildFontConfigXml(path.dirname(embeddedFontPath)),
+      );
+
+      process.env.FONTCONFIG_FILE = fontConfigPath;
+      process.env.FONTCONFIG_PATH = path.dirname(fontConfigPath);
+    })();
+  }
+
+  return fontConfigPromise;
 };
 
 const getEmbeddedSvgFontFace = async () => {

@@ -1,6 +1,9 @@
 import {
+  buildFontConfigXml,
+  configureSharpFontEnvironment,
   getEmbeddedSvgFontPathCandidates,
   injectSvgTextFontStyle,
+  resolveEmbeddedSvgFontPath,
   svgTextFontFamily,
 } from './svg-font';
 
@@ -13,6 +16,23 @@ describe('injectSvgTextFontStyle', () => {
       true,
     );
     expect(new Set(candidates).size).toBe(candidates.length);
+  });
+
+  it('should build a fontconfig file for the embedded font directory', () => {
+    const xml = buildFontConfigXml('/var/task/fonts');
+
+    expect(xml).toContain('<dir>/var/task/fonts</dir>');
+    expect(xml).toContain('<cachedir>/tmp/fonts-cache</cachedir>');
+  });
+
+  it('should configure fontconfig env vars when the embedded font exists', async () => {
+    const embeddedFontPath = await resolveEmbeddedSvgFontPath();
+
+    expect(embeddedFontPath).toBeTruthy();
+    await configureSharpFontEnvironment();
+
+    expect(process.env.FONTCONFIG_FILE).toBe('/tmp/ssr-contributions-fonts.conf');
+    expect(process.env.FONTCONFIG_PATH).toBe('/tmp');
   });
 
   it('should inject a rasterization font style into svg markup', async () => {
