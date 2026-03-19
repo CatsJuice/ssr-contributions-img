@@ -2,6 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd playground && yarn install --frozen-lockfile --production=false && yarn build",
   "outputDirectory": "playground/dist",
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "fonts/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/_/:username",

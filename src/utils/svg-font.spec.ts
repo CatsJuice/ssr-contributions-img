@@ -1,6 +1,20 @@
-import { injectSvgTextFontStyle, svgTextFontFamily } from './svg-font';
+import {
+  getEmbeddedSvgFontPathCandidates,
+  injectSvgTextFontStyle,
+  svgTextFontFamily,
+} from './svg-font';
 
 describe('injectSvgTextFontStyle', () => {
+  it('should probe font paths from cwd and compiled locations', () => {
+    const candidates = getEmbeddedSvgFontPathCandidates();
+
+    expect(candidates.length).toBeGreaterThan(0);
+    expect(candidates.some((item) => item.endsWith('fonts/CascadiaCode.ttf'))).toBe(
+      true,
+    );
+    expect(new Set(candidates).size).toBe(candidates.length);
+  });
+
   it('should inject a rasterization font style into svg markup', async () => {
     const svg =
       '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="32"><text x="0" y="16">图例</text></svg>';

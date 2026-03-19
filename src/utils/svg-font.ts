@@ -1,12 +1,9 @@
 import * as path from 'path';
+import { access } from 'fs/promises';
 import { readFile } from 'fs/promises';
 
 const embeddedSvgFontFamily = 'SSRCEmbeddedFont';
-const embeddedSvgFontPath = path.resolve(
-  process.cwd(),
-  'fonts',
-  'CascadiaCode.ttf',
-);
+const embeddedSvgFontFile = path.join('fonts', 'CascadiaCode.ttf');
 
 export const svgTextFontFamily = [
   embeddedSvgFontFamily,
@@ -26,8 +23,34 @@ export const svgTextFontFamily = [
 
 let rasterizationStylePromise: Promise<string> | null = null;
 
+export const getEmbeddedSvgFontPathCandidates = () => {
+  const cwd = process.cwd();
+  const dir = __dirname;
+
+  return [...new Set([
+    path.resolve(cwd, embeddedSvgFontFile),
+    path.resolve(dir, '..', '..', embeddedSvgFontFile),
+    path.resolve(dir, '..', '..', '..', embeddedSvgFontFile),
+    path.resolve(dir, embeddedSvgFontFile),
+  ])];
+};
+
+const resolveEmbeddedSvgFontPath = async () => {
+  for (const candidatePath of getEmbeddedSvgFontPathCandidates()) {
+    try {
+      await access(candidatePath);
+      return candidatePath;
+    } catch {}
+  }
+
+  return null;
+};
+
 const getEmbeddedSvgFontFace = async () => {
   try {
+    const embeddedSvgFontPath = await resolveEmbeddedSvgFontPath();
+    if (!embeddedSvgFontPath) return '';
+
     const fontBuffer = await readFile(embeddedSvgFontPath);
     return `@font-face{font-family:${embeddedSvgFontFamily};src:url("data:font/ttf;base64,${fontBuffer.toString(
       'base64',
