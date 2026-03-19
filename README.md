@@ -271,6 +271,46 @@ ${host}/_/${username}?${queryString}
   </tr>
 
   <tr>
+    <td>legend</td>
+    <td><code>boolean</code></td>
+    <td>
+      Toggle the 3D cube legend. The legacy alias <code>lengend</code> is also accepted.
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
+  <tr>
+    <td>legendPosition</td>
+    <td><code>enum</code></td>
+    <td>
+      Choose where the cube legend is rendered: <code>top</code>, <code>right</code>,
+      <code>bottom</code>, <code>left</code>, <code>topRight</code>,
+      <code>bottomLeft</code>. The last two reuse the chart's empty corners and do not
+      increase the canvas size.
+    </td>
+    <td><code>right</code></td>
+  </tr>
+
+  <tr>
+    <td>legendDirection</td>
+    <td><code>enum</code></td>
+    <td>
+      Arrange legend cubes by <code>row</code> or <code>column</code>
+    </td>
+    <td><code>column</code></td>
+  </tr>
+
+  <tr>
+    <td>foregroundColor</td>
+    <td><code>string</code></td>
+    <td>
+      Legend text color. Defaults to <code>#222</code> in light mode and
+      <code>#ddd</code> in dark mode.
+    </td>
+    <td><code>auto</code></td>
+  </tr>
+
+  <tr>
     <td>strokeWidth</td>
     <td><code>number</code></td>
     <td>

@@ -9,6 +9,10 @@ import { cubeAnimationWaveCfgs } from './animation-config/cube-wave.config';
 import { cubeAnimationMessCfgs } from './animation-config/cube-mass.config';
 import { cubeAnimationSpinCfgs } from './animation-config/cube-spin.config';
 import { cubeAnimationFadeCfgs } from './animation-config/cube-fade.config';
+import {
+  Bar3DLegendDirection,
+  Bar3DLegendPosition,
+} from '../types/3dbar-legend.enum';
 
 type Locale = 'en' | 'zh';
 
@@ -104,6 +108,93 @@ const bar3dCfg: ConfigItem[] = [
     description: {
       en: 'Enable the gradient mode of cubes',
       zh: '启用立方体渐变模式',
+    },
+  },
+  {
+    key: 'legend',
+    label: {
+      en: 'Legend',
+      zh: '图例',
+    },
+    type: 'boolean',
+    default: false,
+    description: {
+      en: 'Toggle the 3D cube legend',
+      zh: '切换 3D 立方体图例',
+    },
+  },
+  {
+    key: 'legendPosition',
+    label: {
+      en: 'Legend Position',
+      zh: '图例位置',
+    },
+    type: 'enum',
+    default: Bar3DLegendPosition.RIGHT,
+    description: {
+      en: 'Set where the 3D legend is rendered',
+      zh: '设置 3D 图例的摆放位置',
+    },
+    optioins: [
+      {
+        value: Bar3DLegendPosition.TOP,
+        label: { en: 'Top', zh: '顶部' },
+      },
+      {
+        value: Bar3DLegendPosition.RIGHT,
+        label: { en: 'Right', zh: '右侧' },
+      },
+      {
+        value: Bar3DLegendPosition.BOTTOM,
+        label: { en: 'Bottom', zh: '底部' },
+      },
+      {
+        value: Bar3DLegendPosition.LEFT,
+        label: { en: 'Left', zh: '左侧' },
+      },
+      {
+        value: Bar3DLegendPosition.TOP_RIGHT,
+        label: { en: 'Top Right', zh: '右上角' },
+      },
+      {
+        value: Bar3DLegendPosition.BOTTOM_LEFT,
+        label: { en: 'Bottom Left', zh: '左下角' },
+      },
+    ],
+  },
+  {
+    key: 'legendDirection',
+    label: {
+      en: 'Legend Direction',
+      zh: '图例排列',
+    },
+    type: 'enum',
+    default: Bar3DLegendDirection.COLUMN,
+    description: {
+      en: 'Set how legend cubes are arranged',
+      zh: '设置图例立方体的排列方向',
+    },
+    optioins: [
+      {
+        value: Bar3DLegendDirection.ROW,
+        label: { en: 'Row', zh: '横向' },
+      },
+      {
+        value: Bar3DLegendDirection.COLUMN,
+        label: { en: 'Column', zh: '纵向' },
+      },
+    ],
+  },
+  {
+    key: 'foregroundColor',
+    label: {
+      en: 'Foreground Color',
+      zh: '前景文字颜色',
+    },
+    type: 'color',
+    description: {
+      en: 'Set the legend text color. Defaults to #222 in light mode and #ddd in dark mode.',
+      zh: '设置图例文字颜色。默认浅色模式为 #222，深色模式为 #ddd。',
     },
   },
   {

@@ -273,6 +273,45 @@ ${host}/_/${username}?${queryString}
   </tr>
 
   <tr>
+    <td>legend</td>
+    <td><code>boolean</code></td>
+    <td>
+      切换 3D 立方体图例。兼容旧拼写别名 <code>lengend</code>。
+    </td>
+    <td><code>false</code></td>
+  </tr>
+
+  <tr>
+    <td>legendPosition</td>
+    <td><code>enum</code></td>
+    <td>
+      设置图例位置，可选 <code>top</code>、<code>right</code>、<code>bottom</code>、
+      <code>left</code>、<code>topRight</code>、<code>bottomLeft</code>。
+      后两者会直接使用图表右上角和左下角的空白区域，不会额外扩大画布。
+    </td>
+    <td><code>right</code></td>
+  </tr>
+
+  <tr>
+    <td>legendDirection</td>
+    <td><code>enum</code></td>
+    <td>
+      设置图例立方体排列方向，可选 <code>row</code> 或 <code>column</code>
+    </td>
+    <td><code>column</code></td>
+  </tr>
+
+  <tr>
+    <td>foregroundColor</td>
+    <td><code>string</code></td>
+    <td>
+      图例文字颜色。浅色模式默认 <code>#222</code>，深色模式默认
+      <code>#ddd</code>。
+    </td>
+    <td><code>auto</code></td>
+  </tr>
+
+  <tr>
     <td>strokeWidth</td>
     <td><code>number</code></td>
     <td>

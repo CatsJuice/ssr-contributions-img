@@ -12,6 +12,10 @@ import { QualityDto } from './base/quality.dto';
 import { WidgetSizeDto } from './base/widget-size.dto';
 import { OutputFormatDto } from './base/output-format.dto';
 import { Bar3DAnimation } from '../types/3dbar-animation.enum';
+import {
+  Bar3DLegendDirection,
+  Bar3DLegendPosition,
+} from '../types/3dbar-legend.enum';
 
 export enum ChartTpl {
   CALENDAR = 'calendar',
@@ -27,6 +31,35 @@ const normalizeColorInput = (value: unknown) => {
   )
     ? `#${normalized}`
     : normalized;
+};
+
+const normalizeBooleanInput = (value: unknown) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') return value.trim().toLowerCase() === 'true';
+  return value;
+};
+
+const normalizeEnumInput = (value: unknown) => {
+  if (typeof value !== 'string') return value;
+  const normalized = value.trim().toLowerCase();
+  return normalized || undefined;
+};
+
+const normalizeLegendPositionInput = (value: unknown) => {
+  if (typeof value !== 'string') return value;
+  const normalized = value.trim().toLowerCase().replace(/[_-]/g, '');
+  if (!normalized) return undefined;
+
+  return (
+    {
+      top: Bar3DLegendPosition.TOP,
+      right: Bar3DLegendPosition.RIGHT,
+      bottom: Bar3DLegendPosition.BOTTOM,
+      left: Bar3DLegendPosition.LEFT,
+      topright: Bar3DLegendPosition.TOP_RIGHT,
+      bottomleft: Bar3DLegendPosition.BOTTOM_LEFT,
+    }[normalized] || value
+  );
 };
 
 /**
@@ -57,6 +90,28 @@ class Bar3DQueryDto implements CalendarChart3DConfig {
   @decorate(Transform(({ value }) => value && value.toLowerCase() === 'true'))
   @decorate(IsBoolean())
   gradient?: boolean;
+
+  @decorate(IsOptional())
+  @decorate(
+    Transform(({ value, obj }) => normalizeBooleanInput(value ?? obj?.lengend)),
+  )
+  @decorate(IsBoolean())
+  legend?: boolean;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => normalizeLegendPositionInput(value)))
+  @decorate(IsEnum(Bar3DLegendPosition))
+  legendPosition?: Bar3DLegendPosition;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => normalizeEnumInput(value)))
+  @decorate(IsEnum(Bar3DLegendDirection))
+  legendDirection?: Bar3DLegendDirection;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => normalizeColorInput(value)))
+  @decorate(IsString())
+  foregroundColor?: string;
 
   @decorate(IsOptional())
   @decorate(Transform(({ value }) => parseFloat(value)))

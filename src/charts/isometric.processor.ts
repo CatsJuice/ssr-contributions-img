@@ -1,9 +1,27 @@
 import { CalendarChart3DConfig } from '../types/chart-config.interface';
+import {
+  Bar3DLegendDirection,
+  Bar3DLegendPosition,
+} from '../types/3dbar-legend.enum';
 import { generate3dbarAnimation } from './animations/3dbar-animator';
 import {
   ContributionDay,
   ContributionWeek,
 } from '../types/contribution.interface';
+
+interface CubeMarkupOptions {
+  color: string;
+  height: number;
+  level: number;
+  className: string;
+  ox: number;
+  oy: number;
+  sizeX: number;
+  sizeY: number;
+  data?: Record<string, number | string>;
+}
+
+type LegendLabelPlacement = 'below' | 'left' | 'right';
 
 function d(pathArr: number[][]) {
   return `M${pathArr.map((p) => `${fix(p[0])},${fix(p[1])}`).join(' ')} z`;
@@ -19,7 +37,7 @@ function el(
     .join(' ')}>${children.join('')}</${name}>`;
 }
 
-function shadeColor(color, percent) {
+function shadeColor(color: string, percent: number) {
   let R = parseInt(color.substring(1, 3), 16);
   let G = parseInt(color.substring(3, 5), 16);
   let B = parseInt(color.substring(5, 7), 16);
@@ -39,17 +57,33 @@ function shadeColor(color, percent) {
   return '#' + RR + GG + BB;
 }
 
-function fix(num, len = 2) {
+function fix(num: number, len = 2) {
   return num.toFixed(len);
 }
 
 export const isometricProcessor = (
-  contributiuonWeeks: ContributionWeek[],
+  contributionWeeks: ContributionWeek[],
   max: number,
   cfg: CalendarChart3DConfig = {},
 ) => {
-  const { scale, colors, gap, light, gradient } = cfg;
-  const weekCount = cfg.weeks;
+  const palette = cfg.colors?.length ? cfg.colors : ['#ebedf0'];
+  const scale = cfg.scale || 2;
+  const gap = cfg.gap ?? 1.2;
+  const light = cfg.light ?? 10;
+  const gradient = !!cfg.gradient;
+  const legendEnabled = !!cfg.legend;
+  const legendPosition = cfg.legendPosition || Bar3DLegendPosition.RIGHT;
+  const legendDirection = cfg.legendDirection || Bar3DLegendDirection.COLUMN;
+  const foregroundColor = cfg.foregroundColor || (cfg.dark ? '#ddd' : '#222');
+  const legendOnRight = [
+    Bar3DLegendPosition.RIGHT,
+    Bar3DLegendPosition.TOP_RIGHT,
+  ].includes(legendPosition);
+  const legendOverlayPosition = [
+    Bar3DLegendPosition.TOP_RIGHT,
+    Bar3DLegendPosition.BOTTOM_LEFT,
+  ].includes(legendPosition);
+  const weekCount = contributionWeeks.length;
   const strokeWidth =
     cfg.strokeWidth !== undefined || cfg.strokeColor
       ? Math.max(cfg.strokeWidth ?? 1, 0)
@@ -57,25 +91,24 @@ export const isometricProcessor = (
 
   const maxHeight = 80;
   const minHeight = 3.2;
-  const size = 16;
-
   const sizeX = 16;
   const sizeY = sizeX / scale;
-  const colNum = contributiuonWeeks.length;
+  const stepX = sizeX + gap;
+  const stepY = sizeY + gap;
   const rowNum = 7;
-  const svgWidth = (sizeX + gap) * (colNum + rowNum);
-  const svgHeight = (sizeY + gap) * (colNum + rowNum) + maxHeight;
-  const translateX = rowNum * (sizeX + gap);
-  const translateY = maxHeight;
+  const colNum = contributionWeeks.length;
+  const chartWidth = stepX * (colNum + rowNum);
+  const chartHeight = stepY * (colNum + rowNum) + maxHeight;
+  const chartTranslateX = rowNum * stepX;
+  const chartTranslateY = maxHeight;
 
-  const shadeColorLeft = (color) => shadeColor(color, -(15 + light));
-  const shadeColorRight = (color) => shadeColor(color, -(5 + light));
-  const shadeColorTop = (color) => shadeColor(color, -10 + light);
+  const shadeColorLeft = (color: string) => shadeColor(color, -(15 + light));
+  const shadeColorRight = (color: string) => shadeColor(color, -(5 + light));
+  const shadeColorTop = (color: string) => shadeColor(color, -10 + light);
 
-  // generate gradient defs
   const gradientArr = gradient
-    ? colors.slice(1).map((color, index) => {
-        const subColors = colors.slice(1, 1 + index + 1).reverse();
+    ? palette.slice(1).map((color, index) => {
+        const subColors = palette.slice(1, 1 + index + 1).reverse();
         const sides = ['left', 'right'];
         return sides
           .map((side) => {
@@ -87,8 +120,8 @@ export const isometricProcessor = (
                 }" />
                 <stop offset="100%" stop-color="${
                   side === 'left'
-                    ? shadeColorLeft(subColors[1] || '')
-                    : shadeColorRight(subColors[1] || '')
+                    ? shadeColorLeft(subColors[1] || subColors[0])
+                    : shadeColorRight(subColors[1] || subColors[0])
                 }" />
               </linearGradient>`;
           })
@@ -97,34 +130,29 @@ export const isometricProcessor = (
     : [];
 
   const coord = (day: ContributionDay) => {
-    const i = Math.ceil((day.contributionCount / max) * (colors.length - 1));
-    const _h = Math.ceil((day.contributionCount / max) * maxHeight);
-    let height = _h ? _h + minHeight : minHeight;
+    const ratio = max > 0 ? day.contributionCount / max : 0;
+    const level = Math.ceil(ratio * (palette.length - 1));
+    const color = palette[Math.max(0, Math.min(level, palette.length - 1))];
+    const rawHeight = Math.ceil(ratio * maxHeight);
+    let height = rawHeight ? rawHeight + minHeight : minHeight;
     if (cfg.flatten) {
       height =
-        cfg.flatten === 2 ? (minHeight === height ? minHeight : size) : size;
+        cfg.flatten === 2 ? (minHeight === height ? minHeight : sizeX) : sizeX;
     }
-    return {
-      level: i,
-      color: colors[Math.max(0, Math.min(i, colors.length - 1))],
-      height,
-    };
+    return { level, color, height };
   };
 
-  const coordIndex = (rowIndex, colIndex) => [
-    (rowIndex - colIndex) * (sizeX + gap),
-    (rowIndex + colIndex) * (sizeY + gap),
-  ];
-
-  const dayBuilder = (
-    contributionDay: ContributionDay,
-    weekIndex,
-    dayIndex,
-  ) => {
-    const [ox, oy] = coordIndex(weekIndex, dayIndex);
-    const { level, color, height } = coord(contributionDay);
-
-    // const pO = [ox, oy];
+  const cubeBuilder = ({
+    color,
+    height,
+    level,
+    className,
+    ox,
+    oy,
+    sizeX,
+    sizeY,
+    data = {},
+  }: CubeMarkupOptions) => {
     const pA = [ox - sizeX, oy + sizeY];
     const pB = [ox, oy + 2 * sizeY];
     const pC = [ox + sizeX, oy + sizeY];
@@ -133,13 +161,11 @@ export const isometricProcessor = (
     const pF = [ox + sizeX, oy - height + sizeY];
     const pG = [ox, oy - height];
 
-    const face_l = [pE, pD, pA, pB];
-    const face_r = [pE, pF, pC, pB];
-    const face_t = [pE, pD, pG, pF];
+    const faceLeft = [pE, pD, pA, pB];
+    const faceRight = [pE, pF, pC, pB];
+    const faceTop = [pE, pD, pG, pF];
 
-    const info = { 'data-week': weekIndex, 'data-day': dayIndex, class: 'day' };
-    const gradientMode =
-      gradient && contributionDay.contributionCount && level > 1;
+    const gradientMode = gradient && level > 1;
     const fillTop = shadeColorTop(color);
     const fillLeft = gradientMode
       ? `url(#gradient_left_${level - 1})`
@@ -155,23 +181,258 @@ export const isometricProcessor = (
             'stroke-linejoin': 'round',
           }
         : {};
-    const gs = [
-      { d: d(face_l), fill: fillLeft, ...stroke },
-      { d: d(face_r), fill: fillRight, ...stroke },
-      { d: d(face_t), fill: fillTop, ...stroke },
-    ];
-    const paths = gs.map((g) => el('path', g));
-    return el('g', info, paths);
+    const attrs = Object.entries(data).reduce(
+      (res, [key, value]) => ({
+        ...res,
+        [`data-${key}`]: value,
+      }),
+      { class: className } as Record<string, number | string>,
+    );
+    const paths = [
+      { d: d(faceLeft), fill: fillLeft, ...stroke },
+      { d: d(faceRight), fill: fillRight, ...stroke },
+      { d: d(faceTop), fill: fillTop, ...stroke },
+    ].map((g) => el('path', g));
+    return el('g', attrs, paths);
   };
 
-  const weekBuilder = (contributiuonWeek: ContributionWeek, weekIndex) => {
-    return contributiuonWeek.contributionDays
+  const coordIndex = (rowIndex: number, colIndex: number) => [
+    (rowIndex - colIndex) * stepX,
+    (rowIndex + colIndex) * stepY,
+  ];
+
+  const dayBuilder = (
+    contributionDay: ContributionDay,
+    weekIndex: number,
+    dayIndex: number,
+  ) => {
+    const [ox, oy] = coordIndex(weekIndex, dayIndex);
+    const { level, color, height } = coord(contributionDay);
+    return cubeBuilder({
+      ox,
+      oy,
+      color,
+      height,
+      level,
+      sizeX,
+      sizeY,
+      className: 'day',
+      data: {
+        week: weekIndex,
+        day: dayIndex,
+        level,
+      },
+    });
+  };
+
+  const weekBuilder = (contributionWeek: ContributionWeek, weekIndex: number) =>
+    contributionWeek.contributionDays
       .map((day, dayIndex) => dayBuilder(day, weekIndex, dayIndex))
       .join('\n');
-  };
 
-  // const svgWidth = fix((weekCount + 7) * (size + gap));
-  // const svgHeight = fix((weekCount + 9) * (size / scale + gap) + maxHeight * 2);
+  const legendCubeSizeX = sizeX * 0.72;
+  const legendCubeSizeY = legendCubeSizeX / scale;
+  const legendHeightStep = Math.max(3, legendCubeSizeX * 0.35);
+  const legendFontSize = 9;
+  const legendLabelGap = 6;
+  const legendTextHeight = legendFontSize + 3;
+  const legendHeights = palette.map(
+    (_, index) => minHeight + index * legendHeightStep,
+  );
+  const legendMaxCubeHeight =
+    legendHeights[legendHeights.length - 1] || minHeight;
+  const legendCubeSpanWidth = legendCubeSizeX * 2;
+  const legendCubeSpanHeight = legendMaxCubeHeight + legendCubeSizeY * 2;
+  const legendPadding = 4;
+  const legendSpacing = Math.max(8, gap * 4);
+  const legendLabelPlacement: LegendLabelPlacement =
+    legendDirection === Bar3DLegendDirection.ROW
+      ? 'below'
+      : legendOnRight
+      ? 'left'
+      : 'right';
+  const legendRangeLabel = (level: number) => {
+    if (max <= 0) return '0-0';
+    if (level === 0) return '0-0';
+    const stepCount = Math.max(palette.length - 1, 1);
+    const from = Math.floor(((level - 1) * max) / stepCount) + 1;
+    const to =
+      level === stepCount
+        ? max
+        : Math.max(from, Math.floor((level * max) / stepCount));
+    return `${from}-${to}`;
+  };
+  const estimateTextWidth = (text: string) =>
+    Math.max(text.length * legendFontSize * 0.62, legendFontSize * 2.4);
+  const legendLabels = palette.map((_, index) => legendRangeLabel(index));
+  const legendLabelWidths = legendLabels.map(estimateTextWidth);
+  const legendLabelMaxWidth = Math.max(...legendLabelWidths, 0);
+  const legendSideTextWidth =
+    legendLabelPlacement === 'below' ? 0 : legendLabelMaxWidth;
+  const legendBelowTextWidth =
+    legendLabelPlacement === 'below' ? legendLabelMaxWidth : 0;
+  const legendCellWidth =
+    Math.max(legendCubeSpanWidth, legendBelowTextWidth) +
+    (legendLabelPlacement === 'below'
+      ? legendSpacing
+      : legendSideTextWidth + legendLabelGap + legendSpacing);
+  const legendCellHeight =
+    Math.max(legendCubeSpanHeight, legendTextHeight) +
+    (legendLabelPlacement === 'below'
+      ? legendTextHeight + legendLabelGap + legendSpacing
+      : legendSpacing);
+  const legendWidth = legendEnabled
+    ? legendPadding * 2 +
+      (legendDirection === Bar3DLegendDirection.ROW
+        ? legendCellWidth * palette.length
+        : legendCellWidth)
+    : 0;
+  const legendHeight = legendEnabled
+    ? legendPadding * 2 +
+      (legendDirection === Bar3DLegendDirection.COLUMN
+        ? legendCellHeight * palette.length
+        : legendCellHeight)
+    : 0;
+
+  const legendMarkup = legendEnabled
+    ? palette
+        .map((color, index) => {
+          const label = legendLabels[index];
+          const cellX =
+            legendPadding +
+            (legendDirection === Bar3DLegendDirection.ROW
+              ? index * legendCellWidth
+              : 0);
+          const cellY =
+            legendPadding +
+            (legendDirection === Bar3DLegendDirection.COLUMN
+              ? index * legendCellHeight
+              : 0);
+          const cubeOffsetX =
+            legendLabelPlacement === 'left'
+              ? legendSideTextWidth + legendLabelGap + legendCubeSizeX
+              : legendLabelPlacement === 'right'
+              ? legendCubeSizeX
+              : legendCellWidth / 2 - legendSpacing / 2;
+          const cubeOffsetY = legendMaxCubeHeight;
+          const cubeHeight = legendHeights[index];
+          const cubeMarkup = cubeBuilder({
+            ox: cubeOffsetX,
+            oy: cubeOffsetY,
+            color,
+            height: cubeHeight,
+            level: index,
+            sizeX: legendCubeSizeX,
+            sizeY: legendCubeSizeY,
+            className: 'legend-cube',
+            data: {
+              legend: index,
+              level: index,
+              range: label,
+            },
+          });
+          const cubeCenterY =
+            (cubeOffsetY - cubeHeight + cubeOffsetY + legendCubeSizeY * 2) / 2;
+          const labelMarkup = el(
+            'text',
+            legendLabelPlacement === 'below'
+              ? {
+                  class: 'legend-label',
+                  'data-placement': legendLabelPlacement,
+                  'data-range': label,
+                  x: fix(legendCellWidth / 2 - legendSpacing / 2),
+                  y: fix(legendCubeSpanHeight + legendLabelGap),
+                  fill: foregroundColor,
+                  'font-size': fix(legendFontSize, 0),
+                  'text-anchor': 'middle',
+                  'dominant-baseline': 'hanging',
+                }
+              : {
+                  class: 'legend-label',
+                  'data-placement': legendLabelPlacement,
+                  'data-range': label,
+                  x:
+                    legendLabelPlacement === 'left'
+                      ? fix(legendSideTextWidth)
+                      : fix(legendCubeSpanWidth + legendLabelGap),
+                  y: fix(cubeCenterY),
+                  fill: foregroundColor,
+                  'font-size': fix(legendFontSize, 0),
+                  'text-anchor':
+                    legendLabelPlacement === 'left' ? 'end' : 'start',
+                  'dominant-baseline': 'middle',
+                },
+            [label],
+          );
+
+          return el(
+            'g',
+            {
+              class: 'legend-item',
+              'data-legend': index,
+              'data-range': label,
+              transform: `translate(${fix(cellX)},${fix(cellY)})`,
+            },
+            [cubeMarkup, labelMarkup],
+          );
+        })
+        .join('\n')
+    : '';
+
+  const legendGap = legendEnabled ? 12 : 0;
+  let svgWidth = chartWidth;
+  let svgHeight = chartHeight;
+  let chartOffsetX = 0;
+  let chartOffsetY = 0;
+  let legendX = 0;
+  let legendY = 0;
+
+  if (legendEnabled) {
+    if (legendOverlayPosition) {
+      svgWidth = chartWidth;
+      svgHeight = chartHeight;
+      chartOffsetX = 0;
+      chartOffsetY = 0;
+      legendX =
+        legendPosition === Bar3DLegendPosition.TOP_RIGHT
+          ? Math.max(svgWidth - legendWidth, 0)
+          : 0;
+      legendY =
+        legendPosition === Bar3DLegendPosition.BOTTOM_LEFT
+          ? Math.max(svgHeight - legendHeight, 0)
+          : 0;
+    } else if (
+      legendPosition === Bar3DLegendPosition.LEFT ||
+      legendPosition === Bar3DLegendPosition.RIGHT
+    ) {
+      svgWidth = chartWidth + legendWidth + legendGap;
+      svgHeight = Math.max(chartHeight, legendHeight);
+      chartOffsetX =
+        legendPosition === Bar3DLegendPosition.LEFT
+          ? legendWidth + legendGap
+          : 0;
+      chartOffsetY = Math.max((svgHeight - chartHeight) / 2, 0);
+      legendX =
+        legendPosition === Bar3DLegendPosition.LEFT
+          ? 0
+          : chartWidth + legendGap;
+      legendY = Math.max((svgHeight - legendHeight) / 2, 0);
+    } else {
+      svgWidth = Math.max(chartWidth, legendWidth);
+      svgHeight = chartHeight + legendHeight + legendGap;
+      chartOffsetX = Math.max((svgWidth - chartWidth) / 2, 0);
+      chartOffsetY =
+        legendPosition === Bar3DLegendPosition.TOP
+          ? legendHeight + legendGap
+          : 0;
+      legendX = Math.max((svgWidth - legendWidth) / 2, 0);
+      legendY =
+        legendPosition === Bar3DLegendPosition.TOP
+          ? 0
+          : chartHeight + legendGap;
+    }
+  }
+
   const animation = generate3dbarAnimation(weekCount, cfg, {
     width: svgWidth,
     height: svgHeight,
@@ -193,12 +454,26 @@ export const isometricProcessor = (
       <defs>
         ${gradient ? gradientArr.join('\n') : ''}
       </defs>
-      <g transform="translate(${translateX},${translateY})">
-        ${contributiuonWeeks
+      <g
+        class="chart"
+        transform="translate(${fix(chartOffsetX + chartTranslateX)},${fix(
+    chartOffsetY + chartTranslateY,
+  )})"
+      >
+        ${[...contributionWeeks]
           .reverse()
           .map((week, index) => weekBuilder(week, index))
           .join('\n')}
       </g>
+      ${
+        legendEnabled
+          ? `<g class="legend" data-position="${legendPosition}" transform="translate(${fix(
+              legendX,
+            )},${fix(legendY)})">
+        ${legendMarkup}
+      </g>`
+          : ''
+      }
     </svg>
   `
     .trim()

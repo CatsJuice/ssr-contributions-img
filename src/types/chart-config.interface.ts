@@ -1,9 +1,11 @@
 import { WidgetSize } from '../dto/base/widget-size.dto';
 import { Bar3DAnimation } from './3dbar-animation.enum';
+import { Bar3DLegendDirection, Bar3DLegendPosition } from './3dbar-legend.enum';
 
 export interface BaseChartConfig {
   widget_size?: WidgetSize;
   quality?: number;
+  dark?: boolean;
 }
 
 export const defaultCalendarChartConfig: CalendarChartConfig = {
@@ -23,6 +25,9 @@ export const defaultCalenderChart3dConfig: CalendarChart3DConfig = {
   scale: 2,
   gap: 1.2,
   light: 10,
+  legend: false,
+  legendPosition: Bar3DLegendPosition.RIGHT,
+  legendDirection: Bar3DLegendDirection.COLUMN,
 };
 export interface CalendarChart3DConfig extends BaseChartConfig {
   scale?: number;
@@ -31,6 +36,10 @@ export interface CalendarChart3DConfig extends BaseChartConfig {
   weeks?: number;
   light?: number;
   gradient?: boolean;
+  legend?: boolean;
+  legendPosition?: Bar3DLegendPosition;
+  legendDirection?: Bar3DLegendDirection;
+  foregroundColor?: string;
   strokeWidth?: number;
   strokeColor?: string;
   flatten?: number;
