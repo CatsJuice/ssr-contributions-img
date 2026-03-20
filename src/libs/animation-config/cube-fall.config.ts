@@ -1,33 +1,11 @@
-import { ConfigItem } from '../config.constant';
+import type { ConfigItem } from '../config.constant';
+import { configGroups } from '../config-panel.constant';
+import { createAnimationTimingConfigs } from './shared.config';
 
-export const cubeAnimationFallCfgs: ConfigItem[] = [
+export const cubeAnimationFallCfgs: ConfigItem[] = createAnimationTimingConfigs(
+  configGroups.animationEntrance,
   {
-    key: 'animation_duration',
-    label: {
-      en: 'Animation duration(s)',
-      zh: '动画时长(单位：秒)',
-    },
-    type: 'float',
-    default: 3,
-    required: false,
-    description: {
-      en: 'Set the duration of animation',
-      zh: '设置动画时长',
-    },
+    duration: 3,
+    delay: 0.03,
   },
-
-  {
-    key: 'animation_delay',
-    label: {
-      en: 'Animation delay(s)',
-      zh: '动画延迟(单位：秒)',
-    },
-    type: 'float',
-    default: 0.03,
-    required: false,
-    description: {
-      en: 'Set the delay of animation',
-      zh: '设置动画延迟',
-    },
-  },
-];
+);

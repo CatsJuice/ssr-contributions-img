@@ -4,25 +4,10 @@ import { useStorage, useWindowSize } from '@vueuse/core';
 
 import { getWall } from '../api/get-wall';
 import { getConfig } from '../api/get-config';
+import type { Choice, ConfigItem, ConfigTab, Locale } from '../types/config';
+import { buildConfigTabs, resolveConfigItems } from '../utils/config-schema';
 
-type Locale = 'en' | 'zh';
-interface Choice {
-  value: string;
-  label: any;
-  config?: ConfigItem[];
-  info?: Record<string, any>;
-}
-export interface ConfigItem {
-  key: string;
-  label: any | string;
-  type: 'enum' | 'int' | 'float' | 'colors' | 'color' | 'boolean' | 'point';
-  default?: any;
-  required?: boolean;
-  description?: any;
-  optioins?: Choice[];
-  min?: number;
-  max?: number;
-}
+export type { ConfigItem, ConfigTab, Locale } from '../types/config';
 interface ActiveThemeState {
   value: string;
   dark: boolean;
@@ -34,7 +19,7 @@ const localeOptions = [
   { label: '中文简体', value: 'zh' as const },
 ];
 const { width } = useWindowSize();
-const locale = useStorage('locale', localeOptions[0].value as Locale);
+const locale = useStorage<Locale>('locale', localeOptions[0].value);
 const username = useStorage('githubUsername', 'CatsJuice');
 const config = ref([] as ConfigItem[]);
 const loadingConfig = ref(false);
@@ -102,42 +87,11 @@ export function useConfig() {
 
   const configItems = computed(() => {
     if (!config.value?.length) return [];
-    const res: ConfigItem[] = [];
-
-    const checkConfig = (cfg: ConfigItem) => {
-      cfg = JSON.parse(JSON.stringify(cfg));
-      const { key, optioins } = cfg;
-
-      const subConfig: ConfigItem[] = [];
-      if (cfg.type === 'enum' && optioins?.length) {
-        const value = state.value[key];
-        let option;
-        for (const item of optioins) {
-          if (item.value == value) {
-            option = item;
-            if (option.config) {
-              // option.config.forEach(checkConfig);
-              subConfig.push(...option.config);
-            }
-          }
-          delete item.config;
-        }
-      }
-
-      res.push({
-        ...cfg,
-        label: cfg.label[locale.value],
-        description: cfg.description?.[locale.value],
-        optioins: optioins?.map((item) => ({
-          ...item,
-          label: item.label[locale.value],
-        })),
-      });
-      subConfig.forEach(checkConfig);
-    };
-    config.value.forEach(checkConfig);
-    return res;
+    return resolveConfigItems(config.value, state.value, locale.value);
   });
+  const configTabs = computed(() =>
+    buildConfigTabs(configItems.value, locale.value),
+  );
 
   const query = computed(() => {
     return configItems.value.reduce((prev, curr) => {
@@ -252,6 +206,7 @@ export function useConfig() {
     activeAppearance,
     loadingSvg,
     configItems,
+    configTabs,
     themeOptions,
     localeOptions,
     loadingConfig,

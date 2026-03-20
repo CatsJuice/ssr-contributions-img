@@ -13,8 +13,13 @@ import {
   Bar3DLegendDirection,
   Bar3DLegendPosition,
 } from '../types/3dbar-legend.enum';
-
-type Locale = 'en' | 'zh';
+import {
+  ConfigPanelMeta,
+  Locale,
+  configGroups,
+  configTabs,
+  withPanel,
+} from './config-panel.constant';
 
 export interface ConfigItem {
   key: keyof ConfigSvgQueryDto;
@@ -26,6 +31,7 @@ export interface ConfigItem {
   optioins?: Choice[];
   min?: number;
   max?: number;
+  panel?: ConfigPanelMeta;
 }
 
 interface Choice {
@@ -35,406 +41,513 @@ interface Choice {
   info?: Record<string, any>;
 }
 
-const qualityCfg: ConfigItem = {
-  key: 'quality',
-  label: {
-    en: 'Quality',
-    zh: '输出质量',
+const qualityCfg: ConfigItem = withPanel(
+  {
+    key: 'quality',
+    label: {
+      en: 'Quality',
+      zh: '输出质量',
+    },
+    type: 'float',
+    default: 1,
+    required: false,
+    description: {
+      en: 'Set the quality of jpeg or png',
+      zh: '设置jpeg或png输出质量',
+    },
+    min: 0.1,
+    max: 10,
   },
-  type: 'float',
-  default: 1,
-  required: false,
-  description: {
-    en: 'Set the quality of jpeg or png',
-    zh: '设置jpeg或png输出质量',
-  },
-  min: 0.1,
-  max: 10,
-};
+  configTabs.general,
+  configGroups.generalOutput,
+  20,
+);
 
 const bar3dCfg: ConfigItem[] = [
-  {
-    key: 'gap',
-    label: {
-      en: 'Cube Gap',
-      zh: '立方体间距',
-    },
-    type: 'float',
-    min: 0,
-    max: 20,
-    default: 0.6,
-    description: {
-      en: 'Set the gap between cubes',
-      zh: '设置立方体间距',
-    },
-  },
-  {
-    key: 'scale',
-    label: {
-      en: 'Cube skew',
-      zh: '立方体倾斜',
-    },
-    default: 2,
-    type: 'float',
-    min: 1,
-    max: 100,
-    description: {
-      en: 'Set the skew of cubes',
-      zh: '设置立方体倾斜',
-    },
-  },
-  {
-    key: 'light',
-    label: {
-      en: 'Light',
-      zh: '光照强度',
-    },
-    type: 'float',
-    min: 1,
-    max: 60,
-    description: {
-      en: 'Set the light of cubes',
-      zh: '设置立方体光照强度',
-    },
-  },
-  {
-    key: 'gradient',
-    label: {
-      en: 'Gradient Mode',
-      zh: '渐变模式',
-    },
-    type: 'boolean',
-    default: false,
-    description: {
-      en: 'Enable the gradient mode of cubes',
-      zh: '启用立方体渐变模式',
-    },
-  },
-  {
-    key: 'legend',
-    label: {
-      en: 'Legend',
-      zh: '图例',
-    },
-    type: 'boolean',
-    default: false,
-    description: {
-      en: 'Toggle the 3D cube legend',
-      zh: '切换 3D 立方体图例',
-    },
-  },
-  {
-    key: 'legendPosition',
-    label: {
-      en: 'Legend Position',
-      zh: '图例位置',
-    },
-    type: 'enum',
-    default: Bar3DLegendPosition.RIGHT,
-    description: {
-      en: 'Set where the 3D legend is rendered',
-      zh: '设置 3D 图例的摆放位置',
-    },
-    optioins: [
-      {
-        value: Bar3DLegendPosition.TOP,
-        label: { en: 'Top', zh: '顶部' },
+  withPanel(
+    {
+      key: 'gap',
+      label: {
+        en: 'Cube Gap',
+        zh: '立方体间距',
       },
-      {
-        value: Bar3DLegendPosition.RIGHT,
-        label: { en: 'Right', zh: '右侧' },
+      type: 'float',
+      min: 0,
+      max: 20,
+      default: 0.6,
+      description: {
+        en: 'Set the gap between cubes',
+        zh: '设置立方体间距',
       },
-      {
-        value: Bar3DLegendPosition.BOTTOM,
-        label: { en: 'Bottom', zh: '底部' },
-      },
-      {
-        value: Bar3DLegendPosition.LEFT,
-        label: { en: 'Left', zh: '左侧' },
-      },
-      {
-        value: Bar3DLegendPosition.TOP_RIGHT,
-        label: { en: 'Top Right', zh: '右上角' },
-      },
-      {
-        value: Bar3DLegendPosition.BOTTOM_LEFT,
-        label: { en: 'Bottom Left', zh: '左下角' },
-      },
-    ],
-  },
-  {
-    key: 'legendDirection',
-    label: {
-      en: 'Legend Direction',
-      zh: '图例排列',
     },
-    type: 'enum',
-    default: Bar3DLegendDirection.COLUMN,
-    description: {
-      en: 'Set how legend cubes are arranged',
-      zh: '设置图例立方体的排列方向',
-    },
-    optioins: [
-      {
-        value: Bar3DLegendDirection.ROW,
-        label: { en: 'Row', zh: '横向' },
+    configTabs.bar3d,
+    configGroups.bar3dStructure,
+    10,
+  ),
+  withPanel(
+    {
+      key: 'scale',
+      label: {
+        en: 'Cube skew',
+        zh: '立方体倾斜',
       },
-      {
-        value: Bar3DLegendDirection.COLUMN,
-        label: { en: 'Column', zh: '纵向' },
+      default: 2,
+      type: 'float',
+      min: 1,
+      max: 100,
+      description: {
+        en: 'Set the skew of cubes',
+        zh: '设置立方体倾斜',
       },
-    ],
-  },
-  {
-    key: 'foregroundColor',
-    label: {
-      en: 'Foreground Color',
-      zh: '前景文字颜色',
     },
-    type: 'color',
-    description: {
-      en: 'Set the legend text color. Defaults to #222 in light mode and #ddd in dark mode.',
-      zh: '设置图例文字颜色。默认浅色模式为 #222，深色模式为 #ddd。',
-    },
-  },
-  {
-    key: 'strokeWidth',
-    label: {
-      en: 'Stroke Width',
-      zh: '描边宽度',
-    },
-    type: 'float',
-    min: 0,
-    max: 20,
-    default: 0,
-    description: {
-      en: 'Set the outline width of cubes. Set 0 to disable the stroke.',
-      zh: '设置立方体描边宽度，设为 0 表示关闭描边。',
-    },
-  },
-  {
-    key: 'strokeColor',
-    label: {
-      en: 'Stroke Color',
-      zh: '描边颜色',
-    },
-    type: 'color',
-    description: {
-      en: 'Set the outline color of cubes. Hex values can omit "#", for example "111827".',
-      zh: '设置立方体描边颜色。十六进制颜色可省略 "#"，例如 "111827"。',
-    },
-  },
-
-  {
-    key: 'flatten',
-    label: {
-      en: 'Flatten',
-      zh: '平面化',
-    },
-    type: 'enum',
-    default: '1',
-    optioins: [
-      { value: '0', label: { en: 'None', zh: '无' } },
-      { value: '1', label: { en: 'All', zh: '全部扁平化' } },
-      { value: '2', label: { en: 'Ignore Empty', zh: '忽略空值' } },
-    ],
-    description: {
-      en: 'Flatten the cube',
-      zh: '平面化立方体',
-    },
-  },
-
-  {
-    key: 'animation',
-    label: {
-      en: 'Animation',
-      zh: '动画',
-    },
-    type: 'enum',
-    default: Bar3DAnimation.WAVE,
-    description: {
-      en: 'Enable the animation of cubes',
-      zh: '启用立方体动画',
-    },
-    optioins: [
-      { value: Bar3DAnimation.NONE, label: { en: 'None', zh: '无' } },
-      {
-        value: Bar3DAnimation.FALL,
-        label: { en: 'fall', zh: '落下' },
-        config: cubeAnimationFallCfgs,
+    configTabs.bar3d,
+    configGroups.bar3dStructure,
+    20,
+  ),
+  withPanel(
+    {
+      key: 'flatten',
+      label: {
+        en: 'Flatten',
+        zh: '平面化',
       },
-      {
-        value: Bar3DAnimation.RAISE,
-        label: { en: 'rise', zh: '上升' },
-        config: cubeAnimationFallCfgs,
+      type: 'enum',
+      default: '1',
+      optioins: [
+        { value: '0', label: { en: 'None', zh: '无' } },
+        { value: '1', label: { en: 'All', zh: '全部扁平化' } },
+        { value: '2', label: { en: 'Ignore Empty', zh: '忽略空值' } },
+      ],
+      description: {
+        en: 'Flatten the cube',
+        zh: '平面化立方体',
       },
-      {
-        value: Bar3DAnimation.WAVE,
-        label: { en: 'wave', zh: '波浪' },
-        config: cubeAnimationWaveCfgs,
+    },
+    configTabs.bar3d,
+    configGroups.bar3dStructure,
+    30,
+  ),
+  withPanel(
+    {
+      key: 'light',
+      label: {
+        en: 'Light',
+        zh: '光照强度',
       },
-      {
-        value: Bar3DAnimation.MESS,
-        label: { en: 'mess', zh: '杂乱' },
-        config: cubeAnimationMessCfgs,
+      type: 'float',
+      min: 1,
+      max: 60,
+      description: {
+        en: 'Set the light of cubes',
+        zh: '设置立方体光照强度',
       },
-      {
-        value: Bar3DAnimation.SPIN,
-        label: { en: 'spin', zh: '转啊转' },
-        config: cubeAnimationSpinCfgs,
+    },
+    configTabs.bar3d,
+    configGroups.bar3dSurface,
+    10,
+  ),
+  withPanel(
+    {
+      key: 'gradient',
+      label: {
+        en: 'Gradient Mode',
+        zh: '渐变模式',
       },
-      {
-        value: Bar3DAnimation.FADE,
-        label: { en: 'fadeIn', zh: '淡入' },
-        config: cubeAnimationFadeCfgs,
+      type: 'boolean',
+      default: false,
+      description: {
+        en: 'Enable the gradient mode of cubes',
+        zh: '启用立方体渐变模式',
       },
-    ],
-  },
+    },
+    configTabs.bar3d,
+    configGroups.bar3dSurface,
+    20,
+  ),
+  withPanel(
+    {
+      key: 'legend',
+      label: {
+        en: 'Legend',
+        zh: '图例',
+      },
+      type: 'boolean',
+      default: false,
+      description: {
+        en: 'Toggle the 3D cube legend',
+        zh: '切换 3D 立方体图例',
+      },
+    },
+    configTabs.bar3d,
+    configGroups.bar3dLegend,
+    10,
+  ),
+  withPanel(
+    {
+      key: 'legendPosition',
+      label: {
+        en: 'Legend Position',
+        zh: '图例位置',
+      },
+      type: 'enum',
+      default: Bar3DLegendPosition.RIGHT,
+      description: {
+        en: 'Set where the 3D legend is rendered',
+        zh: '设置 3D 图例的摆放位置',
+      },
+      optioins: [
+        {
+          value: Bar3DLegendPosition.TOP,
+          label: { en: 'Top', zh: '顶部' },
+        },
+        {
+          value: Bar3DLegendPosition.RIGHT,
+          label: { en: 'Right', zh: '右侧' },
+        },
+        {
+          value: Bar3DLegendPosition.BOTTOM,
+          label: { en: 'Bottom', zh: '底部' },
+        },
+        {
+          value: Bar3DLegendPosition.LEFT,
+          label: { en: 'Left', zh: '左侧' },
+        },
+        {
+          value: Bar3DLegendPosition.TOP_RIGHT,
+          label: { en: 'Top Right', zh: '右上角' },
+        },
+        {
+          value: Bar3DLegendPosition.BOTTOM_LEFT,
+          label: { en: 'Bottom Left', zh: '左下角' },
+        },
+      ],
+    },
+    configTabs.bar3d,
+    configGroups.bar3dLegend,
+    20,
+  ),
+  withPanel(
+    {
+      key: 'legendDirection',
+      label: {
+        en: 'Legend Direction',
+        zh: '图例排列',
+      },
+      type: 'enum',
+      default: Bar3DLegendDirection.COLUMN,
+      description: {
+        en: 'Set how legend cubes are arranged',
+        zh: '设置图例立方体的排列方向',
+      },
+      optioins: [
+        {
+          value: Bar3DLegendDirection.ROW,
+          label: { en: 'Row', zh: '横向' },
+        },
+        {
+          value: Bar3DLegendDirection.COLUMN,
+          label: { en: 'Column', zh: '纵向' },
+        },
+      ],
+    },
+    configTabs.bar3d,
+    configGroups.bar3dLegend,
+    30,
+  ),
+  withPanel(
+    {
+      key: 'foregroundColor',
+      label: {
+        en: 'Foreground Color',
+        zh: '前景文字颜色',
+      },
+      type: 'color',
+      description: {
+        en: 'Set the legend text color. Defaults to #222 in light mode and #ddd in dark mode.',
+        zh: '设置图例文字颜色。默认浅色模式为 #222，深色模式为 #ddd。',
+      },
+    },
+    configTabs.bar3d,
+    configGroups.bar3dLegend,
+    40,
+  ),
+  withPanel(
+    {
+      key: 'strokeWidth',
+      label: {
+        en: 'Stroke Width',
+        zh: '描边宽度',
+      },
+      type: 'float',
+      min: 0,
+      max: 20,
+      default: 0,
+      description: {
+        en: 'Set the outline width of cubes. Set 0 to disable the stroke.',
+        zh: '设置立方体描边宽度，设为 0 表示关闭描边。',
+      },
+    },
+    configTabs.bar3d,
+    configGroups.bar3dStroke,
+    10,
+  ),
+  withPanel(
+    {
+      key: 'strokeColor',
+      label: {
+        en: 'Stroke Color',
+        zh: '描边颜色',
+      },
+      type: 'color',
+      description: {
+        en: 'Set the outline color of cubes. Hex values can omit "#", for example "111827".',
+        zh: '设置立方体描边颜色。十六进制颜色可省略 "#"，例如 "111827"。',
+      },
+    },
+    configTabs.bar3d,
+    configGroups.bar3dStroke,
+    20,
+  ),
+  withPanel(
+    {
+      key: 'animation',
+      label: {
+        en: 'Animation',
+        zh: '动画',
+      },
+      type: 'enum',
+      default: Bar3DAnimation.WAVE,
+      description: {
+        en: 'Enable the animation of cubes',
+        zh: '启用立方体动画',
+      },
+      optioins: [
+        { value: Bar3DAnimation.NONE, label: { en: 'None', zh: '无' } },
+        {
+          value: Bar3DAnimation.FALL,
+          label: { en: 'fall', zh: '落下' },
+          config: cubeAnimationFallCfgs,
+        },
+        {
+          value: Bar3DAnimation.RAISE,
+          label: { en: 'raise', zh: '上升' },
+          config: cubeAnimationFallCfgs,
+        },
+        {
+          value: Bar3DAnimation.WAVE,
+          label: { en: 'wave', zh: '波浪' },
+          config: cubeAnimationWaveCfgs,
+        },
+        {
+          value: Bar3DAnimation.MESS,
+          label: { en: 'mess', zh: '杂乱' },
+          config: cubeAnimationMessCfgs,
+        },
+        {
+          value: Bar3DAnimation.SPIN,
+          label: { en: 'spin', zh: '转啊转' },
+          config: cubeAnimationSpinCfgs,
+        },
+        {
+          value: Bar3DAnimation.FADE,
+          label: { en: 'fadeIn', zh: '淡入' },
+          config: cubeAnimationFadeCfgs,
+        },
+      ],
+    },
+    configTabs.animation,
+    configGroups.animationMode,
+    10,
+  ),
 ];
 
 export const config: ConfigItem[] = [
   // chart
-  {
-    key: 'chart',
-    label: {
-      en: 'Chart',
-      zh: '图表模板',
-    },
-    type: 'enum',
-    default: ChartTpl.BAR3D,
-    required: false,
-    description: {
-      en: 'Select which chart you want to generate',
-      zh: '选择你要生成的图表模板',
-    },
-    optioins: [
-      { value: ChartTpl.CALENDAR, label: { en: 'Calendar', zh: '日历' } },
-      {
-        value: ChartTpl.BAR3D,
-        label: { en: 'Isometric', zh: '3D日历' },
-        config: bar3dCfg,
+  withPanel(
+    {
+      key: 'chart',
+      label: {
+        en: 'Chart',
+        zh: '图表模板',
       },
-    ],
-  },
+      type: 'enum',
+      default: ChartTpl.BAR3D,
+      required: false,
+      description: {
+        en: 'Select which chart you want to generate',
+        zh: '选择你要生成的图表模板',
+      },
+      optioins: [
+        { value: ChartTpl.CALENDAR, label: { en: 'Calendar', zh: '日历' } },
+        {
+          value: ChartTpl.BAR3D,
+          label: { en: 'Isometric', zh: '3D日历' },
+          config: bar3dCfg,
+        },
+      ],
+    },
+    configTabs.general,
+    configGroups.generalChart,
+    10,
+  ),
 
   // format
-  {
-    key: 'format',
-    label: {
-      en: 'Format',
-      zh: '输出格式',
-    },
-    type: 'enum',
-    default: OutputFormat.SVG,
-    required: false,
-    description: {
-      en: 'Select the output format',
-      zh: '选择输出格式',
-    },
-    optioins: [
-      { value: OutputFormat.SVG, label: { en: 'SVG', zh: 'SVG' } },
-      { value: OutputFormat.XML, label: { en: 'XML', zh: 'XML' } },
-      { value: OutputFormat.HTML, label: { en: 'HTML', zh: 'HTML' } },
-      {
-        value: OutputFormat.PNG,
-        label: { en: 'PNG', zh: 'PNG' },
-        config: [qualityCfg],
+  withPanel(
+    {
+      key: 'format',
+      label: {
+        en: 'Format',
+        zh: '输出格式',
       },
-      {
-        value: OutputFormat.JPEG,
-        label: { en: 'JPEG', zh: 'JPEG' },
-        config: [qualityCfg],
+      type: 'enum',
+      default: OutputFormat.SVG,
+      required: false,
+      description: {
+        en: 'Select the output format',
+        zh: '选择输出格式',
       },
-    ],
-  },
+      optioins: [
+        { value: OutputFormat.SVG, label: { en: 'SVG', zh: 'SVG' } },
+        { value: OutputFormat.XML, label: { en: 'XML', zh: 'XML' } },
+        { value: OutputFormat.HTML, label: { en: 'HTML', zh: 'HTML' } },
+        {
+          value: OutputFormat.PNG,
+          label: { en: 'PNG', zh: 'PNG' },
+          config: [qualityCfg],
+        },
+        {
+          value: OutputFormat.JPEG,
+          label: { en: 'JPEG', zh: 'JPEG' },
+          config: [qualityCfg],
+        },
+      ],
+    },
+    configTabs.general,
+    configGroups.generalOutput,
+    10,
+  ),
 
   // weeks
-  {
-    key: 'weeks',
-    label: {
-      en: 'Weeks',
-      zh: '周数',
+  withPanel(
+    {
+      key: 'weeks',
+      label: {
+        en: 'Weeks',
+        zh: '周数',
+      },
+      type: 'int',
+      default: 40,
+      description: {
+        en: 'Weeks count, will override the num calculated by widget_size',
+        zh: '周数，会覆盖widget_size计算的周数',
+      },
+      min: 1,
+      max: 50,
     },
-    type: 'int',
-    default: 40,
-    description: {
-      en: 'Weeks count, will override the num calculated by widget_size',
-      zh: '周数，会覆盖widget_size计算的周数',
-    },
-    min: 1,
-    max: 50,
-  },
+    configTabs.general,
+    configGroups.generalChart,
+    30,
+  ),
 
   // theme
-  {
-    key: 'theme',
-    label: {
-      en: 'Theme',
-      zh: '主题',
-    },
-    type: 'enum',
-    description: {
-      en: 'Select the theme',
-      zh: '选择主题',
-    },
-    optioins: Object.keys(themes).map((themeName) => ({
-      value: themeName,
+  withPanel(
+    {
+      key: 'theme',
       label: {
-        en: formatPresetThemeLabel(themeName),
-        zh: formatPresetThemeLabel(themeName),
+        en: 'Theme',
+        zh: '主题',
       },
-      info: {
-        colors: themes[themeName],
+      type: 'enum',
+      description: {
+        en: 'Select the theme',
+        zh: '选择主题',
       },
-    })),
-  },
+      optioins: [
+        {
+          value: 'random',
+          label: {
+            en: 'Random',
+            zh: '随机',
+          },
+        },
+        ...Object.keys(themes).map((themeName) => ({
+          value: themeName,
+          label: {
+            en: formatPresetThemeLabel(themeName),
+            zh: formatPresetThemeLabel(themeName),
+          },
+          info: {
+            colors: themes[themeName],
+          },
+        })),
+      ],
+    },
+    configTabs.general,
+    configGroups.generalTheme,
+    10,
+  ),
 
   // widget size
-  {
-    key: 'widget_size',
-    label: {
-      en: 'Widget size',
-      zh: '组件尺寸',
+  withPanel(
+    {
+      key: 'widget_size',
+      label: {
+        en: 'Widget size',
+        zh: '组件尺寸',
+      },
+      type: 'enum',
+      required: false,
+      description: {
+        en: 'Select the widget size of ios',
+        zh: '选择ios组件尺寸',
+      },
+      optioins: [
+        { value: WidgetSize.SMALL, label: { en: 'Small', zh: '小' } },
+        { value: WidgetSize.MEDIUM, label: { en: 'Medium', zh: '中' } },
+        { value: WidgetSize.LARGE, label: { en: 'Large', zh: '大' } },
+      ],
     },
-    type: 'enum',
-    required: false,
-    description: {
-      en: 'Select the widget size of ios',
-      zh: '选择ios组件尺寸',
-    },
-    optioins: [
-      { value: WidgetSize.SMALL, label: { en: 'Small', zh: '小' } },
-      { value: WidgetSize.MEDIUM, label: { en: 'Medium', zh: '中' } },
-      { value: WidgetSize.LARGE, label: { en: 'Large', zh: '大' } },
-    ],
-  },
+    configTabs.general,
+    configGroups.generalChart,
+    20,
+  ),
 
   // colors
-  {
-    key: 'colors',
-    label: {
-      en: 'Colors',
-      zh: '自定义颜色',
+  withPanel(
+    {
+      key: 'colors',
+      label: {
+        en: 'Colors',
+        zh: '自定义颜色',
+      },
+      type: 'colors',
+      description: {
+        en: 'Custom colors, hex value join with ",", will override the theme colors',
+        zh: '自定义颜色，十六进制值用","连接, 会覆盖主题颜色',
+      },
     },
-    type: 'colors',
-    description: {
-      en: 'Custom colors, hex value join with ",", will override the theme colors',
-      zh: '自定义颜色，十六进制值用","连接, 会覆盖主题颜色',
-    },
-  },
+    configTabs.general,
+    configGroups.generalTheme,
+    20,
+  ),
 
   // dark
-  {
-    key: 'dark',
-    label: {
-      en: 'DarkMode',
-      zh: '暗黑模式',
+  withPanel(
+    {
+      key: 'dark',
+      label: {
+        en: 'DarkMode',
+        zh: '暗黑模式',
+      },
+      type: 'boolean',
+      default: false,
+      description: {
+        en: 'Enable darkMode',
+        zh: '使用暗黑模式',
+      },
     },
-    type: 'boolean',
-    default: false,
-    description: {
-      en: 'Enable darkMode',
-      zh: '使用暗黑模式',
-    },
-  },
+    configTabs.general,
+    configGroups.generalTheme,
+    30,
+  ),
 ];

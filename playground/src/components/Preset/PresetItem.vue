@@ -3,7 +3,9 @@ import { PropType } from 'vue';
 import { computed } from '@vue/reactivity';
 
 import { validatePath } from '../utils/validatePath';
-import { useConfig, ConfigItem } from '../../hooks/useConfig';
+import { useConfig } from '../../hooks/useConfig';
+import type { Locale } from '../../types/config';
+import { resolveConfigItems } from '../../utils/config-schema';
 import MagicHoverCard from '../base/MagicHoverCard.vue';
 import { getApiPath } from '../../utils/runtime-env';
 
@@ -19,41 +21,7 @@ const props = defineProps({
 
 const configItems = computed(() => {
   if (!config.value?.length) return [];
-  const res: ConfigItem[] = [];
-
-  const checkConfig = (cfg: ConfigItem) => {
-    cfg = JSON.parse(JSON.stringify(cfg));
-    const { key, optioins } = cfg;
-
-    const subConfig: ConfigItem[] = [];
-    if (cfg.type === 'enum' && optioins?.length) {
-      const value = props.cfg[key];
-      let option;
-      for (const item of optioins) {
-        if (item.value == value) {
-          option = item;
-          if (option.config) {
-            // option.config.forEach(checkConfig);
-            subConfig.push(...option.config);
-          }
-        }
-        delete item.config;
-      }
-    }
-
-    res.push({
-      ...cfg,
-      label: cfg.label[locale.value],
-      description: cfg.description?.[locale.value],
-      optioins: optioins?.map((item) => ({
-        ...item,
-        label: item.label[locale.value],
-      })),
-    });
-    subConfig.forEach(checkConfig);
-  };
-  config.value.forEach(checkConfig);
-  return res;
+  return resolveConfigItems(config.value, props.cfg, locale.value as Locale);
 });
 
 const query = computed(() => {
@@ -93,9 +61,8 @@ const src = computed(() => {
 
 <style lang="scss">
 .preset-item-card {
-  width: 140px;
-  height: 80px;
-  margin-bottom: 7px;
+  width: 100%;
+  aspect-ratio: 7 / 4;
 }
 .preset-item {
   width: 100%;

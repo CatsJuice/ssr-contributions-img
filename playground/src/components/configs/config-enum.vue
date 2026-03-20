@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useConfig, ConfigItem } from '../../hooks/useConfig';
+import { useConfig } from '../../hooks/useConfig';
 import { computed } from '@vue/reactivity';
 import SelectColorPreview from '../base/SelectColorPreview.vue';
 
@@ -14,7 +14,7 @@ defineEmits(['update:model-value']);
 const { locale, activeDarkMode } = useConfig();
 
 const defaultOption = computed(() => ({
-  label: { zh: '默认' }[locale.value] || 'Default',
+  label: locale.value === 'zh' ? '默认' : 'Default',
   value: '',
 }));
 

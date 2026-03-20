@@ -47,7 +47,7 @@ function isActive(cfg: Record<string, any>) {
     </div>
   </div>
 
-  <div class="row justify-between q-mb-md q-pb-md">
+  <div class="preset-grid">
     <PresetItem
       @click.native="usePreset(cfg)"
       :active="isActive(cfg)"
@@ -57,3 +57,11 @@ function isActive(cfg: Record<string, any>) {
     />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+</style>

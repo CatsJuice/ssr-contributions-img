@@ -27,4 +27,34 @@ describe('AppController', () => {
       ]),
     );
   });
+
+  it('should expose panel metadata and the random theme option', () => {
+    const themeConfig = config.find((item) => item.key === 'theme');
+    const chartConfig = config.find((item) => item.key === 'chart');
+    const bar3dOption = chartConfig?.optioins?.find(
+      (option) => option.value === '3dbar',
+    );
+    const animationConfig = bar3dOption?.config?.find(
+      (item) => item.key === 'animation',
+    );
+    const waveOption = animationConfig?.optioins?.find(
+      (option) => option.value === 'wave',
+    );
+
+    expect(themeConfig?.panel).toMatchObject({
+      tab: { key: 'general' },
+      group: { key: 'general-theme' },
+    });
+    expect(themeConfig?.optioins?.some((option) => option.value === 'random')).toBe(
+      true,
+    );
+
+    expect(animationConfig?.panel).toMatchObject({
+      tab: { key: 'animation' },
+      group: { key: 'animation-mode' },
+    });
+    expect((waveOption?.config || []).every((item) => item.panel?.group.key === 'animation-wave')).toBe(
+      true,
+    );
+  });
 });
