@@ -11,7 +11,7 @@ const props = defineProps({
 });
 defineEmits(['update:model-value']);
 
-const { locale, darkMode } = useConfig();
+const { locale, activeDarkMode } = useConfig();
 
 const defaultOption = computed(() => ({
   label: { zh: '默认' }[locale.value] || 'Default',
@@ -38,12 +38,12 @@ const checkedOption = computed(() => {
 
 const popupContentClass = computed(() => {
   const names = ['q-pa-xs'];
-  if (darkMode.value) names.push('bg-black');
+  if (activeDarkMode.value) names.push('bg-black');
   return names.join(' ');
 });
 
 function readColors(cfg: any) {
-  return (cfg?.info?.colors || {})[darkMode.value ? 'dark' : 'light'];
+  return (cfg?.info?.colors || {})[activeDarkMode.value ? 'dark' : 'light'];
 }
 </script>
 

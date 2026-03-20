@@ -10,6 +10,7 @@ import ConfigNumber from './configs/config-number.vue';
 import ConfigBoolean from './configs/config-boolean.vue';
 // import ConfigColors from './configs/config-colors.vue';
 import TinyDropdownSelect from './base/TinyDropdownSelect.vue';
+import Github from './Github.vue';
 
 import { useConfig } from '../hooks/useConfig';
 
@@ -35,11 +36,10 @@ const {
     <header class="q-pa-md">
       <div class="row no-wrap items-center justify-between">
         <h3>{{ locale === 'zh' ? '配置' : 'Config' }}</h3>
-        <TinyDropdownSelect :options="localeOptions" v-model="locale">
-          <template v-slot:icon>
-            <q-icon name="fas fa-earth-africa"></q-icon>
-          </template>
-        </TinyDropdownSelect>
+        <div class="header-actions row no-wrap items-center">
+          <TinyDropdownSelect :options="localeOptions" v-model="locale" />
+          <Github size="0.95rem" />
+        </div>
       </div>
 
       <q-input
@@ -104,6 +104,11 @@ const {
 </template>
 
 <style lang="scss">
+.header-actions {
+  gap: 4px;
+  align-items: center;
+}
+
 .config-item {
   display: flex;
   flex-direction: column;

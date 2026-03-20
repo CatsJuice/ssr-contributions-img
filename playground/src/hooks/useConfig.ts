@@ -23,6 +23,11 @@ export interface ConfigItem {
   min?: number;
   max?: number;
 }
+interface ActiveThemeState {
+  value: string;
+  dark: boolean;
+  colors: string[];
+}
 
 const localeOptions = [
   { label: 'English', value: 'en' as const },
@@ -36,15 +41,61 @@ const loadingConfig = ref(false);
 const loadingSvg = ref(false);
 const svgCode = ref('');
 const themeOptions = ref([] as Choice[]);
+const activeTheme = ref<ActiveThemeState>({
+  value: 'green',
+  dark: false,
+  colors: [],
+});
 
 const state = useStorage('__cfgState', {} as Record<string, any>);
 const darkMode = computed(() => !!state.value['dark']);
+const activeDarkMode = computed(() => !!activeTheme.value.dark);
 const activeReqParams = ref(
   {} as {
     username: string;
     query: Record<string, string>;
   },
 );
+
+function normalizeColor(color: string) {
+  const value = `${color || ''}`.trim().replace(/^#/, '');
+  if (!value) return '';
+  if (!/^[\da-f]{3}([\da-f]{3})?$/i.test(value)) return '';
+  return `#${value}`;
+}
+
+function parseColorsValue(value: unknown) {
+  return `${value || ''}`
+    .split(',')
+    .map((item) => normalizeColor(item))
+    .filter(Boolean);
+}
+
+function readThemeColors(value: string, dark: boolean): string[] {
+  const theme = themeOptions.value.find((item) => item.value === value);
+  const themeColors = (theme?.info?.colors || {})[dark ? 'dark' : 'light'];
+  const colors = Array.isArray(themeColors)
+    ? themeColors.map((item) => normalizeColor(item)).filter(Boolean)
+    : [];
+  if (colors.length) return colors;
+  if (value !== 'green') return readThemeColors('green', dark);
+  return dark
+    ? ['#2D3135', '#13451D', '#1A782D', '#1EBB3E', '#00E52E']
+    : ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196027'];
+}
+
+function syncActiveTheme() {
+  const query = activeReqParams.value?.query || {};
+  const dark = query.dark === 'true';
+  const value = query.theme || 'green';
+  const colors = parseColorsValue(query.colors);
+
+  activeTheme.value = {
+    value,
+    dark,
+    colors: colors.length ? colors : readThemeColors(value, dark),
+  };
+}
 
 export function useConfig() {
   initConfig();
@@ -114,9 +165,17 @@ export function useConfig() {
   });
   const selectedTheme = computed(() => {
     const dft = 'green';
-    const value = activeReqParams.value?.query?.theme || dft;
+    const value = state.value?.theme || dft;
     const theme = themeOptions.value.find((item) => item.value === value);
     return theme;
+  });
+  const activeAppearance = computed(() => {
+    const query = activeReqParams.value?.query || {};
+    return {
+      dark: activeDarkMode.value,
+      theme: query.colors ? '' : query.theme || activeTheme.value.value,
+      colors: query.colors || '',
+    };
   });
 
   const isMobile = computed(() => width.value < 768);
@@ -166,11 +225,15 @@ export function useConfig() {
   function confirm() {
     if (isMobile.value) document.body.scrollTo(0, 0);
     activeReqParams.value = JSON.parse(JSON.stringify(requestParams.value));
+    syncActiveTheme();
     loadSvg();
   }
 
   function usePreset(newState: Record<string, any>) {
-    state.value = { ...newState, dark: darkMode.value };
+    state.value = {
+      ...newState,
+      dark: newState.dark ?? darkMode.value,
+    };
     confirm();
   }
 
@@ -184,6 +247,9 @@ export function useConfig() {
     username,
     isMobile,
     darkMode,
+    activeDarkMode,
+    activeTheme,
+    activeAppearance,
     loadingSvg,
     configItems,
     themeOptions,

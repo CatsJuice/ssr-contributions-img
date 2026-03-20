@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { PropType } from 'vue';
+import { PropType, useSlots } from 'vue';
 import { computed } from '@vue/reactivity';
 import { useConfig } from '../../hooks/useConfig';
 
-const { darkMode } = useConfig();
+const { activeDarkMode } = useConfig();
+const slots = useSlots();
 
 const props = defineProps({
   modelValue: {
@@ -24,15 +25,15 @@ const activeItem = computed(() => {
 
 <template>
   <div class="tiny-dropdown-select">
-    <q-item dense clickable class="row no-wrap items-center">
+    <q-item dense clickable class="tiny-dropdown-select-trigger row no-wrap items-center">
       <span class="text-caption">{{ activeItem.label }}</span>
-      <span class="icon q-ml-xs">
+      <span v-if="slots.icon" class="icon q-ml-xs">
         <slot name="icon"></slot>
       </span>
     </q-item>
 
     <q-menu :offset="[0, 5]">
-      <q-list class="q-pa-xs" :class="darkMode ? 'bg-black' : null">
+      <q-list class="q-pa-xs" :class="activeDarkMode ? 'bg-black' : null">
         <q-item
           v-for="opt in options"
           :key="opt.value"
@@ -51,6 +52,12 @@ const activeItem = computed(() => {
 </template>
 
 <style lang="scss">
+.tiny-dropdown-select-trigger {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 16px;
+}
+
 .tiny-dropdown-select-item.active {
   color: var(--q-primary);
   font-weight: bold;
