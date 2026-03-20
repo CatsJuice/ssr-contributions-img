@@ -7,11 +7,23 @@ import { hashObject } from '../utils/has-object';
 import { useConfig } from '../../hooks/useConfig';
 import { presets as _presets } from './presets.list';
 
-const { locale, state, darkMode, usePreset } = useConfig();
+const { locale, state, activeAppearance, usePreset } = useConfig();
 
 const presets = computed(() => {
   return JSON.parse(JSON.stringify(_presets)).map((cfg: any) => ({
-    cfg: { ...cfg, dark: darkMode.value },
+    cfg: {
+      ...cfg,
+      dark: activeAppearance.value.dark,
+      ...(activeAppearance.value.colors
+        ? {
+            colors: activeAppearance.value.colors,
+            theme: undefined,
+          }
+        : {
+            theme: activeAppearance.value.theme,
+            colors: undefined,
+          }),
+    },
   }));
 });
 
@@ -35,7 +47,7 @@ function isActive(cfg: Record<string, any>) {
     </div>
   </div>
 
-  <div class="row justify-between q-mb-md q-pb-md">
+  <div class="preset-grid">
     <PresetItem
       @click.native="usePreset(cfg)"
       :active="isActive(cfg)"
@@ -45,3 +57,11 @@ function isActive(cfg: Record<string, any>) {
     />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+</style>

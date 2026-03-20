@@ -4,13 +4,12 @@ import { nextTick, ref, watch } from 'vue';
 import { load } from './utils/load';
 import { useConfig } from '../hooks/useConfig';
 
-const { selectedTheme, darkMode } = useConfig();
+const { activeTheme } = useConfig();
 const canvas = ref();
 
 async function draw() {
   clear();
-  const colorsMap = selectedTheme.value?.info?.colors || {};
-  const colors = (darkMode.value ? colorsMap.dark : colorsMap.light) || [];
+  const colors = activeTheme.value.colors || [];
   const obelisk = (window as any)['obelisk'];
   const point = new obelisk.Point(27, 28);
   const pixelView = new obelisk.PixelView(canvas.value, point);
@@ -60,9 +59,9 @@ function updateFavicon() {
 }
 
 watch(
-  [() => selectedTheme.value, () => darkMode.value],
-  async ([theme]) => {
-    if (!theme) return;
+  () => activeTheme.value.colors.join(','),
+  async (colors) => {
+    if (!colors) return;
     await initObelisk();
     nextTick(draw);
   },

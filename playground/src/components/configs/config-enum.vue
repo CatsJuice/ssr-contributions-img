@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useConfig, ConfigItem } from '../../hooks/useConfig';
+import { useConfig } from '../../hooks/useConfig';
 import { computed } from '@vue/reactivity';
 import SelectColorPreview from '../base/SelectColorPreview.vue';
 
@@ -11,10 +11,10 @@ const props = defineProps({
 });
 defineEmits(['update:model-value']);
 
-const { locale, darkMode } = useConfig();
+const { locale, activeDarkMode } = useConfig();
 
 const defaultOption = computed(() => ({
-  label: { zh: '默认' }[locale.value] || 'Default',
+  label: locale.value === 'zh' ? '默认' : 'Default',
   value: '',
 }));
 
@@ -36,14 +36,10 @@ const checkedOption = computed(() => {
   ) as any;
 });
 
-const popupContentClass = computed(() => {
-  const names = ['q-pa-xs'];
-  if (darkMode.value) names.push('bg-black');
-  return names.join(' ');
-});
+const popupContentClass = 'q-pa-xs menu-glass-surface';
 
 function readColors(cfg: any) {
-  return (cfg?.info?.colors || {})[darkMode.value ? 'dark' : 'light'];
+  return (cfg?.info?.colors || {})[activeDarkMode.value ? 'dark' : 'light'];
 }
 </script>
 

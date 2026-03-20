@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { throttle, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { useWindowSize } from '@vueuse/core';
 
 import Logo from './Logo.vue';
-import Github from './Github.vue';
 
 import { useConfig } from '../hooks/useConfig';
 import { validatePath } from './utils/validatePath';
@@ -78,7 +77,9 @@ onMounted(() => {
       <q-btn
         :loading="loadingConfig || loadingSvg"
         outline
-        color="primary"
+        color="white"
+        text-color="white"
+        class="exportor-download-btn"
         @click="download"
       >
         <q-icon name="fas fa-download" size="14px" class="q-mr-sm" />
@@ -89,7 +90,7 @@ onMounted(() => {
       <q-btn
         :loading="loadingConfig || loadingSvg"
         flat
-        class="bg-primary text-white q-ml-sm"
+        class="bg-white text-primary q-ml-sm exportor-copy-btn"
         @click="copy"
       >
         <q-icon name="fas fa-copy" size="14px" class="q-mr-sm" />
@@ -97,7 +98,6 @@ onMounted(() => {
       </q-btn>
     </div>
 
-    <Github id="github" />
     <Logo id="logo" />
   </div>
 </template>
@@ -130,17 +130,23 @@ onMounted(() => {
     backdrop-filter: blur(10px) saturate(180%);
   }
 
-  #github,
   #logo {
     position: absolute;
     top: var(--gap);
-    /* right: var(--gap); */
-  }
-  #github {
-    right: var(--gap);
   }
   #logo {
     left: var(--gap);
+  }
+
+  .exportor-download-btn {
+    border-color: rgba(255, 255, 255, 0.82);
+    color: #fff;
+    background: transparent !important;
+  }
+
+  .exportor-copy-btn {
+    color: var(--q-primary);
+    box-shadow: 0 14px 30px rgba(255, 255, 255, 0.18);
   }
 }
 
