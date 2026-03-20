@@ -36,11 +36,7 @@ const checkedOption = computed(() => {
   ) as any;
 });
 
-const popupContentClass = computed(() => {
-  const names = ['q-pa-xs'];
-  if (activeDarkMode.value) names.push('bg-black');
-  return names.join(' ');
-});
+const popupContentClass = 'q-pa-xs menu-glass-surface';
 
 function readColors(cfg: any) {
   return (cfg?.info?.colors || {})[activeDarkMode.value ? 'dark' : 'light'];

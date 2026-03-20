@@ -11,6 +11,7 @@
   .q-field__control {
     border-radius: $generic-border-radius !important;
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.14);
 
     &::before {
       border-bottom: 1px solid transparent;
@@ -22,27 +23,76 @@
   }
 
   &.q-field--focused .q-field__control {
-    background-color: $grey-2;
+    background: rgba(255, 255, 255, 0.22);
   }
 }
 body.body--dark {
+  .q-field--filled.q-field--dense .q-field__control {
+    background: rgba(15, 23, 42, 0.3);
+  }
+
   .q-field--filled.q-field--dense.q-field--focused .q-field__control {
-    background-color: $grey-10;
+    background: rgba(15, 23, 42, 0.42);
   }
 }
 
 // menu
 .q-menu {
   border-radius: $generic-border-radius !important;
-  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.05),
-    0px 2px 10px rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.08),
+    0px 2px 10px rgba(0, 0, 0, 0.03) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  .q-list {
+    background: transparent !important;
+  }
+
   .q-item {
     &:hover {
       background-color: rgba($primary, 0.1);
       color: $primary;
       font-weight: bold;
     }
+
+    &.active,
+    &.q-item--active,
+    &.q-manual-focusable--focused,
+    &[aria-selected='true'] {
+      background: rgba($primary, 0.14);
+      color: mix(#fff, $primary, 18%);
+      font-weight: bold;
+    }
   }
+}
+
+body.body--dark {
+  .q-menu {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(8, 15, 23, 0.72);
+    box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.3),
+      0px 8px 16px rgba(0, 0, 0, 0.12) !important;
+
+    .q-item {
+      &:hover {
+        background-color: rgba($primary, 0.16);
+      }
+
+      &.active,
+      &.q-item--active,
+      &.q-manual-focusable--focused,
+      &[aria-selected='true'] {
+        background: rgba($primary, 0.2);
+        color: mix(#fff, $primary, 40%);
+      }
+    }
+  }
+}
+
+.menu-glass-surface {
+  background: transparent !important;
 }
 
 // notify
@@ -71,9 +121,6 @@ body.body--dark {
 }
 
 // list
-.q-menu {
-  box-shadow: $shadow-2;
-}
 .q-item {
   border-radius: $generic-border-radius;
 }

@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 import { PropType, useSlots } from 'vue';
 import { computed } from '@vue/reactivity';
-import { useConfig } from '../../hooks/useConfig';
-
-const { activeDarkMode } = useConfig();
 const slots = useSlots();
 
 const props = defineProps({
@@ -33,7 +30,7 @@ const activeItem = computed(() => {
     </q-item>
 
     <q-menu :offset="[0, 5]">
-      <q-list class="q-pa-xs" :class="activeDarkMode ? 'bg-black' : null">
+      <q-list class="q-pa-xs menu-glass-surface">
         <q-item
           v-for="opt in options"
           :key="opt.value"

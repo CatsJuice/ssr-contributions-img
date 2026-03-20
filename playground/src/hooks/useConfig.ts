@@ -18,6 +18,16 @@ const localeOptions = [
   { label: 'English', value: 'en' as const },
   { label: '中文简体', value: 'zh' as const },
 ];
+const playgroundDefaults = {
+  theme: 'rose_pulse',
+  dark: true,
+  flatten: '0',
+  legend: true,
+  legendPosition: 'bottomLeft',
+  legendDirection: 'row',
+  strokeWidth: 2,
+  strokeColor: '222222',
+} as const;
 const { width } = useWindowSize();
 const locale = useStorage<Locale>('locale', localeOptions[0].value);
 const username = useStorage('githubUsername', 'CatsJuice');
@@ -27,12 +37,14 @@ const loadingSvg = ref(false);
 const svgCode = ref('');
 const themeOptions = ref([] as Choice[]);
 const activeTheme = ref<ActiveThemeState>({
-  value: 'green',
-  dark: false,
+  value: playgroundDefaults.theme,
+  dark: playgroundDefaults.dark,
   colors: [],
 });
 
-const state = useStorage('__cfgState', {} as Record<string, any>);
+const state = useStorage('__cfgState', {
+  ...playgroundDefaults,
+} as Record<string, any>);
 const darkMode = computed(() => !!state.value['dark']);
 const activeDarkMode = computed(() => !!activeTheme.value.dark);
 const activeReqParams = ref(
@@ -71,8 +83,12 @@ function readThemeColors(value: string, dark: boolean): string[] {
 
 function syncActiveTheme() {
   const query = activeReqParams.value?.query || {};
-  const dark = query.dark === 'true';
-  const value = query.theme || 'green';
+  const dark = query.dark === 'true'
+    ? true
+    : query.dark === 'false'
+    ? false
+    : playgroundDefaults.dark;
+  const value = query.theme || playgroundDefaults.theme;
   const colors = parseColorsValue(query.colors);
 
   activeTheme.value = {
@@ -118,7 +134,7 @@ export function useConfig() {
     return { query: query.value, username: username.value };
   });
   const selectedTheme = computed(() => {
-    const dft = 'green';
+    const dft = playgroundDefaults.theme;
     const value = state.value?.theme || dft;
     const theme = themeOptions.value.find((item) => item.value === value);
     return theme;
@@ -159,8 +175,11 @@ export function useConfig() {
     const walk = (cfg: ConfigItem) => {
       const key = cfg.key;
       const value = state.value[key];
-      if (value === undefined && cfg.default !== undefined) {
-        state.value[key] = cfg.default;
+      const playgroundDefaultValue =
+        playgroundDefaults[key as keyof typeof playgroundDefaults];
+      const defaultValue = playgroundDefaultValue ?? cfg.default;
+      if (value === undefined && defaultValue !== undefined) {
+        state.value[key] = defaultValue;
       }
 
       // store themes
