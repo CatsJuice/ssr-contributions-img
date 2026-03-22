@@ -37,6 +37,15 @@ export enum PresetTheme {
   LOTUS_ECLIPSE = 'lotus_eclipse',
   TROPIC_BURST = 'tropic_burst',
   DECO_NIGHTS = 'deco_nights',
+  SUPERNOVA_CRASH = 'supernova_crash',
+  VAPORWAVE_DREAM = 'vaporwave_dream',
+  QUANTUM_LEAP = 'quantum_leap',
+  DRAGONFIRE_SCALES = 'dragonfire_scales',
+  HALLOWEEN_PUMPKIN = 'halloween_pumpkin',
+  NORDIC_FROST = 'nordic_frost',
+  COSMIC_LATTE = 'cosmic_latte',
+  TOKYO_NIGHT = 'tokyo_night',
+  AUTUMN_MAPLE = 'autumn_maple',
 }
 
 export enum WidgetSize {
