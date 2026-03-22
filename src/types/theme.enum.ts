@@ -25,4 +25,10 @@ export enum PresetTheme {
   LAVA_SURGE = 'lava_surge',
   FROST_BYTE = 'frost_byte',
   ACID_RAIN = 'acid_rain',
+  VOLT_RIOT = 'volt_riot',
+  TOXIC_GLITCH = 'toxic_glitch',
+  PLASMA_STORM = 'plasma_storm',
+  CHROME_PULSE = 'chrome_pulse',
+  CYBER_SAKURA = 'cyber_sakura',
+  OBSIDIAN_BLOOM = 'obsidian_bloom',
 }

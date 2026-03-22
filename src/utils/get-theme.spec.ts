@@ -28,6 +28,20 @@ describe('getTheme', () => {
       '#F37BC5',
       '#FF8E45',
     ]);
+    expect(getTheme(PresetTheme.TOXIC_GLITCH, true)).toEqual([
+      '#13140C',
+      '#2F4A0B',
+      '#67A510',
+      '#B7F30B',
+      '#F7FF63',
+    ]);
+    expect(getTheme(PresetTheme.TOXIC_GLITCH, false)).toEqual([
+      '#FEFFE9',
+      '#F1FFB6',
+      '#D2F05B',
+      '#94CC1D',
+      '#577A0B',
+    ]);
   });
 
   it('should format preset labels for display', () => {
@@ -35,5 +49,8 @@ describe('getTheme', () => {
       'Purple Nebula',
     );
     expect(formatPresetThemeLabel(PresetTheme.ACID_RAIN)).toBe('Acid Rain');
+    expect(formatPresetThemeLabel(PresetTheme.CYBER_SAKURA)).toBe(
+      'Cyber Sakura',
+    );
   });
 });

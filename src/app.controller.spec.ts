@@ -54,6 +54,12 @@ describe('AppController', () => {
     expect(
       themeConfig?.optioins?.some((option) => option.value === 'acid_rain'),
     ).toBe(true);
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'volt_riot'),
+    ).toBe(true);
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'chrome_pulse'),
+    ).toBe(true);
 
     expect(animationConfig?.panel).toMatchObject({
       tab: { key: 'animation' },
