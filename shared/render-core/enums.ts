@@ -31,6 +31,12 @@ export enum PresetTheme {
   CHROME_PULSE = 'chrome_pulse',
   CYBER_SAKURA = 'cyber_sakura',
   OBSIDIAN_BLOOM = 'obsidian_bloom',
+  DESERT_MIRAGE = 'desert_mirage',
+  HOLOGRAM_POP = 'hologram_pop',
+  CIRCUIT_BRONZE = 'circuit_bronze',
+  LOTUS_ECLIPSE = 'lotus_eclipse',
+  TROPIC_BURST = 'tropic_burst',
+  DECO_NIGHTS = 'deco_nights',
 }
 
 export enum WidgetSize {

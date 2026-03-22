@@ -466,6 +466,126 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke2: '#FFFFFF',
     },
   ),
+  [PresetTheme.DESERT_MIRAGE]: createDetailedTheme(
+    ['#1E1610', '#7B5A35', '#C88A4B', '#4CB5A7', '#E8FFF7'],
+    ['#FFF8EE', '#F2D8A7', '#E3A56C', '#68C7B9', '#177E89'],
+    {
+      background: '#0F0A07',
+      textMain: '#FFF4E5',
+      textSub: '#C9AD8A',
+      grid: '#5D4630',
+      stroke1: '#090603',
+      stroke2: '#030201',
+    },
+    {
+      background: '#FFFCF6',
+      textMain: '#3C2817',
+      textSub: '#8A6B53',
+      grid: '#E7D6BE',
+      stroke1: '#F7EBDD',
+      stroke2: '#FFFFFF',
+    },
+  ),
+  [PresetTheme.HOLOGRAM_POP]: createDetailedTheme(
+    ['#121626', '#4E5DFF', '#7AB8FF', '#78F0DD', '#FFD38A'],
+    ['#FFF8F0', '#DDE4FF', '#B8EEFF', '#A2F3DF', '#FFB86C'],
+    {
+      background: '#070A13',
+      textMain: '#F5F7FF',
+      textSub: '#B5C0DD',
+      grid: '#334062',
+      stroke1: '#04060B',
+      stroke2: '#010204',
+    },
+    {
+      background: '#FFFDF9',
+      textMain: '#24304A',
+      textSub: '#6A7897',
+      grid: '#D8E0F1',
+      stroke1: '#EFF4FA',
+      stroke2: '#FFFFFF',
+    },
+  ),
+  [PresetTheme.CIRCUIT_BRONZE]: createDetailedTheme(
+    ['#171310', '#61401C', '#A86A2C', '#D7A86E', '#7EE0CF'],
+    ['#FFF8F1', '#F1DABF', '#D5A06C', '#8AC8C2', '#186A66'],
+    {
+      background: '#0A0806',
+      textMain: '#FFF4EA',
+      textSub: '#C7A98D',
+      grid: '#59412A',
+      stroke1: '#050403',
+      stroke2: '#010100',
+    },
+    {
+      background: '#FFFCF8',
+      textMain: '#3B2718',
+      textSub: '#826754',
+      grid: '#E8D8C7',
+      stroke1: '#F6EEE7',
+      stroke2: '#FFFFFF',
+    },
+  ),
+  [PresetTheme.LOTUS_ECLIPSE]: createDetailedTheme(
+    ['#12111E', '#3A2E6B', '#7B3FE4', '#1FAF97', '#FFE082'],
+    ['#FCFAFF', '#DDD3FF', '#B79BFF', '#74D8C4', '#B07A00'],
+    {
+      background: '#070611',
+      textMain: '#F7F2FF',
+      textSub: '#B9B0D5',
+      grid: '#433A71',
+      stroke1: '#040309',
+      stroke2: '#010102',
+    },
+    {
+      background: '#FFFDFB',
+      textMain: '#2D2546',
+      textSub: '#6F6690',
+      grid: '#E4DCF1',
+      stroke1: '#F4EFFB',
+      stroke2: '#FFFFFF',
+    },
+  ),
+  [PresetTheme.TROPIC_BURST]: createDetailedTheme(
+    ['#191015', '#7A2247', '#F25F4C', '#FFB347', '#5DDBA4'],
+    ['#FFF8F4', '#FFD6E0', '#FFAB97', '#FFC56A', '#1EA974'],
+    {
+      background: '#0C060A',
+      textMain: '#FFF2EE',
+      textSub: '#D6AFB7',
+      grid: '#5D3141',
+      stroke1: '#060304',
+      stroke2: '#020101',
+    },
+    {
+      background: '#FFFCFA',
+      textMain: '#3D2029',
+      textSub: '#8B6570',
+      grid: '#F0D6DD',
+      stroke1: '#F9EBEE',
+      stroke2: '#FFFFFF',
+    },
+  ),
+  [PresetTheme.DECO_NIGHTS]: createDetailedTheme(
+    ['#161217', '#62405F', '#B76E79', '#F2A541', '#6FD3C1'],
+    ['#FFF9F2', '#EADAF0', '#D8A0B0', '#F8C56B', '#2BA89B'],
+    {
+      background: '#090608',
+      textMain: '#FFF5EF',
+      textSub: '#C8B1BB',
+      grid: '#564152',
+      stroke1: '#050304',
+      stroke2: '#010101',
+    },
+    {
+      background: '#FFFDFC',
+      textMain: '#342531',
+      textSub: '#826878',
+      grid: '#EBDCE6',
+      stroke1: '#F7F0F5',
+      stroke2: '#FFFFFF',
+    },
+  ),
 };
 
 export const themes: Record<PresetTheme, { dark: string[]; light: string[] }> =
@@ -483,10 +603,7 @@ export const formatPresetThemeLabel = (themeName: string) =>
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
 
-export const getTheme = (
-  themeName: PresetTheme,
-  dark = false,
-): string[] => {
+export const getTheme = (themeName: PresetTheme, dark = false): string[] => {
   return themes[themeName]
     ? themes[themeName][dark ? 'dark' : 'light']
     : getTheme(PresetTheme.GREEN, dark);

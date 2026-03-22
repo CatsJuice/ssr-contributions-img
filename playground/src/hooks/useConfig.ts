@@ -102,6 +102,35 @@ function readThemeColors(
     : ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196027'];
 }
 
+function resolveDarkFlag(value: unknown, fallback = false) {
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  return fallback;
+}
+
+function buildLocalRenderConfig(configLike: Record<string, any>) {
+  const explicitColors = parseColorsValue(configLike.colors);
+  if (explicitColors.length) {
+    return {
+      ...configLike,
+      colors: explicitColors,
+    };
+  }
+
+  const theme = `${configLike.theme || ''}`.trim();
+  if (!theme || theme === 'random') return configLike;
+
+  const dark = resolveDarkFlag(configLike.dark, darkMode.value);
+  const colors = readThemeColors(themeOptions.value, theme, dark);
+
+  return colors.length
+    ? {
+        ...configLike,
+        colors,
+      }
+    : configLike;
+}
+
 function isEmptyValue(value: unknown) {
   return value === undefined || value === null || value === '';
 }
@@ -283,6 +312,10 @@ const themePreviewKey = computed(() =>
   stableSerialize({
     config: themePreviewConfig.value,
     data: previewDataKey.value,
+    themes: themeOptions.value.map((item) => ({
+      value: item.value,
+      colors: item?.info?.colors || null,
+    })),
   }),
 );
 
@@ -338,7 +371,7 @@ function scheduleSvgRender(delay = CONFIG_RENDER_DEBOUNCE_MS) {
     try {
       const svg = await renderContributionResponseSvg(
         contributionData.value,
-        query.value,
+        buildLocalRenderConfig(query.value),
       );
       if (sequence !== renderSequence) return;
       svgCode.value = svg;
@@ -423,17 +456,18 @@ watch(previewDataKey, () => {
 });
 
 async function renderPreviewSvg(configLike: Record<string, any>) {
+  const localConfig = buildLocalRenderConfig(configLike);
   const key = stableSerialize({
     data: previewDataKey.value,
-    config: configLike,
+    config: localConfig,
   });
   const cached = previewSvgCache.get(key);
   if (cached) return cached;
 
   const task = (
     contributionData.value
-      ? renderContributionResponseSvg(contributionData.value, configLike)
-      : renderMockContributionSvg(configLike)
+      ? renderContributionResponseSvg(contributionData.value, localConfig)
+      : renderMockContributionSvg(localConfig)
   ).catch((error) => {
     previewSvgCache.delete(key);
     throw error;

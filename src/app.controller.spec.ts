@@ -60,6 +60,12 @@ describe('AppController', () => {
     expect(
       themeConfig?.optioins?.some((option) => option.value === 'chrome_pulse'),
     ).toBe(true);
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'desert_mirage'),
+    ).toBe(true);
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'hologram_pop'),
+    ).toBe(true);
 
     expect(animationConfig?.panel).toMatchObject({
       tab: { key: 'animation' },

@@ -42,6 +42,34 @@ describe('getTheme', () => {
       '#94CC1D',
       '#577A0B',
     ]);
+    expect(getTheme(PresetTheme.DESERT_MIRAGE, true)).toEqual([
+      '#1E1610',
+      '#7B5A35',
+      '#C88A4B',
+      '#4CB5A7',
+      '#E8FFF7',
+    ]);
+    expect(getTheme(PresetTheme.DESERT_MIRAGE, false)).toEqual([
+      '#FFF8EE',
+      '#F2D8A7',
+      '#E3A56C',
+      '#68C7B9',
+      '#177E89',
+    ]);
+    expect(getTheme(PresetTheme.HOLOGRAM_POP, true)).toEqual([
+      '#121626',
+      '#4E5DFF',
+      '#7AB8FF',
+      '#78F0DD',
+      '#FFD38A',
+    ]);
+    expect(getTheme(PresetTheme.HOLOGRAM_POP, false)).toEqual([
+      '#FFF8F0',
+      '#DDE4FF',
+      '#B8EEFF',
+      '#A2F3DF',
+      '#FFB86C',
+    ]);
   });
 
   it('should format preset labels for display', () => {
@@ -51,6 +79,9 @@ describe('getTheme', () => {
     expect(formatPresetThemeLabel(PresetTheme.ACID_RAIN)).toBe('Acid Rain');
     expect(formatPresetThemeLabel(PresetTheme.CYBER_SAKURA)).toBe(
       'Cyber Sakura',
+    );
+    expect(formatPresetThemeLabel(PresetTheme.CIRCUIT_BRONZE)).toBe(
+      'Circuit Bronze',
     );
   });
 });
