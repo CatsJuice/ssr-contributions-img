@@ -2,6 +2,19 @@ export type Locale = 'en' | 'zh';
 
 export type LocalizedText = Record<Locale, string> | string;
 
+export interface ThemeToneInfo {
+  key: string;
+  color: string;
+  name: LocalizedText;
+  order?: number;
+}
+
+export interface ThemeChoiceInfo {
+  colors?: Record<'dark' | 'light', string[]>;
+  primaryTones?: ThemeToneInfo[];
+  [key: string]: any;
+}
+
 export interface ConfigPanelSlot {
   key: string;
   label: LocalizedText;
@@ -19,7 +32,7 @@ export interface Choice {
   value: string;
   label: LocalizedText;
   config?: ConfigItem[];
-  info?: Record<string, any>;
+  info?: ThemeChoiceInfo;
 }
 
 export interface ConfigItem {

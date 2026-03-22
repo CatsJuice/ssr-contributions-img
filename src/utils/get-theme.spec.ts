@@ -1,6 +1,11 @@
 import { PresetTheme } from '../types/theme.enum';
 
-import { formatPresetThemeLabel, getTheme } from './get-theme';
+import {
+  formatPresetThemeLabel,
+  getTheme,
+  themeDefinitions,
+  themeToneDefinitions,
+} from './get-theme';
 
 describe('getTheme', () => {
   it('should expose the new preset theme levels', () => {
@@ -82,6 +87,44 @@ describe('getTheme', () => {
     );
     expect(formatPresetThemeLabel(PresetTheme.CIRCUIT_BRONZE)).toBe(
       'Circuit Bronze',
+    );
+  });
+
+  it('should expose primary tones for every theme definition', () => {
+    expect(themeDefinitions[PresetTheme.GREEN].primaryTones).toEqual(['green']);
+    expect(themeDefinitions[PresetTheme.DESERT_MIRAGE].primaryTones).toEqual([
+      'orange',
+      'teal',
+    ]);
+    expect(themeDefinitions[PresetTheme.MONO_SLATE].primaryTones).toEqual([
+      'neutral',
+    ]);
+    expect(themeDefinitions[PresetTheme.HOLOGRAM_POP].primaryTones).toEqual([
+      'blue',
+      'cyan',
+      'orange',
+    ]);
+
+    Object.values(themeDefinitions).forEach((definition) => {
+      expect(definition.primaryTones.length).toBeGreaterThan(0);
+      definition.primaryTones.forEach((toneKey) => {
+        expect(themeToneDefinitions[toneKey]).toEqual(
+          expect.objectContaining({
+            color: expect.any(String),
+            name: expect.any(Object),
+          }),
+        );
+      });
+    });
+
+    expect(themeToneDefinitions.orange).toEqual(
+      expect.objectContaining({
+        color: '#E28B3E',
+        name: {
+          en: 'Orange',
+          zh: '橙',
+        },
+      }),
     );
   });
 });

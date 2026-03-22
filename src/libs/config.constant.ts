@@ -1,4 +1,9 @@
-import { themes, formatPresetThemeLabel } from '../utils/get-theme';
+import {
+  themes,
+  themeDefinitions,
+  themeToneDefinitions,
+  formatPresetThemeLabel,
+} from '../utils/get-theme';
 
 import { WidgetSize } from '../dto/base/widget-size.dto';
 import { OutputFormat } from '../dto/base/output-format.dto';
@@ -39,6 +44,14 @@ interface Choice {
   label: Record<Locale, string>;
   config?: ConfigItem[];
   info?: Record<string, any>;
+}
+
+function buildThemeToneInfo(themeName: string) {
+  return themeDefinitions[themeName as keyof typeof themeDefinitions].primaryTones
+    .map((toneKey) => ({
+      key: toneKey,
+      ...themeToneDefinitions[toneKey],
+    }));
 }
 
 const qualityCfg: ConfigItem = withPanel(
@@ -478,6 +491,7 @@ export const config: ConfigItem[] = [
           },
           info: {
             colors: themes[themeName],
+            primaryTones: buildThemeToneInfo(themeName),
           },
         })),
       ],

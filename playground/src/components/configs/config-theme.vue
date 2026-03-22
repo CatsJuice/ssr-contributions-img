@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import type { Choice, LocalizedText, ThemeToneInfo } from '../../types/config';
+import { PresetTheme, themeDefinitions, themeToneDefinitions } from '@render-core';
+
 import { PropType, computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 
 import MagicHoverCard from '../base/MagicHoverCard.vue';
@@ -6,13 +9,15 @@ import ThemePaletteSwatches from './ThemePaletteSwatches.vue';
 
 import { useConfig } from '../../hooks/useConfig';
 
+const ALL_TONE_KEY = 'all';
+
 const props = defineProps({
   modelValue: {
     type: String,
     default: '',
   },
   options: {
-    type: Array as PropType<Array<Record<string, any>>>,
+    type: Array as PropType<Choice[]>,
     default: () => [],
   },
 });
@@ -29,7 +34,7 @@ const {
 } = useConfig();
 
 const dialog = ref(false);
-const search = ref('');
+const selectedToneKey = ref(ALL_TONE_KEY);
 const previewMap = ref<Record<string, string>>({});
 const loadingMap = ref<Record<string, boolean>>({});
 const galleryListRef = ref<HTMLElement | null>(null);
@@ -48,20 +53,87 @@ const currentOption = computed(
     allOptions.value[0],
 );
 const triggerSvg = computed(() => previewMap.value[props.modelValue] || '');
+const toneFilters = computed(() => {
+  const toneMap = new Map<string, ThemeToneInfo>();
 
-const filteredOptions = computed(() => {
-  const keyword = search.value.trim().toLowerCase();
-  if (!keyword) return allOptions.value;
+  allOptions.value.forEach((option) => {
+    if (option.value === 'random') return;
 
-  return allOptions.value.filter((item) => {
-    const label = `${item.label || ''}`.toLowerCase();
-    const value = `${item.value || ''}`.toLowerCase();
-    return label.includes(keyword) || value.includes(keyword);
+    readPrimaryTones(option).forEach((tone) => {
+      if (!toneMap.has(tone.key)) toneMap.set(tone.key, tone);
+    });
+  });
+
+  return [...toneMap.values()].sort((prev, next) => {
+    const orderDiff =
+      (prev.order ?? Number.MAX_SAFE_INTEGER) -
+      (next.order ?? Number.MAX_SAFE_INTEGER);
+    if (orderDiff !== 0) return orderDiff;
+    return getLocalizedText(prev.name).localeCompare(getLocalizedText(next.name));
   });
 });
+const toneFilteredOptions = computed(() => {
+  if (selectedToneKey.value === ALL_TONE_KEY) return allOptions.value;
+
+  return allOptions.value.filter((option) =>
+    readPrimaryTones(option).some((tone) => tone.key === selectedToneKey.value),
+  );
+});
 const filteredValuesKey = computed(() =>
-  filteredOptions.value.map((item) => item.value).join('|'),
+  toneFilteredOptions.value.map((item) => item.value).join('|'),
 );
+const galleryFilterClass = computed(() => `filter-tone-${selectedToneKey.value}`);
+
+function getLocalizedText(value: LocalizedText | undefined) {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  return value[locale.value] || value.en || Object.values(value)[0] || '';
+}
+
+function isPresetTheme(value: unknown): value is PresetTheme {
+  return typeof value === 'string' && value in themeDefinitions;
+}
+
+function buildToneInfo(toneKey: string): ThemeToneInfo | null {
+  if (!(toneKey in themeToneDefinitions)) return null;
+
+  return {
+    key: toneKey,
+    ...themeToneDefinitions[toneKey as keyof typeof themeToneDefinitions],
+  };
+}
+
+function readPrimaryTones(option: Choice | Record<string, any>): ThemeToneInfo[] {
+  const tones = option?.info?.primaryTones;
+  if (Array.isArray(tones) && tones.length) {
+    return tones.filter(
+      (tone): tone is ThemeToneInfo => !!tone && typeof tone.key === 'string',
+    );
+  }
+
+  const themeValue = option?.value;
+  if (!isPresetTheme(themeValue)) return [];
+
+  return themeDefinitions[themeValue].primaryTones
+    .map((toneKey) => buildToneInfo(toneKey))
+    .filter((tone): tone is ThemeToneInfo => !!tone);
+}
+
+function getToneName(tone: ThemeToneInfo) {
+  return getLocalizedText(tone.name);
+}
+
+function getToneClassNames(option: Choice | Record<string, any>) {
+  return readPrimaryTones(option).map((tone) => `tone-${tone.key}`);
+}
+
+function selectToneFilter(toneKey: string) {
+  selectedToneKey.value = toneKey;
+}
+
+function isToneSelected(toneKey: string) {
+  return selectedToneKey.value === toneKey;
+}
 
 function setLoading(value: string, loading: boolean) {
   if (loading) {
@@ -144,6 +216,7 @@ function getVisibleThemeValues(values: string[]) {
   const visibleValues = values.filter((value) => {
     const cell = themeCellElements.get(value);
     if (!cell) return false;
+    if (window.getComputedStyle(cell).display === 'none') return false;
 
     const rect = cell.getBoundingClientRect();
     return (
@@ -158,7 +231,7 @@ function getVisibleThemeValues(values: string[]) {
 }
 
 function buildPreviewQueue() {
-  const values = filteredOptions.value
+  const values = toneFilteredOptions.value
     .map((item) => item.value)
     .filter((value) => value && value !== 'random');
   const activeValue = `${props.modelValue || ''}`;
@@ -218,10 +291,15 @@ function selectTheme(value: string) {
   dialog.value = false;
 }
 
-function getThemePalette(option: Record<string, any>) {
+function getThemePalette(option: Choice | Record<string, any>) {
   const mode = activeDarkMode.value ? 'dark' : 'light';
   const palette = option?.info?.colors?.[mode];
-  return Array.isArray(palette) ? palette.filter(Boolean) : [];
+  if (Array.isArray(palette)) return palette.filter(Boolean);
+
+  const themeValue = option?.value;
+  if (!isPresetTheme(themeValue)) return [];
+
+  return themeDefinitions[themeValue][mode].levels.filter(Boolean);
 }
 
 watch(
@@ -242,6 +320,16 @@ watch(themePreviewKey, () => {
   }
   if (dialog.value) schedulePreviewQueueAfterPaint();
 });
+
+watch(
+  toneFilters,
+  (tones) => {
+    if (selectedToneKey.value === ALL_TONE_KEY) return;
+    if (tones.some((tone) => tone.key === selectedToneKey.value)) return;
+    selectedToneKey.value = ALL_TONE_KEY;
+  },
+  { immediate: true },
+);
 
 watch(
   () => [dialog.value, filteredValuesKey.value],
@@ -320,12 +408,34 @@ onBeforeUnmount(() => {
         </div>
 
         <div class="theme-gallery-toolbar">
-          <q-input
-            v-model="search"
-            dense
-            filled
-            :label="locale === 'zh' ? '搜索主题' : 'Search themes'"
-          />
+          <div v-if="toneFilters.length" class="theme-tone-filter-shell">
+            <div class="theme-tone-filter-row">
+              <button
+                type="button"
+                class="theme-tone-filter"
+                :class="{ active: isToneSelected(ALL_TONE_KEY) }"
+                @click="selectToneFilter(ALL_TONE_KEY)"
+              >
+                <span class="theme-tone-dot theme-tone-dot-all"></span>
+                <span>{{ locale === 'zh' ? '全部' : 'All' }}</span>
+              </button>
+
+              <button
+                v-for="tone in toneFilters"
+                :key="tone.key"
+                type="button"
+                class="theme-tone-filter"
+                :class="{ active: isToneSelected(tone.key) }"
+                @click="selectToneFilter(tone.key)"
+              >
+                <span
+                  class="theme-tone-dot"
+                  :style="{ backgroundColor: tone.color }"
+                ></span>
+                <span>{{ getToneName(tone) }}</span>
+              </button>
+            </div>
+          </div>
 
           <div v-if="hasCustomColors" class="theme-gallery-note">
             {{
@@ -336,13 +446,18 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <div ref="galleryListRef" class="theme-gallery-list">
+        <div
+          ref="galleryListRef"
+          class="theme-gallery-list"
+          :class="galleryFilterClass"
+        >
           <div class="theme-gallery-grid">
             <div
-              v-for="opt in filteredOptions"
+              v-for="opt in allOptions"
               :key="opt.value"
               :ref="(el) => setCellRef(opt.value, el)"
               class="theme-gallery-cell"
+              :class="getToneClassNames(opt)"
               @click="selectTheme(opt.value)"
             >
               <MagicHoverCard class="theme-gallery-hover">
@@ -398,11 +513,16 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <div v-if="!filteredOptions.length" class="theme-gallery-empty">
+          <div
+            v-if="
+              selectedToneKey !== ALL_TONE_KEY && !toneFilteredOptions.length
+            "
+            class="theme-gallery-empty"
+          >
             {{
               locale === 'zh'
-                ? '没有匹配的主题'
-                : 'No themes matched the search'
+                ? '没有匹配当前主色调的主题'
+                : 'No themes matched the selected tone'
             }}
           </div>
         </div>
@@ -412,12 +532,16 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
+$theme-tone-keys: 'red', 'rose', 'orange', 'yellow', 'lime', 'green', 'teal',
+  'cyan', 'blue', 'purple', 'neutral';
+
 .theme-gallery-dialog {
   .q-dialog__inner--minimized {
     padding: 16px;
 
     > div {
       width: min(1080px, 80vw) !important;
+      height: 80vh !important;
       max-width: calc(100vw - 32px) !important;
       max-height: 80vh !important;
     }
@@ -473,6 +597,7 @@ onBeforeUnmount(() => {
 .theme-gallery-shell {
   --theme-gallery-column-min: 212px;
   width: 100%;
+  height: 80vh;
   max-width: none;
   max-height: 80vh;
   display: flex;
@@ -517,11 +642,76 @@ onBeforeUnmount(() => {
 }
 
 .theme-gallery-toolbar {
-  padding: 16px 24px 0;
+  padding: 16px 24px 32px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   flex-shrink: 0;
+}
+
+.theme-tone-filter-shell {
+  width: 100%;
+}
+
+.theme-tone-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.theme-tone-filter {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.46);
+  color: inherit;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease,
+    background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(71, 85, 105, 0.28);
+  }
+
+  &.active {
+    border-color: rgba(30, 41, 59, 0.18);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.88),
+        rgba(255, 255, 255, 0.62)
+      ),
+      rgba(255, 255, 255, 0.72);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+  }
+}
+
+.theme-tone-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42),
+    0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.theme-tone-dot-all {
+  background: linear-gradient(
+    135deg,
+    #d96c98 0%,
+    #e28b3e 30%,
+    #9cc94a 55%,
+    #42b7d6 78%,
+    #8a63d2 100%
+  );
 }
 
 .theme-gallery-list {
@@ -529,7 +719,7 @@ onBeforeUnmount(() => {
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 4px 24px 24px;
+  padding: 0 24px 24px;
 }
 
 .theme-gallery-grid {
@@ -543,6 +733,13 @@ onBeforeUnmount(() => {
 
 .theme-gallery-cell {
   min-width: 0;
+}
+
+@each $tone in $theme-tone-keys {
+  .theme-gallery-list.filter-tone-#{$tone}
+    .theme-gallery-cell:not(.tone-#{$tone}) {
+    display: none;
+  }
 }
 
 .theme-gallery-hover {
@@ -694,6 +891,31 @@ body.body--dark {
     color: #fed7aa;
   }
 
+  .theme-tone-filter {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.34);
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.active {
+      border-color: rgba(255, 255, 255, 0.18);
+      background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.12),
+          rgba(255, 255, 255, 0.05)
+        ),
+        rgba(15, 23, 42, 0.56);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+    }
+  }
+
+  .theme-tone-dot {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
   .theme-card {
     --theme-card-surface: linear-gradient(
         180deg,
@@ -721,11 +943,11 @@ body.body--dark {
   }
 
   .theme-gallery-toolbar {
-    padding: 12px 16px 0;
+    padding: 12px 16px 32px;
   }
 
   .theme-gallery-list {
-    padding: 4px 16px 16px;
+    padding: 0 16px 16px;
   }
 }
 </style>

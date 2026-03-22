@@ -1,5 +1,95 @@
 import { PresetTheme } from './enums';
 
+export enum ThemeTone {
+  RED = 'red',
+  ROSE = 'rose',
+  ORANGE = 'orange',
+  YELLOW = 'yellow',
+  LIME = 'lime',
+  GREEN = 'green',
+  TEAL = 'teal',
+  CYAN = 'cyan',
+  BLUE = 'blue',
+  PURPLE = 'purple',
+  NEUTRAL = 'neutral',
+}
+
+export type ThemeToneName = {
+  en: string;
+  zh: string;
+};
+
+export type ThemeToneDefinition = {
+  color: string;
+  name: ThemeToneName;
+  order: number;
+};
+
+export const themeToneDefinitions: Record<ThemeTone, ThemeToneDefinition> = {
+  [ThemeTone.RED]: {
+    color: '#D45A5A',
+    name: { en: 'Red', zh: '红' },
+    order: 10,
+  },
+  [ThemeTone.ROSE]: {
+    color: '#D96C98',
+    name: { en: 'Rose', zh: '玫红' },
+    order: 20,
+  },
+  [ThemeTone.ORANGE]: {
+    color: '#E28B3E',
+    name: { en: 'Orange', zh: '橙' },
+    order: 30,
+  },
+  [ThemeTone.YELLOW]: {
+    color: '#D6B34A',
+    name: { en: 'Yellow', zh: '黄' },
+    order: 40,
+  },
+  [ThemeTone.LIME]: {
+    color: '#9CC94A',
+    name: { en: 'Lime', zh: '黄绿' },
+    order: 50,
+  },
+  [ThemeTone.GREEN]: {
+    color: '#47A66D',
+    name: { en: 'Green', zh: '绿' },
+    order: 60,
+  },
+  [ThemeTone.TEAL]: {
+    color: '#2FA89B',
+    name: { en: 'Teal', zh: '青绿' },
+    order: 70,
+  },
+  [ThemeTone.CYAN]: {
+    color: '#42B7D6',
+    name: { en: 'Cyan', zh: '青' },
+    order: 80,
+  },
+  [ThemeTone.BLUE]: {
+    color: '#517FE3',
+    name: { en: 'Blue', zh: '蓝' },
+    order: 90,
+  },
+  [ThemeTone.PURPLE]: {
+    color: '#8A63D2',
+    name: { en: 'Purple', zh: '紫' },
+    order: 100,
+  },
+  [ThemeTone.NEUTRAL]: {
+    color: '#8C8278',
+    name: { en: 'Neutral', zh: '中性' },
+    order: 110,
+  },
+};
+
+export const themeToneList = (Object.keys(
+  themeToneDefinitions,
+) as ThemeTone[]).map((key) => ({
+  key,
+  ...themeToneDefinitions[key],
+}));
+
 export type ThemePalette = {
   levels: string[];
   background?: string;
@@ -10,9 +100,13 @@ export type ThemePalette = {
   stroke2?: string;
 };
 
-export type ThemeDefinition = {
+export type ThemePaletteDefinition = {
   dark: ThemePalette;
   light: ThemePalette;
+};
+
+export type ThemeDefinition = ThemePaletteDefinition & {
+  primaryTones: ThemeTone[];
 };
 
 const createPalette = (
@@ -23,7 +117,10 @@ const createPalette = (
   ...palette,
 });
 
-const createTheme = (dark: string[], light: string[]): ThemeDefinition => ({
+const createTheme = (
+  dark: string[],
+  light: string[],
+): ThemePaletteDefinition => ({
   dark: createPalette(dark),
   light: createPalette(light),
 });
@@ -33,26 +130,34 @@ const createDetailedTheme = (
   light: string[],
   darkPalette: Omit<ThemePalette, 'levels'> = {},
   lightPalette: Omit<ThemePalette, 'levels'> = {},
-): ThemeDefinition => ({
+): ThemePaletteDefinition => ({
   dark: createPalette(dark, darkPalette),
   light: createPalette(light, lightPalette),
 });
 
-const mirrorTheme = (palette: ThemePalette): ThemeDefinition => ({
+const mirrorTheme = (palette: ThemePalette): ThemePaletteDefinition => ({
   dark: palette,
   light: palette,
 });
 
+const defineTheme = (
+  primaryTones: ThemeTone[],
+  definition: ThemePaletteDefinition,
+): ThemeDefinition => ({
+  ...definition,
+  primaryTones,
+});
+
 export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
-  [PresetTheme.GREEN]: createTheme(
+  [PresetTheme.GREEN]: defineTheme([ThemeTone.GREEN], createTheme(
     ['#2D3135', '#13451D', '#1A782D', '#1EBB3E', '#00E52E'],
     ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196027'],
-  ),
-  [PresetTheme.DARK_GREEN]: createTheme(
+  )),
+  [PresetTheme.DARK_GREEN]: defineTheme([ThemeTone.TEAL, ThemeTone.GREEN], createTheme(
     ['#2D3135', '#0C4739', '#247C6A', '#22A58A', '#00E8B8'],
     ['#EBEDF0', '#BAD7D2', '#64A394', '#247C6A', '#0F5443'],
-  ),
-  [PresetTheme.RED]: createTheme(
+  )),
+  [PresetTheme.RED]: defineTheme([ThemeTone.RED, ThemeTone.ROSE], createTheme(
     [
       '#2D3135',
       '#65082C',
@@ -71,8 +176,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       '#9e2453',
       '#900c3f',
     ],
-  ),
-  [PresetTheme.PURPLE]: createTheme(
+  )),
+  [PresetTheme.PURPLE]: defineTheme([ThemeTone.PURPLE], createTheme(
     [
       '#2D3135',
       '#4813AD',
@@ -91,8 +196,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       '#5e25cc',
       '#490ac4',
     ],
-  ),
-  [PresetTheme.BLUE]: createTheme(
+  )),
+  [PresetTheme.BLUE]: defineTheme([ThemeTone.BLUE], createTheme(
     [
       '#2D3135',
       '#1A3483',
@@ -111,12 +216,12 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       '#2d4d9b',
       '#0f2e8b',
     ],
-  ),
-  [PresetTheme.YELLOW]: createTheme(
+  )),
+  [PresetTheme.YELLOW]: defineTheme([ThemeTone.YELLOW, ThemeTone.ORANGE], createTheme(
     ['#2D3135', '#6D6442', '#D78C16', '#C9A92A', '#DEB921', '#FFD600'],
     ['#ebedf0', '#F9E79F', '#F4D03F', '#F1C40F', '#F39C12', '#D35400'],
-  ),
-  [PresetTheme.CYAN]: createTheme(
+  )),
+  [PresetTheme.CYAN]: defineTheme([ThemeTone.CYAN, ThemeTone.BLUE], createTheme(
     [
       '#2D3135',
       '#324A6A',
@@ -135,24 +240,24 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       '#355674',
       '#324A6A',
     ],
-  ),
-  [PresetTheme.YELLOW_WINE]: createTheme(
+  )),
+  [PresetTheme.YELLOW_WINE]: defineTheme([ThemeTone.YELLOW, ThemeTone.ROSE], createTheme(
     ['#2D3135', '#662142', '#AC464A', '#D85B34', '#E89C32', '#FFDA00'],
     ['#E3E3E3', '#E8D45E', '#DEA453', '#D9603A', '#AC464A', '#6B1F44'],
-  ),
-  [PresetTheme.PINK]: createTheme(
+  )),
+  [PresetTheme.PINK]: defineTheme([ThemeTone.ROSE], createTheme(
     ['#2D3135', '#8F1A64', '#A63D7A', '#D64690', '#E33479', '#FF0065'],
     ['#EBEDF0', '#ffc0cb', '#f195b9', '#e36aa8', '#d53f96', '#c71585'],
-  ),
-  [PresetTheme.SUNSET]: createTheme(
+  )),
+  [PresetTheme.SUNSET]: defineTheme([ThemeTone.ROSE, ThemeTone.PURPLE], createTheme(
     ['#2D3135', '#2E1B77', '#5a1459', '#91145c', '#c8135e', '#ff1361'],
     ['#EBEDF0', '#DDD7F5', '#FFA8CD', '#FF73AF', '#db357c', '#ff1361'],
-  ),
-  [PresetTheme.NATIVE]: createTheme(
+  )),
+  [PresetTheme.NATIVE]: defineTheme([ThemeTone.GREEN], createTheme(
     ['#2d333b', '#0e4429', '#006d32', '#26a641', '#39d353'],
     ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-  ),
-  [PresetTheme.PURPLE_NEBULA]: mirrorTheme(
+  )),
+  [PresetTheme.PURPLE_NEBULA]: defineTheme([ThemeTone.PURPLE], mirrorTheme(
     createPalette(['#241F31', '#6654AD', '#855CF8', '#A855F7', '#D946EF'], {
       background: '#0F0C18',
       textMain: '#F2EEFF',
@@ -161,32 +266,32 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#110C1C',
       stroke2: '#08060E',
     }),
-  ),
-  [PresetTheme.BLUE_ORBIT]: mirrorTheme(
+  )),
+  [PresetTheme.BLUE_ORBIT]: defineTheme([ThemeTone.BLUE], mirrorTheme(
     createPalette(['#13233A', '#1B4A99', '#2563EB', '#388BFD', '#60A5FA'], {
       background: '#081222',
       textMain: '#E8F3FF',
       textSub: '#92ADCC',
       grid: '#1D334C',
     }),
-  ),
-  [PresetTheme.SUNSET_EMBER]: mirrorTheme(
+  )),
+  [PresetTheme.SUNSET_EMBER]: defineTheme([ThemeTone.RED, ThemeTone.ORANGE], mirrorTheme(
     createPalette(['#2F181F', '#993446', '#EA580C', '#F97316', '#FB923C'], {
       background: '#190D12',
       textMain: '#FFEFE5',
       textSub: '#D6A493',
       grid: '#4A262E',
     }),
-  ),
-  [PresetTheme.TEAL_LAGOON]: mirrorTheme(
+  )),
+  [PresetTheme.TEAL_LAGOON]: defineTheme([ThemeTone.TEAL], mirrorTheme(
     createPalette(['#10292B', '#115E59', '#0D9488', '#14B8A6', '#2DD4BF'], {
       background: '#081819',
       textMain: '#E6FCFA',
       textSub: '#90C1BE',
       grid: '#1C3F41',
     }),
-  ),
-  [PresetTheme.ROSE_PULSE]: mirrorTheme(
+  )),
+  [PresetTheme.ROSE_PULSE]: defineTheme([ThemeTone.ROSE, ThemeTone.RED], mirrorTheme(
     createPalette(['#2E1823', '#BE185D', '#E11D48', '#F43F5E', '#FB7185'], {
       background: '#1B0C14',
       textMain: '#FFEBF4',
@@ -195,8 +300,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#14080E',
       stroke2: '#0A0408',
     }),
-  ),
-  [PresetTheme.AMBER_FORGE]: mirrorTheme(
+  )),
+  [PresetTheme.AMBER_FORGE]: defineTheme([ThemeTone.ORANGE, ThemeTone.YELLOW], mirrorTheme(
     createPalette(['#332310', '#B45309', '#D97706', '#F59E0B', '#FBBF24'], {
       background: '#1C1208',
       textMain: '#FFF5DC',
@@ -205,8 +310,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#140C04',
       stroke2: '#0A0602',
     }),
-  ),
-  [PresetTheme.EMERALD_CANOPY]: mirrorTheme(
+  )),
+  [PresetTheme.EMERALD_CANOPY]: defineTheme([ThemeTone.GREEN], mirrorTheme(
     createPalette(['#132B1D', '#059669', '#10B981', '#34D399', '#6EE7B7'], {
       background: '#081910',
       textMain: '#E5FCF0',
@@ -215,8 +320,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#05120B',
       stroke2: '#020A06',
     }),
-  ),
-  [PresetTheme.CYAN_DEPTH]: mirrorTheme(
+  )),
+  [PresetTheme.CYAN_DEPTH]: defineTheme([ThemeTone.CYAN], mirrorTheme(
     createPalette(['#11252F', '#0891B2', '#06B6D4', '#22D3EE', '#67E8F9'], {
       background: '#07141C',
       textMain: '#E4F8FF',
@@ -225,8 +330,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#050E14',
       stroke2: '#02080C',
     }),
-  ),
-  [PresetTheme.INDIGO_NIGHT]: mirrorTheme(
+  )),
+  [PresetTheme.INDIGO_NIGHT]: defineTheme([ThemeTone.BLUE, ThemeTone.PURPLE], mirrorTheme(
     createPalette(['#1A1F3C', '#4338CA', '#4F46E5', '#6366F1', '#818CF8'], {
       background: '#0D1023',
       textMain: '#ECEEFF',
@@ -235,8 +340,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#090B18',
       stroke2: '#05070F',
     }),
-  ),
-  [PresetTheme.MONO_SLATE]: mirrorTheme(
+  )),
+  [PresetTheme.MONO_SLATE]: defineTheme([ThemeTone.NEUTRAL], mirrorTheme(
     createPalette(['#242424', '#5A5A5A', '#828282', '#B4B4B4', '#E1E1E1'], {
       background: '#121212',
       textMain: '#F2F2F2',
@@ -245,8 +350,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#080808',
       stroke2: '#000000',
     }),
-  ),
-  [PresetTheme.NEON_HORIZON]: createDetailedTheme(
+  )),
+  [PresetTheme.NEON_HORIZON]: defineTheme([ThemeTone.PURPLE, ThemeTone.ROSE, ThemeTone.ORANGE], createDetailedTheme(
     ['#221428', '#5B21B6', '#8B5CF6', '#EC4899', '#FFB84D'],
     ['#FFF4FB', '#E6D7FF', '#C0A8FF', '#F37BC5', '#FF8E45'],
     {
@@ -265,8 +370,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F8E8F2',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.AURORA_DRIFT]: createDetailedTheme(
+  )),
+  [PresetTheme.AURORA_DRIFT]: defineTheme([ThemeTone.TEAL, ThemeTone.GREEN, ThemeTone.LIME], createDetailedTheme(
     ['#10221C', '#0F766E', '#14B8A6', '#6EE7B7', '#D9FF6B'],
     ['#F4FFF8', '#CEF7E5', '#88EBC2', '#33C2A4', '#0F8A7A'],
     {
@@ -285,8 +390,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#E1F5ED',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.LAVA_SURGE]: createDetailedTheme(
+  )),
+  [PresetTheme.LAVA_SURGE]: defineTheme([ThemeTone.RED, ThemeTone.ORANGE, ThemeTone.YELLOW], createDetailedTheme(
     ['#26110F', '#7F1D1D', '#C2410C', '#FB923C', '#FFE082'],
     ['#FFF5EF', '#FFD8C2', '#FFB077', '#F97316', '#B45309'],
     {
@@ -305,8 +410,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F9E6DC',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.FROST_BYTE]: createDetailedTheme(
+  )),
+  [PresetTheme.FROST_BYTE]: defineTheme([ThemeTone.BLUE, ThemeTone.CYAN], createDetailedTheme(
     ['#101A2E', '#164E63', '#0EA5E9', '#67E8F9', '#E0FBFF'],
     ['#F2FBFF', '#CFEFFF', '#8DDCFF', '#38BDF8', '#1761C4'],
     {
@@ -325,8 +430,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#E5F2F8',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.ACID_RAIN]: createDetailedTheme(
+  )),
+  [PresetTheme.ACID_RAIN]: defineTheme([ThemeTone.LIME, ThemeTone.GREEN], createDetailedTheme(
     ['#171C10', '#365314', '#65A30D', '#A3E635', '#E4FF77'],
     ['#FCFFE8', '#EAF8B5', '#CDEB67', '#98CC28', '#5B8B16'],
     {
@@ -345,8 +450,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F2F7DF',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.VOLT_RIOT]: createDetailedTheme(
+  )),
+  [PresetTheme.VOLT_RIOT]: defineTheme([ThemeTone.BLUE, ThemeTone.CYAN, ThemeTone.LIME], createDetailedTheme(
     ['#0E1523', '#124AAD', '#00A1FF', '#00F5FF', '#B7FF5A'],
     ['#F4FBFF', '#D6EEFF', '#8BD4FF', '#2BC7FF', '#7FD31D'],
     {
@@ -365,8 +470,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#E7F3F8',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.TOXIC_GLITCH]: createDetailedTheme(
+  )),
+  [PresetTheme.TOXIC_GLITCH]: defineTheme([ThemeTone.LIME, ThemeTone.GREEN], createDetailedTheme(
     ['#13140C', '#2F4A0B', '#67A510', '#B7F30B', '#F7FF63'],
     ['#FEFFE9', '#F1FFB6', '#D2F05B', '#94CC1D', '#577A0B'],
     {
@@ -385,8 +490,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F3F8D8',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.PLASMA_STORM]: createDetailedTheme(
+  )),
+  [PresetTheme.PLASMA_STORM]: defineTheme([ThemeTone.PURPLE, ThemeTone.ROSE, ThemeTone.ORANGE], createDetailedTheme(
     ['#150D25', '#4C1D95', '#7C3AED', '#C026D3', '#FF7A00'],
     ['#FFF7FD', '#E8D8FF', '#C6B0FF', '#F38BFF', '#FFA24A'],
     {
@@ -405,8 +510,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F6EBFB',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.CHROME_PULSE]: createDetailedTheme(
+  )),
+  [PresetTheme.CHROME_PULSE]: defineTheme([ThemeTone.NEUTRAL, ThemeTone.BLUE], createDetailedTheme(
     ['#171717', '#454545', '#7C7C7C', '#B7C8D6', '#F4FBFF'],
     ['#FAFAFA', '#D9E1E8', '#AEBAC4', '#6F8190', '#24445E'],
     {
@@ -425,8 +530,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#EEF2F5',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.CYBER_SAKURA]: createDetailedTheme(
+  )),
+  [PresetTheme.CYBER_SAKURA]: defineTheme([ThemeTone.ROSE, ThemeTone.PURPLE], createDetailedTheme(
     ['#1E1020', '#6F1D5C', '#C026D3', '#FF4F9A', '#FFD0E7'],
     ['#FFF5FB', '#FFD7EB', '#FFA3D1', '#F65CA8', '#B0196A'],
     {
@@ -445,8 +550,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F9E8F1',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.OBSIDIAN_BLOOM]: createDetailedTheme(
+  )),
+  [PresetTheme.OBSIDIAN_BLOOM]: defineTheme([ThemeTone.TEAL, ThemeTone.LIME], createDetailedTheme(
     ['#0E0F14', '#27324C', '#006D77', '#00C2A8', '#E5FF7A'],
     ['#F8FBFC', '#D7E2E8', '#8BC5CB', '#31BFAE', '#87CC2A'],
     {
@@ -465,8 +570,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#EAF3F3',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.DESERT_MIRAGE]: createDetailedTheme(
+  )),
+  [PresetTheme.DESERT_MIRAGE]: defineTheme([ThemeTone.ORANGE, ThemeTone.TEAL], createDetailedTheme(
     ['#1E1610', '#7B5A35', '#C88A4B', '#4CB5A7', '#E8FFF7'],
     ['#FFF8EE', '#F2D8A7', '#E3A56C', '#68C7B9', '#177E89'],
     {
@@ -485,8 +590,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F7EBDD',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.HOLOGRAM_POP]: createDetailedTheme(
+  )),
+  [PresetTheme.HOLOGRAM_POP]: defineTheme([ThemeTone.BLUE, ThemeTone.CYAN, ThemeTone.ORANGE], createDetailedTheme(
     ['#121626', '#4E5DFF', '#7AB8FF', '#78F0DD', '#FFD38A'],
     ['#FFF8F0', '#DDE4FF', '#B8EEFF', '#A2F3DF', '#FFB86C'],
     {
@@ -505,8 +610,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#EFF4FA',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.CIRCUIT_BRONZE]: createDetailedTheme(
+  )),
+  [PresetTheme.CIRCUIT_BRONZE]: defineTheme([ThemeTone.ORANGE, ThemeTone.TEAL, ThemeTone.NEUTRAL], createDetailedTheme(
     ['#171310', '#61401C', '#A86A2C', '#D7A86E', '#7EE0CF'],
     ['#FFF8F1', '#F1DABF', '#D5A06C', '#8AC8C2', '#186A66'],
     {
@@ -525,8 +630,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F6EEE7',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.LOTUS_ECLIPSE]: createDetailedTheme(
+  )),
+  [PresetTheme.LOTUS_ECLIPSE]: defineTheme([ThemeTone.PURPLE, ThemeTone.TEAL, ThemeTone.YELLOW], createDetailedTheme(
     ['#12111E', '#3A2E6B', '#7B3FE4', '#1FAF97', '#FFE082'],
     ['#FCFAFF', '#DDD3FF', '#B79BFF', '#74D8C4', '#B07A00'],
     {
@@ -545,8 +650,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F4EFFB',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.TROPIC_BURST]: createDetailedTheme(
+  )),
+  [PresetTheme.TROPIC_BURST]: defineTheme([ThemeTone.ROSE, ThemeTone.ORANGE, ThemeTone.GREEN], createDetailedTheme(
     ['#191015', '#7A2247', '#F25F4C', '#FFB347', '#5DDBA4'],
     ['#FFF8F4', '#FFD6E0', '#FFAB97', '#FFC56A', '#1EA974'],
     {
@@ -565,8 +670,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F9EBEE',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.DECO_NIGHTS]: createDetailedTheme(
+  )),
+  [PresetTheme.DECO_NIGHTS]: defineTheme([ThemeTone.NEUTRAL, ThemeTone.ORANGE, ThemeTone.TEAL], createDetailedTheme(
     ['#161217', '#62405F', '#B76E79', '#F2A541', '#6FD3C1'],
     ['#FFF9F2', '#EADAF0', '#D8A0B0', '#F8C56B', '#2BA89B'],
     {
@@ -585,8 +690,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F7F0F5',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.SUPERNOVA_CRASH]: createDetailedTheme(
+  )),
+  [PresetTheme.SUPERNOVA_CRASH]: defineTheme([ThemeTone.ROSE, ThemeTone.RED, ThemeTone.ORANGE], createDetailedTheme(
     ['#1E0A2D', '#7B1E7A', '#C5227B', '#F15C5C', '#FFC130'],
     ['#FFF2FA', '#FFB3E1', '#FF66B2', '#FF3333', '#FFAA00'],
     {
@@ -605,8 +710,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#FFF0F9',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.VAPORWAVE_DREAM]: createDetailedTheme(
+  )),
+  [PresetTheme.VAPORWAVE_DREAM]: defineTheme([ThemeTone.PURPLE, ThemeTone.ROSE, ThemeTone.CYAN], createDetailedTheme(
     ['#1A1A3A', '#355C7D', '#6C5B7B', '#C06C84', '#F67280'],
     ['#F8F4FF', '#E0C3FC', '#8EC5FC', '#A3E8ED', '#98FF98'],
     {
@@ -625,8 +730,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#F3F0FA',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.QUANTUM_LEAP]: createDetailedTheme(
+  )),
+  [PresetTheme.QUANTUM_LEAP]: defineTheme([ThemeTone.BLUE, ThemeTone.CYAN], createDetailedTheme(
     ['#050B14', '#0B2046', '#1A49A1', '#00D4FF', '#FFFFFF'],
     ['#F0F8FF', '#BDE0FE', '#A2D2FF', '#0077B6', '#03045E'],
     {
@@ -645,8 +750,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#EBF4FB',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.DRAGONFIRE_SCALES]: createDetailedTheme(
+  )),
+  [PresetTheme.DRAGONFIRE_SCALES]: defineTheme([ThemeTone.RED, ThemeTone.ORANGE, ThemeTone.YELLOW], createDetailedTheme(
     ['#140505', '#5C0000', '#A30000', '#FF3300', '#FFCC00'],
     ['#FFF5F0', '#FFBCA3', '#FF7F50', '#DC143C', '#8B0000'],
     {
@@ -665,8 +770,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#FFF2F0',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.HALLOWEEN_PUMPKIN]: createDetailedTheme(
+  )),
+  [PresetTheme.HALLOWEEN_PUMPKIN]: defineTheme([ThemeTone.ORANGE, ThemeTone.PURPLE, ThemeTone.LIME], createDetailedTheme(
     ['#1A1121', '#682C00', '#B44C00', '#FF7600', '#93F000'],
     ['#FFF4EA', '#FFC899', '#FF9B4D', '#E66100', '#4C2366'],
     {
@@ -685,8 +790,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#FFF0E6',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.NORDIC_FROST]: createDetailedTheme(
+  )),
+  [PresetTheme.NORDIC_FROST]: defineTheme([ThemeTone.NEUTRAL, ThemeTone.BLUE, ThemeTone.CYAN], createDetailedTheme(
     ['#2E3440', '#4C566A', '#5E81AC', '#81A1C1', '#88C0D0'],
     ['#ECEFF4', '#D8DEE9', '#81A1C1', '#5E81AC', '#4C566A'],
     {
@@ -705,8 +810,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#FFFFFF',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.COSMIC_LATTE]: createDetailedTheme(
+  )),
+  [PresetTheme.COSMIC_LATTE]: defineTheme([ThemeTone.NEUTRAL, ThemeTone.ORANGE], createDetailedTheme(
     ['#262220', '#54463D', '#8C7665', '#C2A895', '#EAE0D5'],
     ['#F9F6F0', '#E0D4C3', '#BDAB97', '#8F7E6B', '#54463D'],
     {
@@ -725,8 +830,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#FFFFFF',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.TOKYO_NIGHT]: createDetailedTheme(
+  )),
+  [PresetTheme.TOKYO_NIGHT]: defineTheme([ThemeTone.BLUE, ThemeTone.PURPLE, ThemeTone.ROSE], createDetailedTheme(
     ['#1A1B26', '#2E3C64', '#7AA2F7', '#BB9AF7', '#F7768E'],
     ['#D5D6DB', '#96A1DF', '#5A75DF', '#8C6DE4', '#E65D7B'],
     {
@@ -745,8 +850,8 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#E8E9ED',
       stroke2: '#FFFFFF',
     },
-  ),
-  [PresetTheme.AUTUMN_MAPLE]: createDetailedTheme(
+  )),
+  [PresetTheme.AUTUMN_MAPLE]: defineTheme([ThemeTone.ORANGE, ThemeTone.YELLOW, ThemeTone.RED], createDetailedTheme(
     ['#1E1412', '#5A2A22', '#9A3F25', '#D66C23', '#F2AC0A'],
     ['#FCF7F2', '#F2AC0A', '#D66C23', '#9A3F25', '#5A2A22'],
     {
@@ -765,7 +870,7 @@ export const themeDefinitions: Record<PresetTheme, ThemeDefinition> = {
       stroke1: '#FFFFFF',
       stroke2: '#FFFFFF',
     },
-  ),
+  )),
 };
 
 export const themes: Record<PresetTheme, { dark: string[]; light: string[] }> =

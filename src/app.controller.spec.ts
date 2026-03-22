@@ -40,6 +40,12 @@ describe('AppController', () => {
     const waveOption = animationConfig?.optioins?.find(
       (option) => option.value === 'wave',
     );
+    const desertMirageOption = themeConfig?.optioins?.find(
+      (option) => option.value === 'desert_mirage',
+    );
+    const monoSlateOption = themeConfig?.optioins?.find(
+      (option) => option.value === 'mono_slate',
+    );
 
     expect(themeConfig?.panel).toMatchObject({
       tab: { key: 'general' },
@@ -66,6 +72,25 @@ describe('AppController', () => {
     expect(
       themeConfig?.optioins?.some((option) => option.value === 'hologram_pop'),
     ).toBe(true);
+    expect(desertMirageOption?.info?.primaryTones).toEqual([
+      expect.objectContaining({
+        key: 'orange',
+        color: '#E28B3E',
+        name: { en: 'Orange', zh: '橙' },
+      }),
+      expect.objectContaining({
+        key: 'teal',
+        color: '#2FA89B',
+        name: { en: 'Teal', zh: '青绿' },
+      }),
+    ]);
+    expect(monoSlateOption?.info?.primaryTones).toEqual([
+      expect.objectContaining({
+        key: 'neutral',
+        color: '#8C8278',
+        name: { en: 'Neutral', zh: '中性' },
+      }),
+    ]);
 
     expect(animationConfig?.panel).toMatchObject({
       tab: { key: 'animation' },
