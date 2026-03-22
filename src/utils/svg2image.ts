@@ -31,7 +31,7 @@ export const svgCode2image = async (
   svgCode: string,
   format: 'png' | 'jpeg',
   resize = 1,
-  bg = '#fff',
+  bg?: string,
 ) => {
   await configureSharpFontEnvironment();
   const rasterizedSvgCode = await injectSvgTextFontStyle(svgCode);
@@ -41,8 +41,9 @@ export const svgCode2image = async (
     .metadata()
     .then(({ width }) => {
       let ref = sharp(buf);
-      // TODO: add to configuration
-      if (format === 'jpeg') ref = ref.flatten({ background: bg });
+      if (format === 'jpeg' || bg) {
+        ref = ref.flatten({ background: bg || '#fff' });
+      }
       return ref
         .toFormat(format)
         .resize(Math.round(width * resize) * 2)

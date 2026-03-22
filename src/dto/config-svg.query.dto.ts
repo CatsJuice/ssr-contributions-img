@@ -190,4 +190,9 @@ export class ConfigSvgQueryDto extends Mixin(
    * @default {"calendar"}
    */
   chart?: ChartTpl;
+
+  @decorate(IsOptional())
+  @decorate(Transform(({ value }) => normalizeColorInput(value)))
+  @decorate(IsString())
+  backgroundColor?: string;
 }

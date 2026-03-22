@@ -550,4 +550,22 @@ export const config: ConfigItem[] = [
     configGroups.generalTheme,
     30,
   ),
+
+  withPanel(
+    {
+      key: 'backgroundColor',
+      label: {
+        en: 'Background Color',
+        zh: '背景颜色',
+      },
+      type: 'color',
+      description: {
+        en: 'Optional page or raster background color. Overrides the default light or dark background for html and jpeg, and also fills png when provided.',
+        zh: '可选的页面或位图背景色。会覆盖 html 和 jpeg 的默认浅色/深色背景；传入后 png 也会铺上该背景色。',
+      },
+    },
+    configTabs.general,
+    configGroups.generalOutput,
+    30,
+  ),
 ];

@@ -5,4 +5,5 @@ export interface SvgResponseResolverOptions {
   quality?: number;
   filename?: string;
   dark?: boolean;
+  backgroundColor?: string;
 }

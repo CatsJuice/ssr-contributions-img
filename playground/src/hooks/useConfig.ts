@@ -241,6 +241,7 @@ const activeAppearance = computed(() => ({
   colors: state.value.colors ? `${state.value.colors}` : '',
   strokeWidth: state.value.strokeWidth,
   strokeColor: state.value.strokeColor,
+  backgroundColor: state.value.backgroundColor,
 }));
 
 const requestUsername = computed(() => `${username.value || ''}`.trim());
@@ -261,6 +262,7 @@ const themePreviewConfig = computed(() => ({
   foregroundColor: state.value.foregroundColor,
   strokeWidth: state.value.strokeWidth,
   strokeColor: state.value.strokeColor,
+  backgroundColor: state.value.backgroundColor,
   flatten: state.value.flatten,
 }));
 

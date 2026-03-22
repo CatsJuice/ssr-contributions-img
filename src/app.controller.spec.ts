@@ -28,6 +28,20 @@ describe('AppController', () => {
     );
   });
 
+  it('should expose backgroundColor as a general output option', () => {
+    const backgroundColorConfig = config.find(
+      (item) => item.key === 'backgroundColor',
+    );
+
+    expect(backgroundColorConfig).toMatchObject({
+      type: 'color',
+      panel: {
+        tab: { key: 'general' },
+        group: { key: 'general-output' },
+      },
+    });
+  });
+
   it('should expose panel metadata and the random theme option', () => {
     const themeConfig = config.find((item) => item.key === 'theme');
     const chartConfig = config.find((item) => item.key === 'chart');

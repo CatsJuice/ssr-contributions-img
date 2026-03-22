@@ -129,11 +129,11 @@ ${host}/_/${username}?${queryString}
         </li>
         <li>
           <code>png</code>
-          <span>: return a png file(transparent background)</span>
+          <span>: return a png file(transparent background unless <code>backgroundColor</code> is provided)</span>
         </li>
         <li>
           <code>jpeg</code>
-          <span>: return a jpg file(white background)</span>
+          <span>: return a jpg file(light or dark default background, configurable via <code>backgroundColor</code>)</span>
         </li>
       </ul>
     </td>
@@ -217,6 +217,18 @@ ${host}/_/${username}?${queryString}
     <td>
       <code>false</code>
     </td>
+  </tr>
+
+  <tr>
+    <td>backgroundColor</td>
+    <td><code>string</code></td>
+    <td>
+      Optional page or raster background color. Supports hex values with or without <code>#</code>, and also preserves CSS color strings such as <code>rgba(...)</code>.
+      <br />
+      Overrides the default light or dark background for <code>html</code> and <code>jpeg</code>.
+      When provided, <code>png</code> will also be flattened onto this background.
+    </td>
+    <td><code>undefined</code></td>
   </tr>
 
 </table>
@@ -447,7 +459,7 @@ Enable animation by passing <code>animation</code> property, available values:
 
 ## DarkMode
 
-In fact, the display of the chart is determined by the `theme`, which is overridden by the `color` property. Enabling dark mode here affects **the display of the built-in theme** and the **background color** when outputting `jpeg` or `html`, while the background is `transparent` in all other output formats. For more details, see [Themes](#themes)
+In fact, the display of the chart is determined by the `theme`, which is overridden by the `color` property. Enabling dark mode here affects **the display of the built-in theme** and the default **background color** when outputting `jpeg` or `html`. You can override that default with `backgroundColor`. In all other cases, the background remains `transparent` unless you explicitly set `backgroundColor`. For more details, see [Themes](#themes)
 
 ## Charts
 

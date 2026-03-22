@@ -34,7 +34,7 @@ export class AppController {
     console.log('Request svg/:username, username = ', username);
     console.log(JSON.stringify(query));
 
-    const svgCode = await this.appService.generateChartSvgCode(
+    const { svgCode, config } = await this.appService.generateChartSvgCode(
       req.user, // user was recorded in UsernameExistsGuard
       query,
     );
@@ -43,7 +43,8 @@ export class AppController {
       format: query.format,
       quality: query.quality,
       filename: `${username}_${Date.now()}`,
-      dark: query.dark,
+      dark: config.dark,
+      backgroundColor: config.backgroundColor,
     });
   }
 
