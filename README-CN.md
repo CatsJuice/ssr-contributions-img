@@ -131,11 +131,11 @@ ${host}/_/${username}?${queryString}
         </li>
         <li>
           <code>png</code>
-          <span>: 返回 png 格式的文件(透明背景)</span>
+          <span>: 返回 png 格式的文件（默认透明背景，传入 <code>backgroundColor</code> 后会铺底）</span>
         </li>
         <li>
           <code>jpeg</code>
-          <span>: 返回 jpeg 格式的文件(白色背景)</span>
+          <span>: 返回 jpeg 格式的文件（默认浅色/深色背景，可通过 <code>backgroundColor</code> 覆盖）</span>
         </li>
       </ul>
     </td>
@@ -219,6 +219,18 @@ ${host}/_/${username}?${queryString}
     <td>
       <code>false</code>
     </td>
+  </tr>
+
+  <tr>
+    <td>backgroundColor</td>
+    <td><code>string</code></td>
+    <td>
+      可选的页面或位图背景色。支持带或不带 <code>#</code> 的十六进制颜色，也保留 <code>rgba(...)</code> 这类 CSS 颜色字符串。
+      <br />
+      会覆盖 <code>html</code> 和 <code>jpeg</code> 的默认浅色/深色背景。
+      传入后 <code>png</code> 也会在导出时铺上该背景色。
+    </td>
+    <td><code>undefined</code></td>
   </tr>
 
 </table>
@@ -449,7 +461,7 @@ Enable animation by passing <code>animation</code> property, available values:
 
 ## 暗黑模式
 
-实际上，图表的显示由主题（ `theme` ）决定，而主题会被颜色（ `colors` ）属性覆盖。在这里启用暗黑模式，影响的是**内置主题的配色**和输出 `jpeg` 或 `html` 时的背景颜色，而其他输出格式下，背景都是透明的，暗黑模式下的主题色可参考 [主题](#主题)
+实际上，图表的显示由主题（ `theme` ）决定，而主题会被颜色（ `colors` ）属性覆盖。在这里启用暗黑模式，影响的是**内置主题的配色**以及输出 `jpeg` 或 `html` 时的默认背景颜色。你可以用 `backgroundColor` 显式覆盖这个默认值。其他情况下背景保持透明，除非你主动传入 `backgroundColor`。暗黑模式下的主题色可参考 [主题](#主题)
 
 ## 图表
 

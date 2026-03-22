@@ -10,7 +10,10 @@ import { GithubUser } from './types/contribution.interface';
 import { themes } from './utils/get-theme';
 import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
 import { SvgResponseResolverOptions } from './types/svg-res-resolver-opt.interface';
-import { renderContributionSvg } from '../shared/render-core/render';
+import {
+  normalizeRenderConfig,
+  renderContributionSvg,
+} from '../shared/render-core';
 
 @Injectable()
 export class AppService {
@@ -33,19 +36,23 @@ export class AppService {
     user: GithubUser,
     _config: ConfigSvgQueryDto,
   ) {
-    const config = { ..._config };
+    const config = normalizeRenderConfig(_config);
+    const renderConfig = { ...config };
     if ([OutputFormat.PNG, OutputFormat.JPEG].includes(_config.format)) {
-      delete config.animation;
+      delete renderConfig.animation;
     }
 
-    const svgStr = await renderContributionSvg(user, config);
+    const svgStr = await renderContributionSvg(user, renderConfig);
     if (!svgStr) {
       throw new BadRequestException(
-        'Unimplemented chart type: ' + config.chart,
+        'Unimplemented chart type: ' + renderConfig.chart,
       );
     }
 
-    return svgStr;
+    return {
+      svgCode: svgStr,
+      config,
+    };
   }
 
   /**
@@ -61,14 +68,17 @@ export class AppService {
     svgCode: string,
     options: SvgResponseResolverOptions = {},
   ) {
-    const { format, quality, dark } = options;
+    const { format, quality, dark, backgroundColor } = options;
     const filename = options.filename || `${Date.now()}`;
 
     const roundQuality = Math.min(
       10,
       Math.max(0.1, parseFloat(`${quality}`) || 1),
     );
-    const bg = this._cfgSrv.get(`theme.bg.${dark ? 'dark' : 'light'}`);
+    const defaultBackgroundColor = this._cfgSrv.get(
+      `theme.bg.${dark ? 'dark' : 'light'}`,
+    );
+    const resolvedBackgroundColor = backgroundColor || defaultBackgroundColor;
     if (format === OutputFormat.SVG) {
       res.header('Content-Type', 'image/svg+xml; charset=utf-8');
       // res.header('Content-Disposition', `inline; filename=${filename}.svg`);
@@ -78,15 +88,24 @@ export class AppService {
       res.send(svgCode);
     } else if (format === OutputFormat.HTML) {
       res.header('Content-Type', 'text/html;charset=utf-8');
-      res.send(generateHtml(svgCode, filename, bg));
+      res.send(generateHtml(svgCode, filename, resolvedBackgroundColor));
     } else if (format === OutputFormat.PNG) {
       res.header('Content-Type', 'image/png;charset=utf-8');
       res.header('Content-Disposition', `inline; filename=${filename}.png`);
-      res.send(await svgCode2image(svgCode, 'png', roundQuality, bg));
+      res.send(
+        await svgCode2image(svgCode, 'png', roundQuality, backgroundColor),
+      );
     } else if (format === OutputFormat.JPEG) {
       res.header('Content-Type', 'image/jpeg;charset=utf-8');
       res.header('Content-Disposition', `inline; filename=${filename}.jpg`);
-      res.send(await svgCode2image(svgCode, 'jpeg', roundQuality, bg));
+      res.send(
+        await svgCode2image(
+          svgCode,
+          'jpeg',
+          roundQuality,
+          resolvedBackgroundColor,
+        ),
+      );
     } else
       this.resolveResponseByFormat(res, svgCode, {
         ...options,

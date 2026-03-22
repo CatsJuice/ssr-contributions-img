@@ -16,6 +16,7 @@ type ResolvedPresetConfig = PresetConfig & {
   colors?: string;
   strokeWidth?: number;
   strokeColor?: string;
+  backgroundColor?: string;
 };
 
 const presets = computed(() => {
@@ -26,6 +27,7 @@ const presets = computed(() => {
         dark: activeAppearance.value.dark,
         strokeWidth: activeAppearance.value.strokeWidth,
         strokeColor: activeAppearance.value.strokeColor,
+        backgroundColor: activeAppearance.value.backgroundColor,
         ...(activeAppearance.value.colors
           ? {
               colors: activeAppearance.value.colors,

@@ -11,6 +11,7 @@ export interface BaseChartConfig {
   quality?: number;
   dark?: boolean;
   tz?: string;
+  backgroundColor?: string;
 }
 
 export interface CalendarChartConfig extends BaseChartConfig {

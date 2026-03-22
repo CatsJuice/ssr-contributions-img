@@ -41,6 +41,7 @@ export type NormalizedRenderContributionConfig =
     foregroundColor: string;
     strokeWidth?: number;
     strokeColor: string;
+    backgroundColor: string;
   };
 
 function normalizeColor(color: string) {
@@ -154,6 +155,10 @@ export function normalizeRenderConfig(
     strokeColor:
       typeof input.strokeColor === 'string'
         ? normalizeColor(input.strokeColor)
+        : '',
+    backgroundColor:
+      typeof input.backgroundColor === 'string'
+        ? normalizeColor(input.backgroundColor)
         : '',
   };
 }
