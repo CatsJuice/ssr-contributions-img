@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PropType, computed, ref, watch } from 'vue';
+import { PropType, computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 
 import MagicHoverCard from '../base/MagicHoverCard.vue';
 import ThemePaletteSwatches from './ThemePaletteSwatches.vue';
@@ -32,8 +32,13 @@ const dialog = ref(false);
 const search = ref('');
 const previewMap = ref<Record<string, string>>({});
 const loadingMap = ref<Record<string, boolean>>({});
+const galleryListRef = ref<HTMLElement | null>(null);
 
 let queueToken = 0;
+let queueFrameId: number | null = null;
+let queueIdleId: number | null = null;
+
+const themeCellElements = new Map<string, HTMLElement>();
 
 const allOptions = computed(() => props.options || []);
 const hasCustomColors = computed(() => !!`${state.value.colors || ''}`.trim());
@@ -59,10 +64,12 @@ const filteredValuesKey = computed(() =>
 );
 
 function setLoading(value: string, loading: boolean) {
-  loadingMap.value = {
-    ...loadingMap.value,
-    [value]: loading,
-  };
+  if (loading) {
+    loadingMap.value[value] = true;
+    return;
+  }
+
+  delete loadingMap.value[value];
 }
 
 async function ensurePreview(value: string) {
@@ -72,47 +79,138 @@ async function ensurePreview(value: string) {
   setLoading(value, true);
   try {
     const svg = await renderThemePreview(value);
-    previewMap.value = {
-      ...previewMap.value,
-      [value]: svg,
-    };
+    previewMap.value[value] = svg;
   } finally {
     setLoading(value, false);
   }
 }
 
-function nextFrame(callback: () => void) {
-  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(callback);
+function setCellRef(value: string, el: unknown) {
+  if (el instanceof HTMLElement) {
+    themeCellElements.set(value, el);
     return;
   }
 
-  window.setTimeout(callback, 16);
+  themeCellElements.delete(value);
 }
 
-function schedulePreviewQueue() {
-  if (!dialog.value) return;
+function clearScheduledQueueWork() {
+  if (queueFrameId !== null) {
+    window.cancelAnimationFrame(queueFrameId);
+    queueFrameId = null;
+  }
 
-  const token = ++queueToken;
+  if (queueIdleId !== null) {
+    const currentWindow = window as Window & {
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    if (currentWindow.cancelIdleCallback) {
+      currentWindow.cancelIdleCallback(queueIdleId);
+    } else {
+      window.clearTimeout(queueIdleId);
+    }
+    queueIdleId = null;
+  }
+}
+
+function cancelPreviewQueue() {
+  queueToken += 1;
+  clearScheduledQueueWork();
+}
+
+function scheduleIdleTask(callback: (deadline: IdleDeadline | null) => void) {
+  const currentWindow = window as Window & {
+    requestIdleCallback?: (
+      handler: IdleRequestCallback,
+      options?: IdleRequestOptions,
+    ) => number;
+  };
+
+  if (currentWindow.requestIdleCallback) {
+    return currentWindow.requestIdleCallback(
+      (deadline) => callback(deadline),
+      { timeout: 120 },
+    );
+  }
+
+  return window.setTimeout(() => callback(null), 16);
+}
+
+function getVisibleThemeValues(values: string[]) {
+  const galleryList = galleryListRef.value;
+  if (!galleryList) return values.slice(0, 6);
+
+  const listRect = galleryList.getBoundingClientRect();
+  const visibleValues = values.filter((value) => {
+    const cell = themeCellElements.get(value);
+    if (!cell) return false;
+
+    const rect = cell.getBoundingClientRect();
+    return (
+      rect.bottom > listRect.top &&
+      rect.top < listRect.bottom &&
+      rect.right > listRect.left &&
+      rect.left < listRect.right
+    );
+  });
+
+  return visibleValues.length ? visibleValues : values.slice(0, 6);
+}
+
+function buildPreviewQueue() {
   const values = filteredOptions.value
     .map((item) => item.value)
     .filter((value) => value && value !== 'random');
   const activeValue = `${props.modelValue || ''}`;
-  const orderedValues = [...new Set([activeValue, ...values])].filter(Boolean);
+  const visibleValues = getVisibleThemeValues(values);
 
-  const run = async (index = 0) => {
-    if (token !== queueToken) return;
+  return [
+    ...new Set([
+      ...(values.includes(activeValue) ? [activeValue] : []),
+      ...visibleValues,
+      ...values,
+    ]),
+  ];
+}
 
-    const batch = orderedValues.slice(index, index + 4);
-    if (!batch.length) return;
+function runPreviewQueue(orderedValues: string[], token: number, index = 0) {
+  if (token !== queueToken || !dialog.value) return;
 
-    await Promise.all(batch.map((value) => ensurePreview(value)));
-    if (token !== queueToken) return;
+  const value = orderedValues[index];
+  if (!value) return;
 
-    nextFrame(() => run(index + 4));
-  };
+  queueIdleId = scheduleIdleTask(async (deadline) => {
+    queueIdleId = null;
+    if (token !== queueToken || !dialog.value) return;
 
-  run();
+    if (deadline && !deadline.didTimeout && deadline.timeRemaining() < 8) {
+      runPreviewQueue(orderedValues, token, index);
+      return;
+    }
+
+    await ensurePreview(value);
+    if (token !== queueToken || !dialog.value) return;
+
+    runPreviewQueue(orderedValues, token, index + 1);
+  });
+}
+
+function schedulePreviewQueueAfterPaint() {
+  if (!dialog.value) return;
+
+  const token = ++queueToken;
+  clearScheduledQueueWork();
+
+  nextTick(() => {
+    if (token !== queueToken || !dialog.value) return;
+
+    queueFrameId = window.requestAnimationFrame(() => {
+      queueFrameId = null;
+      if (token !== queueToken || !dialog.value) return;
+
+      runPreviewQueue(buildPreviewQueue(), token);
+    });
+  });
 }
 
 function selectTheme(value: string) {
@@ -142,16 +240,25 @@ watch(themePreviewKey, () => {
   if (props.modelValue && props.modelValue !== 'random') {
     ensurePreview(props.modelValue);
   }
-  if (dialog.value) schedulePreviewQueue();
+  if (dialog.value) schedulePreviewQueueAfterPaint();
 });
 
 watch(
   () => [dialog.value, filteredValuesKey.value],
   () => {
-    if (!dialog.value) return;
-    schedulePreviewQueue();
+    if (!dialog.value) {
+      cancelPreviewQueue();
+      return;
+    }
+
+    schedulePreviewQueueAfterPaint();
   },
+  { flush: 'post' },
 );
+
+onBeforeUnmount(() => {
+  cancelPreviewQueue();
+});
 </script>
 
 <template>
@@ -229,11 +336,12 @@ watch(
           </div>
         </div>
 
-        <div class="theme-gallery-list">
+        <div ref="galleryListRef" class="theme-gallery-list">
           <div class="theme-gallery-grid">
             <div
               v-for="opt in filteredOptions"
               :key="opt.value"
+              :ref="(el) => setCellRef(opt.value, el)"
               class="theme-gallery-cell"
               @click="selectTheme(opt.value)"
             >
