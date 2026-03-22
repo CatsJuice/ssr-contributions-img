@@ -1,7 +1,9 @@
 import { AppService } from './app.service';
 import { GetThemeQueryDto } from './dto/get-theme.query.dto';
 import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
+import { PlaygroundAccessGuard } from './guards/playground-access.guard';
 import { UsernameExistsGuard } from './guards/username-exists.guard';
+import { ContributionResponse } from './types/contribution.interface';
 import { ExtendedRequest } from './types/extended-request.interface';
 import { config } from './libs/config.constant';
 
@@ -60,5 +62,27 @@ export class AppController {
   @Get('config')
   async getConfig() {
     return config;
+  }
+
+  @Get('contributions/:username')
+  @UseGuards(PlaygroundAccessGuard, UsernameExistsGuard)
+  async getContributions(
+    @Request() req: ExtendedRequest,
+    @Param('username') username: string,
+  ): Promise<ContributionResponse> {
+    return {
+      username,
+      weeks: req.user?.contributionsCollection.contributionCalendar.weeks || [],
+      totalContributions:
+        req.user?.contributionsCollection.contributionCalendar
+          .totalContributions || 0,
+      source: req.contributionMeta?.source || 'graphql_fallback',
+      privateContributionsMode:
+        req.contributionMeta?.privateContributionsMode || 'disabled',
+      privateContributionsReason:
+        req.contributionMeta?.privateContributionsReason ||
+        'missing_repo_scope',
+      fetchedAt: req.contributionMeta?.fetchedAt || new Date().toISOString(),
+    };
   }
 }

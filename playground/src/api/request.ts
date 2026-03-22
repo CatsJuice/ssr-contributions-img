@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { useQuasar } from 'quasar';
+import { Notify } from 'quasar';
 import { getApiBaseUrl } from '../utils/runtime-env';
 
 export async function request(cfg: AxiosRequestConfig = {}) {
@@ -10,6 +10,7 @@ export async function request(cfg: AxiosRequestConfig = {}) {
     });
     return response.data;
   } catch (err: any) {
-    useQuasar().notify({ message: err.message, color: 'red' });
+    Notify.create({ message: err.message, color: 'red' });
+    throw err;
   }
 }

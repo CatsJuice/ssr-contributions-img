@@ -1,26 +1,16 @@
-import * as echarts from 'echarts';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 import { svgCode2image } from './utils/svg2image';
-import { maxInArray } from './utils/max-in-array';
 import { generateHtml } from './utils/generate-html';
-import { WidgetSize } from './dto/base/widget-size.dto';
 import { OutputFormat } from './dto/base/output-format.dto';
 import { themesProcessor } from './charts/themes.processor';
 import { GithubUser } from './types/contribution.interface';
-import { filterEmptyKeys } from './utils/filter-empty-keys';
-import { calendarProcessor } from './charts/calendar.processor';
-import { isometricProcessor } from './charts/isometric.processor';
-import { getRandomTheme, getTheme, themes } from './utils/get-theme';
-import { ChartTpl, ConfigSvgQueryDto } from './dto/config-svg.query.dto';
+import { themes } from './utils/get-theme';
+import { ConfigSvgQueryDto } from './dto/config-svg.query.dto';
 import { SvgResponseResolverOptions } from './types/svg-res-resolver-opt.interface';
-
-import {
-  defaultCalendarChartConfig,
-  defaultCalenderChart3dConfig,
-} from './types/chart-config.interface';
+import { renderContributionSvg } from '../shared/render-core/render';
 
 @Injectable()
 export class AppService {
@@ -43,72 +33,19 @@ export class AppService {
     user: GithubUser,
     _config: ConfigSvgQueryDto,
   ) {
-    // disable animation for png | jpeg
+    const config = { ..._config };
     if ([OutputFormat.PNG, OutputFormat.JPEG].includes(_config.format)) {
-      delete _config.animation;
+      delete config.animation;
     }
-    // set default configurations
-    const config = {
-      chart: ChartTpl.CALENDAR,
-      ...defaultCalendarChartConfig,
-      ..._config,
-      colors: _config.colors?.length
-        ? _config.colors
-        : _config.theme === 'random'
-        ? getRandomTheme(_config.dark)
-        : getTheme(_config.theme, _config.dark),
-      weeks:
-        _config.weeks ||
-        {
-          [WidgetSize.LARGE]: 40,
-          [WidgetSize.MEDIUM]: 16,
-          [WidgetSize.SMALL]: 7,
-        }[_config.widget_size] ||
-        16,
-    };
 
-    const contributionWeeks =
-      user.contributionsCollection.contributionCalendar.weeks
-        .sort(
-          (w1, w2) =>
-            new Date(w2.firstDay).getTime() - new Date(w1.firstDay).getTime(),
-        )
-        .slice(0, config.weeks);
-    const max = maxInArray(
-      contributionWeeks.map((week) =>
-        maxInArray(week.contributionDays.map((day) => day.contributionCount)),
-      ),
-    );
-
-    // 1. calc chart width & height
-    let svgStr = '';
-    if (config.chart === ChartTpl.CALENDAR) {
-      const calc = (weekCount) => weekCount * 20 + (weekCount - 1) * 4 + 40;
-      const width = calc(config.weeks);
-      const height =
-        _config.widget_size === WidgetSize.LARGE ? calc(18) : calc(7);
-      // 2. init instance
-      const chart = echarts.init(null, null, {
-        renderer: 'svg',
-        ssr: true,
-        width,
-        height,
-      });
-
-      // 3. render by chart type
-      chart.setOption(calendarProcessor(contributionWeeks, max, config));
-      svgStr = chart.renderToSVGString();
-    } else if (config.chart === ChartTpl.BAR3D) {
-      svgStr = isometricProcessor(contributionWeeks, max, {
-        ...defaultCalenderChart3dConfig,
-        ...filterEmptyKeys(config),
-      });
-    } else {
+    const svgStr = await renderContributionSvg(user, config);
+    if (!svgStr) {
       throw new BadRequestException(
         'Unimplemented chart type: ' + config.chart,
       );
     }
-    return svgStr.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+
+    return svgStr;
   }
 
   /**
