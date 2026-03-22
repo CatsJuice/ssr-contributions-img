@@ -20,4 +20,9 @@ export enum PresetTheme {
   CYAN_DEPTH = 'cyan_depth',
   INDIGO_NIGHT = 'indigo_night',
   MONO_SLATE = 'mono_slate',
+  NEON_HORIZON = 'neon_horizon',
+  AURORA_DRIFT = 'aurora_drift',
+  LAVA_SURGE = 'lava_surge',
+  FROST_BYTE = 'frost_byte',
+  ACID_RAIN = 'acid_rain',
 }

@@ -45,16 +45,24 @@ describe('AppController', () => {
       tab: { key: 'general' },
       group: { key: 'general-theme' },
     });
-    expect(themeConfig?.optioins?.some((option) => option.value === 'random')).toBe(
-      true,
-    );
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'random'),
+    ).toBe(true);
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'neon_horizon'),
+    ).toBe(true);
+    expect(
+      themeConfig?.optioins?.some((option) => option.value === 'acid_rain'),
+    ).toBe(true);
 
     expect(animationConfig?.panel).toMatchObject({
       tab: { key: 'animation' },
       group: { key: 'animation-mode' },
     });
-    expect((waveOption?.config || []).every((item) => item.panel?.group.key === 'animation-wave')).toBe(
-      true,
-    );
+    expect(
+      (waveOption?.config || []).every(
+        (item) => item.panel?.group.key === 'animation-wave',
+      ),
+    ).toBe(true);
   });
 });
