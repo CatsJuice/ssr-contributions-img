@@ -6,6 +6,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import Preset from './Preset/index.vue';
 import ConfigRaw from './configs/config-raw.vue';
 import ConfigEnum from './configs/config-enum.vue';
+import ConfigTheme from './configs/config-theme.vue';
 import ConfigPoint from './configs/config-point.vue';
 import ConfigNumber from './configs/config-number.vue';
 import ConfigBoolean from './configs/config-boolean.vue';
@@ -19,17 +20,8 @@ const { isMobile } = useConfig();
 
 const scrollComponent = computed(() => (isMobile.value ? 'div' : QScrollArea));
 
-const {
-  state,
-  locale,
-  username,
-  loadingSvg,
-  configTabs,
-  localeOptions,
-  loadingConfig,
-  confirmDisabled,
-  confirm,
-} = useConfig();
+const { state, locale, username, configTabs, localeOptions, loadingConfig } =
+  useConfig();
 
 const activeTab = ref('');
 const scrollShell = ref<any>(null);
@@ -60,7 +52,9 @@ watch(
   { immediate: true },
 );
 
-function resolveComponent(type: string) {
+function resolveComponent(cfg: any) {
+  if (cfg.key === 'theme') return ConfigTheme;
+  const type = cfg.type;
   if (type === 'enum') return ConfigEnum;
   if (type === 'boolean') return ConfigBoolean;
   if (type === 'int' || type === 'float') return ConfigNumber;
@@ -240,7 +234,7 @@ onBeforeUnmount(() => cleanupScrollTracking());
                       class="config-item-control"
                       v-model="state[cfg.key]"
                       :options="cfg.optioins"
-                      :is="resolveComponent(cfg.type)"
+                      :is="resolveComponent(cfg)"
                       :type="cfg.type"
                       :min="cfg.min"
                       :max="cfg.max"
@@ -257,18 +251,6 @@ onBeforeUnmount(() => cleanupScrollTracking());
         </div>
       </div>
     </component>
-    <footer class="q-pa-md">
-      <q-btn
-        :loading="loadingSvg || loadingConfig"
-        @click="confirm"
-        :disable="confirmDisabled"
-        class="full-width bg-primary text-white"
-        flat
-      >
-        <q-icon name="fas fa-check" size="15px" class="q-mr-sm" />
-        <span>{{ locale === 'zh' ? '确认' : 'Confirm' }}</span>
-      </q-btn>
-    </footer>
   </div>
 </template>
 
@@ -280,6 +262,7 @@ onBeforeUnmount(() => cleanupScrollTracking());
 
 .configuration-root {
   --config-surface-radius: 20px;
+  backdrop-filter: blur(20px);
 }
 
 .config-scroll-shell {

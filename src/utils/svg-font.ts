@@ -3,27 +3,13 @@ import { access } from 'fs/promises';
 import { mkdir } from 'fs/promises';
 import { readFile } from 'fs/promises';
 import { writeFile } from 'fs/promises';
+import { svgTextFontFamily } from '../../shared/render-core/svg-font';
 
 const embeddedSvgFontFamily = 'SSRCEmbeddedFont';
 const embeddedSvgFontFile = path.join('fonts', 'CascadiaCode.ttf');
 const fontCacheDir = path.join('/tmp', 'fonts-cache');
 const fontConfigPath = path.join('/tmp', 'ssr-contributions-fonts.conf');
-
-export const svgTextFontFamily = [
-  embeddedSvgFontFamily,
-  'Cascadia Code',
-  'CascadiaCode',
-  'Noto Sans CJK SC',
-  'Noto Sans SC',
-  'Source Han Sans SC',
-  'PingFang SC',
-  'Hiragino Sans GB',
-  'Microsoft YaHei',
-  'Heiti SC',
-  'Arial Unicode MS',
-  'WenQuanYi Micro Hei',
-  'sans-serif',
-].join(', ');
+export { svgTextFontFamily };
 
 let rasterizationStylePromise: Promise<string> | null = null;
 let fontConfigPromise: Promise<void> | null = null;

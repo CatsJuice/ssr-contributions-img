@@ -1,4 +1,5 @@
 import _githubConfig from './_github.config';
+import _playgroundConfig from './_playground.config';
 import _themeConfig from './_theme.config';
 
-export const allConfigs = [_githubConfig, _themeConfig];
+export const allConfigs = [_githubConfig, _playgroundConfig, _themeConfig];

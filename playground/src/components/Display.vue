@@ -33,8 +33,9 @@ function download() {
 
 function copy() {
   const orign = window.location.origin;
+  const linkPath = getApiPath(`/_/${username.value}`);
   const path = validatePath(
-    `${getApiPath(`/_/${username.value}`)}?${queryStr.value}`,
+    queryStr.value ? `${linkPath}?${queryStr.value}` : linkPath,
   );
   const url = `${orign}${path}`;
   copyTextToClipboard(url);

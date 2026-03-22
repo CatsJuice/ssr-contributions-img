@@ -1,11 +1,8 @@
 import { Transform } from 'class-transformer';
 import { decorate } from 'ts-mixer';
+import { WidgetSize } from '../../../shared/render-core/enums';
 
-export enum WidgetSize {
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  LARGE = 'large',
-}
+export { WidgetSize };
 
 export class WidgetSizeDto {
   /**

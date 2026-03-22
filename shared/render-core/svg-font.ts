@@ -1,0 +1,15 @@
+export const svgTextFontFamily = [
+  'SSRCEmbeddedFont',
+  'Cascadia Code',
+  'CascadiaCode',
+  'Noto Sans CJK SC',
+  'Noto Sans SC',
+  'Source Han Sans SC',
+  'PingFang SC',
+  'Hiragino Sans GB',
+  'Microsoft YaHei',
+  'Heiti SC',
+  'Arial Unicode MS',
+  'WenQuanYi Micro Hei',
+  'sans-serif',
+].join(', ');

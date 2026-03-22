@@ -6,29 +6,42 @@ import PresetItem from './PresetItem.vue';
 import { hashObject } from '../utils/has-object';
 import { useConfig } from '../../hooks/useConfig';
 import { presets as _presets } from './presets.list';
+import type { PresetConfig } from './presets.list';
 
 const { locale, state, activeAppearance, usePreset } = useConfig();
 
+type ResolvedPresetConfig = PresetConfig & {
+  dark: boolean;
+  theme?: string;
+  colors?: string;
+  strokeWidth?: number;
+  strokeColor?: string;
+};
+
 const presets = computed(() => {
-  return JSON.parse(JSON.stringify(_presets)).map((cfg: any) => ({
-    cfg: {
-      ...cfg,
-      dark: activeAppearance.value.dark,
-      ...(activeAppearance.value.colors
-        ? {
-            colors: activeAppearance.value.colors,
-            theme: undefined,
-          }
-        : {
-            theme: activeAppearance.value.theme,
-            colors: undefined,
-          }),
-    },
-  }));
+  return _presets.map(
+    (cfg): { cfg: ResolvedPresetConfig } => ({
+      cfg: {
+        ...cfg,
+        dark: activeAppearance.value.dark,
+        strokeWidth: activeAppearance.value.strokeWidth,
+        strokeColor: activeAppearance.value.strokeColor,
+        ...(activeAppearance.value.colors
+          ? {
+              colors: activeAppearance.value.colors,
+              theme: undefined,
+            }
+          : {
+              theme: activeAppearance.value.theme,
+              colors: undefined,
+            }),
+      },
+    }),
+  );
 });
 
 function isActive(cfg: Record<string, any>) {
-  const filter = (v: any) => v !== undefined || v !== null || v !== '';
+  const filter = (v: any) => v !== undefined && v !== null && v !== '';
   return hashObject(state.value, filter) === hashObject(cfg, filter);
 }
 </script>
@@ -49,7 +62,7 @@ function isActive(cfg: Record<string, any>) {
 
   <div class="preset-grid">
     <PresetItem
-      @click.native="usePreset(cfg)"
+      @click="usePreset(cfg)"
       :active="isActive(cfg)"
       v-for="({ cfg }, i) in presets"
       :key="i"
